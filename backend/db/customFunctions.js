@@ -33,6 +33,7 @@ const getAllFromCustom = async (tabla, filtros = {}) => {
 
 const updateCompania = async (data) => {
   data = await sanitizeData({ ...data });
+  delete data["createdAt"];
   const id = Number(data.id);
   // Validar que el ID sea un número
   if (!id || isNaN(Number(id))) {

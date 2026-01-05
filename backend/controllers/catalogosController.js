@@ -28,6 +28,7 @@ exports.getCatalogo = async (req, res, tabla) => {
 
     // Caso especial: ramosByCompania
     if (tabla === "ramosByCompania") {
+      console.log("tabla ", tabla); // IGNORE
       let companiaId = req.body.compania_id;
       if (!companiaId) {
         return res.json({
@@ -37,6 +38,7 @@ exports.getCatalogo = async (req, res, tabla) => {
         });
       }
 
+      console.log("companiaId ", companiaId); // IGNORE
       let rows = await getAllFrom(
         "companias_ramos",
         { compania_id: companiaId, estatus: 1 },

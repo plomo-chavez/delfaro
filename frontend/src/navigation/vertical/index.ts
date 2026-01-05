@@ -1,11 +1,6 @@
 export default [
   {
-    title: "Login",
-    to: { name: "login" },
-    icon: { icon: "tabler-smart-home" },
-  },
-  {
-    title: "Home",
+    title: "Inicio",
     to: { name: "root" },
     icon: { icon: "tabler-smart-home" },
     config: { requiresAuth: true },

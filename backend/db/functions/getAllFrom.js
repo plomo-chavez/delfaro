@@ -38,7 +38,13 @@ const getAllFrom = async (modelo, filtros = {}, include = undefined) => {
     }
 
     const sql = `SELECT * FROM \`${modelo}\` ${joinClause} ${whereClause}`;
+    console.log("modelo: ", modelo); // Debug log
+    console.log("include: ", include); // Debug log
+    console.log("joinClause: ", joinClause); // Debug log
+    console.log("whereClause: ", whereClause); // Debug log
+
     const sqlRendered = renderSQL(sql, params);
+    console.log("Executing SQL:", sqlRendered); // Debug log
 
     const [rows] = await pool.query(sqlRendered, params);
 

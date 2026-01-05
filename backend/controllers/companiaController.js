@@ -5,6 +5,7 @@ const {
   createOrUpdate,
 } = require("../db/functionsSQL");
 const { updateCompania, getAllFromCustom } = require("../db/customFunctions");
+const { sanitizeData } = require("../controllers/controller");
 const tabla = "compania";
 /**
  * Obtener todos los registros de la tabla clientes.

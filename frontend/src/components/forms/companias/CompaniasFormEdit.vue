@@ -55,8 +55,12 @@ const handleFormSubmit = async (data: any) => {
     method: "POST",
     data: { ...data },
   });
-  if (response.data.status) {
-    showSuccessMessage({ message: response.data.message });
+  console.log(response.data.message);
+  if (response.data.result) {
+    showSuccessMessage({
+      title: "Actualización",
+      message: response.data.message,
+    });
   } else {
     showErrorMessage({ title: "Error", message: response.data.message });
   }
