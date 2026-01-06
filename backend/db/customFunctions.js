@@ -16,6 +16,30 @@ const findOneUser = async (filters = {}) => {
   });
 };
 
+function normalizeNullRelations(rows) {
+  if (!Array.isArray(rows)) return rows;
+
+  return rows.map((row) => {
+    const normalized = { ...row };
+
+    for (const key of Object.keys(normalized)) {
+      const value = normalized[key];
+
+      if (
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        "id" in value &&
+        value.id === null
+      ) {
+        normalized[key] = null;
+      }
+    }
+
+    return normalized;
+  });
+}
+
 async function getAllFromModel({
   model,
   filtros = {},
@@ -29,7 +53,7 @@ async function getAllFromModel({
     const offset = (page - 1) * pageSize;
 
     // Realiza la consulta con Sequelize
-    const { count, rows } = await model.findAndCountAll({
+    let { count, rows } = await model.findAndCountAll({
       where: filtros,
       attributes,
       include,
@@ -38,6 +62,8 @@ async function getAllFromModel({
       raw: true,
       nest: true,
     });
+
+    rows = normalizeNullRelations(rows);
 
     // Devuelve los resultados con información de paginación
     return {

@@ -1,6 +1,25 @@
 const { sequelize } = require("../models"); // Asegúrate de importar correctamente Sequelize
 
 const { sanitizeData } = require("../controllers/controller");
+
+const createOrUpdatedRecord = async (tabla, data) => {
+  try {
+    const isCreate = !data.id;
+
+    if (isCreate) {
+      return await createRecord(tabla, data);
+    } else {
+      return await updateRecord(tabla, data);
+    }
+  } catch (error) {
+    console.error("Error en createOrUpdatedRecord:", error);
+    return {
+      result: false,
+      message: "Error en createOrUpdatedRecord: " + error.message,
+    };
+  }
+};
+
 const createRecord = async (tabla, data) => {
   try {
     const sanitizedData = await sanitizeData(data); // Limpia los datos si es necesario
@@ -110,6 +129,7 @@ const deleteRecord = async (tabla, id) => {
 };
 
 module.exports = {
+  createOrUpdatedRecord,
   createRecord,
   updateRecord,
   validateRecord,
