@@ -1,5 +1,6 @@
 const { findOne, getAllFrom, updateOne } = require("../db/functionsSQL");
 const { sanitizeData } = require("../controllers/controller");
+const { sequelize } = require("../models"); // Asegúrate de importar correctamente Sequelize
 
 const findOneUser = async (filters = {}) => {
   return await findOne({
@@ -14,6 +15,63 @@ const findOneUser = async (filters = {}) => {
     },
   });
 };
+
+async function getAllFromModel({
+  model,
+  filtros = {},
+  attributes = [],
+  include = [],
+  page = 1,
+  pageSize = 10,
+}) {
+  try {
+    // Calcula el offset para la paginación
+    const offset = (page - 1) * pageSize;
+
+    // Realiza la consulta con Sequelize
+    const { count, rows } = await model.findAndCountAll({
+      where: filtros,
+      attributes,
+      include,
+      limit: pageSize,
+      offset,
+      raw: true,
+      nest: true,
+    });
+
+    // Devuelve los resultados con información de paginación
+    return {
+      result: true,
+      message: "Registros obtenidos con éxito",
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        pageSize,
+        totalPages: Math.ceil(count / pageSize),
+      },
+    };
+  } catch (error) {
+    console.error("Error al obtener registros:", error);
+    return {
+      result: false,
+      message: "Error al obtener registros: " + error.message,
+      data: [],
+    };
+  }
+}
+
+function toPlain(data) {
+  if (Array.isArray(data)) {
+    // Si es un array, aplica .toJSON() a cada elemento
+    return data.map((item) => (item.toJSON ? item.toJSON() : item));
+  } else if (data && typeof data === "object" && data.toJSON) {
+    // Si es un objeto con .toJSON(), lo convierte
+    return data.toJSON();
+  }
+  // Si no es ni un array ni un objeto Sequelize, devuelve el dato tal cual
+  return data;
+}
 
 const getAllFromCustom = async (tabla, filtros = {}) => {
   try {
@@ -78,4 +136,10 @@ const updateCompania = async (data) => {
   };
 };
 
-module.exports = { findOneUser, updateCompania, getAllFromCustom };
+module.exports = {
+  toPlain,
+  getAllFromModel,
+  findOneUser,
+  updateCompania,
+  getAllFromCustom,
+};

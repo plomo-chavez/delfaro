@@ -9,7 +9,7 @@ const formSchema = [
   { label: "Tipo de usuario",     type: "select", model: "tipo",      placeholder: "Selecciona el tipo de usuario", catalogo: "tipos-usuarios"},
   { label: "Estatus",             type: "switch", model: "estatus" },
 ];
-const showFormEdit = ref(false); // Referencia al componente FormFactory
+const showFormEdit = ref(true); // Referencia al componente FormFactory
 const data = ref(null); // Referencia al componente FormFactory
 
 const tableHeaders = [

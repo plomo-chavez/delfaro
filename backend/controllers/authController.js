@@ -1,5 +1,7 @@
 const { deleteById, getAllFrom, exportData } = require("./controller");
-const { findOneUser } = require("../db/customFunctions");
+const { toPlain, findOneUser } = require("../db/customFunctions");
+const { Usuarios, TiposDeUsuarios } = require("../models"); // Asegúrate de importar correctamente tu modelo
+
 // const { PrismaClient } = require("@prisma/client");
 // const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
@@ -45,8 +47,21 @@ exports.verificarToken = async (req, res) => {
     }
 
     // Busca al usuario por ID
-    let user = await findOneUser({
-      id: decoded.id,
+    // let user = await findOneUser({
+    //   id: decoded.id,
+    // });
+
+    let user = await Usuarios.findOne({
+      where: { id: decoded.id },
+      include: [
+        {
+          model: TiposDeUsuarios,
+          as: "tipo",
+          attributes: ["id", "label"],
+        },
+      ],
+      raw: true,
+      nest: true,
     });
 
     if (!user) {
@@ -76,6 +91,7 @@ exports.verificarToken = async (req, res) => {
     });
   }
 };
+
 exports.login = async (req, res) => {
   let params = req.body || {};
 
@@ -86,7 +102,18 @@ exports.login = async (req, res) => {
     });
   }
 
-  let user = await findOneUser({ correo: params.email, estatus: 1 });
+  let user = await Usuarios.findOne({
+    where: { correo: params.email, estatus: 1 },
+    include: [
+      {
+        model: TiposDeUsuarios,
+        as: "tipo",
+        attributes: ["id", "label"],
+      },
+    ],
+    raw: true,
+    nest: true,
+  });
 
   if (!user) {
     return res.json({

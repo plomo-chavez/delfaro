@@ -1,309 +1,412 @@
-const { deleteById, getAllFrom } = require("./controller");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { Usuarios, TiposDeUsuarios } = require("../models"); // Asegúrate de importar correctamente tu modelo
+const { toPlain, getAllFromModel } = require("../db/customFunctions");
+const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
-const tabla = "cliente";
-
-//
-//
-//
-//
-// ------>        Ususarios
-/**
- * Obtener todos los registros de la tabla clientes.
- */
-exports.getAll = async (req, res) => {
-  // Puedes recibir filtros por body o query
-  const filtros = req.body || {};
-  return res.json(getAllFromCustom(tabla, filtros));
-};
+const {
+  createShortToken,
+  verifyShortToken,
+} = require("../utils/encryptHelper"); // Importa tu helper
+const {
+  validateRecord,
+  createRecord,
+  updateRecord,
+} = require("../controllers/CRUDController");
 
 /**
- * Eliminar un registro específico de la tabla clientes.
+ * Validar los datos requeridos para crear o actualizar un usuario.
  */
-exports.delete = async (req, res) => {
-  const { id } = req.body;
-  const result = await deleteById(tabla, id);
-  return res.json(result);
-};
+function validateUserData(data) {
+  if (!data.nombre || !data.correo || !data.tipo || !data.tipo.id) {
+    return {
+      result: false,
+      message: "Faltan campos requeridos",
+      data: [],
+    };
+  }
+  return { result: true };
+}
 
 /**
- * Crear un usuario (función interna reutilizable)
+ * Transformar los datos del usuario antes de guardarlos.
  */
-async function createUser(data) {
+async function transformUserData(data) {
+  // Transformar estatus
+  data.estatus =
+    data.estatus === "Activo" ||
+    data.estatus === true ||
+    data.estatus === "true"
+      ? 1
+      : 0;
+
+  // Extraer tipo_id
+  data.tipo_id = data.tipo.id;
+  delete data.tipo;
+
+  // Encriptar contraseña si existe
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+
+  return data;
+}
+
+/**
+ * Crear o actualizar un usuario.
+ */
+async function saveUser(data) {
   try {
-    // Validación básica
-    if (
-      !data.nombre ||
-      !data.correo ||
-      !data.tipo ||
-      !data.tipo.id ||
-      !data.password
-    ) {
-      return {
-        result: false,
-        message: "Faltan campos requeridos",
-        data: [],
-      };
-    }
-    // Validar unicidad de correo
-    const existeCorreo = await prisma.usuario.findFirst({
-      where: { correo: data.correo },
+    const createUserValidation = data.id ? false : true;
+    // Validar datos
+    const validation = validateUserData(data);
+    if (!validation.result) return validation;
+
+    // Validar correo único
+    const existeCorreo = await validateRecord("Usuarios", {
+      correo: data.correo,
+      ...(data.id && { id: { [Op.ne]: data.id } }), // Si es actualización, excluir el ID actual
     });
-    if (existeCorreo) {
+
+    const nextStep = !existeCorreo.result;
+
+    if (nextStep) {
       return {
         result: false,
         message: "El correo ya está en uso",
         data: [],
       };
     }
-    // Transformar estatus
-    data.estatus =
-      data.estatus === "Activo" ||
-      data.estatus === true ||
-      data.estatus === "true"
-        ? 1
-        : 0;
-    // Extraer tipo_id
-    data.tipo_id = data.tipo.id;
-    delete data.tipo;
-    // Encriptar contraseña
-    data.password = await bcrypt.hash(data.password, 10);
 
-    // Crear usuario
-    const usuario = await prisma.usuario.create({ data });
+    // Transformar datos
+    data = await transformUserData(data);
+
+    // Crear o actualizar registro
+    const usuario = createUserValidation
+      ? await createRecord("Usuarios", data)
+      : await updateRecord("Usuarios", data);
+
     return {
       result: true,
-      message: "Registro creado con éxito",
+      message: data.id
+        ? "Registro actualizado con éxito"
+        : "Registro creado con éxito",
       data: usuario,
     };
   } catch (e) {
     return {
       result: false,
-      message: "Error al crear el registro: " + e.message,
+      message: "Error al guardar el registro: " + e.message,
       data: [],
     };
   }
 }
 
+exports.getAll = async (req, res) => {
+  try {
+    // Recibe filtros, paginación y otros parámetros desde el body
+    const filtros = req.body.filtros || {};
+    const page = parseInt(req.body.page) || 1;
+    const pageSize = parseInt(req.body.pageSize) || 10;
+
+    // Define los campos y relaciones a incluir
+    const attributes = ["id", "nombre", "correo", "tipo_id", "estatus"];
+    const include = [
+      {
+        model: TiposDeUsuarios,
+        as: "tipo",
+        attributes: ["id", "label"],
+      },
+    ];
+
+    // Llama a la función genérica
+    // prettier-ignore
+    const response = await getAllFromModel({model: Usuarios, filtros, attributes, include, page, pageSize });
+
+    // Devuelve la respuesta
+    return res.json(response);
+  } catch (error) {
+    console.log("Error en getAll:", error);
+    return res.json({
+      result: false,
+      message: "Error al obtener usuarios",
+      data: [],
+    });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const usuario = await Usuarios.findOne({
+      where: { id },
+      attributes: ["id", "nombre", "correo", "tipo_id", "estatus"], // Campos a devolver
+      include: [
+        {
+          model: TiposDeUsuarios,
+          as: "tipo",
+          attributes: ["id", "label"], // Relación con tipo de usuario
+        },
+      ],
+    });
+
+    if (!usuario) {
+      return res.json({
+        result: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    return res.json({
+      result: true,
+      message: "Usuario obtenido con éxito",
+      data: usuario,
+    });
+  } catch (error) {
+    console.log("Error al obtener usuario:", error);
+    return res.json({
+      result: false,
+      message: "Error al obtener usuario",
+    });
+  }
+};
+
 /**
- * Crear un nuevo usuario.
+ * Crear o actualizar un usuario (controlador).
  */
-exports.create = async (req, res) => {
-  const response = await createUser(req.body);
-  // Si no quieres devolver el usuario creado, puedes eliminar el campo data
+exports.createOrUpdate = async (req, res) => {
+  const data = req.body;
+  const response = await saveUser(data);
+
+  // Si no quieres devolver el usuario creado/actualizado, elimina el campo `data`
   if (response.data) delete response.data;
+
   res.json(response);
 };
 
-/**
- * Actualizar un usuario existente.
- */
-exports.update = async (req, res) => {
-  try {
-    const id = req.params.id || req.body.id;
-
-    let data = req.body;
-
-    if (!id) {
-      return res.json({
-        result: false,
-        message: "ID de usuario no proporcionado",
-        data: [],
-      });
-    }
-
-    data = sanitizeData({ ...data }, { nestedToId: ["tipo"] });
-
-    // Si viene password, encriptar
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, 10);
-    }
-
-    const usuario = await prisma.usuario.update({
-      where: { id: Number(id) },
-      data,
-    });
-
-    res.json({
-      result: true,
-      message: "Registro actualizado con éxito",
-      data: usuario,
-    });
-  } catch (e) {
-    res.json({
-      result: false,
-      message: "Error al actualizar el registro: " + e.message,
-      data: [],
-    });
-  }
-};
-
-//
-//
-//
-// ------>        Usuarios claves
-/**
- * Obtener todos los registros de la tabla clientes.
- */
-exports.getAllClaves = async (req, res) => {
-  // Puedes recibir filtros por body o query
-  let include = { compania: true };
-  const filtros = req.body || {};
-  return res.json(await getAllFrom(tabla, filtros, include));
-};
-
-/**
- * Eliminar una clave de usuario.
- */
-exports.deleteClaves = async (req, res) => {
+exports.delete = async (req, res) => {
   const { id } = req.body;
-  const result = await deleteById("usuarioClave", id);
-  return res.json(result);
-};
 
-/**
- * Crear o actualizar una clave de usuario.
- */
-exports.createOrUpdateClaves = async (req, res) => {
-  try {
-    let data = { ...req.body };
-    data = sanitizeData({ ...data }, { nestedToId: ["compania"] });
-
-    if (data.id) {
-      await prisma.usuarioClave.update({
-        where: { id: Number(data.id) },
-        data,
-      });
-
-      return res.json({
-        result: true,
-        message: "Registro actualizado con éxito",
-      });
-    } else {
-      await prisma.usuarioClave.create({ data });
-      return res.json({
-        result: true,
-        message: "Registro creado con éxito",
-      });
-    }
-  } catch (e) {
-    res.json({
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
       result: false,
-      message: "Error al crear o actualizar el registro: " + e.message,
+      message: "ID de usuario es requerido",
     });
   }
-};
 
-/**
- * Obtener todos los equipos de usuario.
- */
-exports.getAllTeam = async (req, res) => {
   try {
-    const { principal_id, tipo } = req.body;
+    // Actualizar el estatus del usuario a 0 (eliminado lógico)
+    const response = await updateRecord("Usuarios", { id, estatus: 0 });
 
-    if (!principal_id) {
+    if (!response.result) {
       return res.json({
         result: false,
-        message: "ID de usuario no proporcionado",
+        message: "Usuario no encontrado o no se pudo eliminar",
       });
     }
 
-    const filtros = { principal_id: Number(principal_id) };
-
-    if (tipo && tipo.id) {
-      filtros.tipo_id = tipo.id;
-    }
-
-    return res.json(await getAllFrom("usuarioTeam", filtros));
-  } catch (e) {
-    res.json({
-      result: false,
-      message: "Error al obtener los registros: " + e.message,
-      data: [],
-    });
-  }
-};
-
-/**
- * Crear o actualizar un equipo de usuario.
- */
-exports.createOrUpdateTeam = async (req, res) => {
-  try {
-    let data = { ...req.body };
-    if (data.id) {
-      delete data.created_at;
-      delete data.deleted_at;
-      delete data.updated_at;
-      if (data.estatus !== undefined) {
-        data.estatus =
-          data.estatus === "Activo" ||
-          data.estatus === true ||
-          data.estatus === "true"
-            ? 1
-            : 0;
-      }
-      if (data.tipo && data.tipo.id) {
-        data.tipo_id = data.tipo.id;
-        delete data.tipo;
-      }
-      // Actualizar usuario
-      const usuario = await prisma.usuario.update({
-        where: { id: Number(data.usuario_id) },
-        data,
-      });
-      // Actualizar equipo si es necesario (puedes agregar lógica aquí)
-      return res.json({
-        result: true,
-        message: "Registro actualizado con éxito",
-      });
-    } else {
-      // Crear usuario y luego el equipo
-      const userResponse = await createUser(data);
-      if (!userResponse.result) {
-        delete userResponse.data;
-        return res.json(userResponse);
-      }
-      const dataTeam = {
-        principal_id: data.principal_id,
-        tipo_id: userResponse.data.tipo_id,
-        usuario_id: userResponse.data.id,
-        estatus: data.estatus,
-      };
-      await prisma.usuarioTeam.create({ data: dataTeam });
-      return res.json({
-        result: true,
-        message: "Registro creado con éxito",
-      });
-    }
-  } catch (e) {
-    res.json({
-      result: false,
-      message: "Error al crear o actualizar el registro: " + e.message,
-    });
-  }
-};
-
-/**
- * Eliminar un equipo de usuario y su usuario.
- */
-exports.deleteTeam = async (req, res) => {
-  try {
-    const { id } = req.body;
-    const result = await deleteById("usuarioTeam", id);
-    if (result.result) {
-      await prisma.usuarioTeam.delete({ where: { id: Number(id) } });
-      await prisma.usuario.delete({ where: { id: usuarioTeam.usuario_id } });
-    }
-    res.json({
+    // Respuesta exitosa
+    return res.json({
       result: true,
-      message: "Registro eliminado con éxito",
-      data: { id },
+      message: "Usuario eliminado con éxito",
     });
-  } catch (e) {
-    res.json({
+  } catch (error) {
+    console.log("Error al eliminar usuario:", error);
+    return res.json({
       result: false,
-      message: "Error al eliminar el registro: " + e.message,
+      message: "Error al eliminar usuario: " + error.message,
+    });
+  }
+};
+
+exports.cambiarContrasenia = async (req, res) => {
+  const { id, contrasenia } = req.body;
+  if (!id || !contrasenia) {
+    return res.json({
+      result: false,
+      message: "ID de usuario y nueva contraseña son requeridos",
+    });
+  }
+
+  try {
+    //prettier-ignore
+    let user = await Usuarios.findOne({ where: { id } });
+
+    if (!user) {
+      return res.json({
+        result: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(contrasenia, 10);
+
+    const response = await updateRecord("Usuarios", {
+      id,
+      password: hashedPassword,
+    });
+
+    if (!response.result) {
+      return res.json({
+        result: false,
+        message: "Usuario no encontrado o no se pudo actualizar la contraseña",
+      });
+    }
+
+    return res.json({
+      result: true,
+      message: "Contraseña actualizada con éxito",
+    });
+  } catch (error) {
+    console.log("Error al cambiar la contraseña:", error);
+
+    return res.json({
+      result: false,
+      message: "Error al cambiar la contraseña: " + error.message,
+    });
+  }
+};
+
+exports.restablecer = async (req, res) => {
+  const { correo, password, token } = req.body;
+  if (!password) {
+    // Proceso de solicitud de restablecimiento de contraseña
+    if (!correo) {
+      return res.json({
+        result: false,
+        message: "El correo es requerido para restablecer la contraseña",
+      });
+    }
+
+    try {
+      const usuario = await Usuarios.findOne({ where: { correo } });
+
+      if (!usuario) {
+        return res.json({
+          result: false,
+          message: "No se encontró un usuario con ese correo",
+        });
+      }
+
+      let reset_token = createShortToken(2);
+
+      reset_token = reset_token.toUpperCase();
+
+      await updateRecord("Usuarios", {
+        id: usuario.id,
+        reset_token,
+      });
+
+      // Aquí iría la lógica para enviar un correo con el enlace de restablecimiento
+
+      return res.json({
+        result: true,
+        message:
+          "Se ha enviado un enlace de restablecimiento de contraseña al correo proporcionado",
+      });
+    } catch (error) {
+      console.log("Error al solicitar restablecimiento de contraseña:", error);
+      return res.json({
+        result: false,
+        message:
+          "Error al solicitar restablecimiento de contraseña: " + error.message,
+      });
+    }
+  } else {
+    // Proceso de restablecimiento de contraseña
+    if (!correo || !password) {
+      return res.json({
+        result: false,
+        message: "Correo son requeridos para restablecer la contraseña",
+      });
+    }
+    try {
+      console.log(token);
+      const isValidToken = verifyShortToken(token); // Aquí deberías validar el token recibido
+      console.log(isValidToken);
+      if (!isValidToken.result) {
+        return res.json({
+          result: false,
+          message: "Token inválido o expirado",
+        });
+      }
+
+      const usuario = await Usuarios.findOne({ where: { correo } });
+
+      if (!usuario) {
+        return res.json({
+          result: false,
+          message: "No se encontró un usuario con ese correo",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await updateRecord("Usuarios", {
+        id: usuario.id,
+        password: hashedPassword,
+        reset_token: "", // Limpia el token después de usarlo
+      });
+
+      return res.json({
+        result: true,
+        message: "Contraseña restablecida con éxito",
+      });
+    } catch (error) {
+      console.log("Error al restablecer la contraseña:", error);
+      return res.json({
+        result: false,
+        message: "Error al restablecer la contraseña: " + error.message,
+      });
+    }
+  }
+};
+
+exports.confirmar = async (req, res) => {
+  const { token } = req.params;
+  if (!token) {
+    return res.json({
+      result: false,
+      message: "El token es requerido para confirmar el usuario",
+    });
+  }
+
+  try {
+    console.log(token);
+    const isValidToken = verifyShortToken(token); // Aquí deberías validar el token recibido
+    console.log(isValidToken);
+    if (!isValidToken.result) {
+      return res.json({
+        result: false,
+        message: "Token inválido o expirado",
+      });
+    }
+    const expiresAt = isValidToken.expiresAt;
+    const now = Math.floor(Date.now() / 1000);
+
+    console.log("Ahora:", now);
+    console.log("Expira en:", expiresAt);
+
+    console.log(expiresAt < now ? "EXPIRADO" : "VIGENTE");
+
+    const usuario = await Usuarios.findOne({ where: { reset_token: token } });
+
+    if (!usuario) {
+      return res.json({
+        result: false,
+        message: "Token inválido o usuario no encontrado",
+      });
+    }
+    return res.json({
+      result: true,
+      message: "Usuario confirmado con éxito",
+      data: toPlain(usuario),
+    });
+  } catch (error) {
+    console.log("Error al confirmar usuario:", error);
+    return res.json({
+      result: false,
+      message: "Error al confirmar usuario: " + error.message,
     });
   }
 };
