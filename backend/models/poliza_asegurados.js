@@ -1,4 +1,5 @@
 const { DataTypes } = require("sequelize");
+const { fields } = require("../routes/multerConfig");
 
 module.exports = (sequelize) => {
   const PolizaAsegurados = sequelize.define(
@@ -34,6 +35,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       fechaNacimiento: {
+        field: "fechaNacimiento",
         type: DataTypes.DATE,
         allowNull: false,
       },
@@ -46,6 +48,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       codigoPostal: {
+        field: "codigoPostal",
         type: DataTypes.STRING,
         allowNull: false,
       },

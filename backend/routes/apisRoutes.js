@@ -10,6 +10,7 @@ const agenteController              = require('../controllers/agenteController')
 const agenteClavesController        = require('../controllers/agenteClavesController');
 const agenteSubAgentesController    = require('../controllers/agenteSubAgentesController');
 const agenteAsistentesController    = require('../controllers/agenteAsistentesController');
+const polizasController             = require('../controllers/polizasController');
 
 const companiaRepresentantesController = require('../controllers/companiaRepresentantesController');
 const procesosAutomatizadosController = require('../controllers/procesosAutomatizadosController');
@@ -21,7 +22,6 @@ const historicoController = require('../controllers/historicoController');
 const catalogoController = require('../controllers/catalogoController');
 const companiaController = require('../controllers/companiaController');
 const clienteController = require('../controllers/clienteController');
-const polizasController = require('../controllers/polizasController');
 const reciboController = require('../controllers/reciboController');
 const robotController = require('../controllers/robotController');
 
@@ -54,11 +54,23 @@ router.post('/api/agente/subagentes',           agenteSubAgentesController.getAl
 router.post('/api/agente/subagente',            agenteSubAgentesController.createOrUpdate);
 router.post('/api/agente/subagente/eliminar',   agenteSubAgentesController.deleteRecord);
 
-
-// // AgenteAsistentes
+// AgenteAsistentes
 router.post('/api/agente/asistentes',           agenteAsistentesController.getAll);
 router.post('/api/agente/asistente',            agenteAsistentesController.createOrUpdate);
 router.post('/api/agente/asistente/eliminar',   agenteAsistentesController.deleteRecord);
+
+// Polizas
+router.post('/api/polizas',                 polizasController.getAll);
+router.get('/api/poliza/:id',               polizasController.getRecord);
+router.post('/api/poliza/asegurados',       polizasController.getAsegurados);
+router.post('/api/poliza/archivos',         polizasController.getArchivos);
+router.post('/api/poliza/renovar',          polizasController.renovarPoliza);
+router.post('/api/poliza/corregir',         polizasController.corregirPoliza);
+router.post('/api/poliza/envio/correo',     polizasController.enviarCorreo);
+router.post('/api/poliza/envio/whatsapp',   polizasController.enviarWhatsApp);
+router.post('/api/poliza/historial',        polizasController.getHistorial);
+router.post('/api/poliza/cancelar',         polizasController.cancelarPoliza);
+router.post('/api/poliza/recibos',          polizasController.getRecibos);
 
 
 

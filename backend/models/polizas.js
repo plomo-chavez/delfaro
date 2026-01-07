@@ -10,6 +10,7 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
       numeroPoliza: {
+        field: "numeroPoliza",
         type: DataTypes.STRING,
         allowNull: true,
         unique: true,
@@ -19,8 +20,8 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       subAgente_id: {
+        field: "subAgente_id",
         type: DataTypes.BIGINT,
-        allowNull: true,
       },
       compania_id: {
         type: DataTypes.BIGINT.UNSIGNED,
@@ -36,17 +37,22 @@ module.exports = (sequelize) => {
       },
       frecuenciaPago_id: {
         type: DataTypes.BIGINT.UNSIGNED,
+        field: "frecuenciaPago_id",
         defaultValue: 1,
+        allowNull: true,
       },
       metodoPago_id: {
+        field: "metodoPago_id",
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 1,
       },
       inicioVigencia: {
+        field: "inicioVigencia",
         type: DataTypes.DATE,
         allowNull: true,
       },
       finVigencia: {
+        field: "finVigencia",
         type: DataTypes.DATE,
         allowNull: true,
       },
@@ -55,18 +61,22 @@ module.exports = (sequelize) => {
         defaultValue: 1,
       },
       comisionAgente: {
+        field: "comisionAgente",
         type: DataTypes.DECIMAL(15, 2),
         allowNull: true,
       },
       primaNeta: {
+        field: "primaNeta",
         type: DataTypes.DECIMAL(15, 2),
         allowNull: true,
       },
       proximoPagoFecha: {
+        field: "proximoPagoFecha",
         type: DataTypes.STRING(45),
         allowNull: true,
       },
       proximoPagoMonto: {
+        field: "proximoPagoMonto",
         type: DataTypes.STRING(45),
         allowNull: true,
       },
@@ -75,14 +85,17 @@ module.exports = (sequelize) => {
         defaultValue: 1,
       },
       primaTotal: {
+        field: "primaTotal",
         type: DataTypes.DECIMAL(15, 2),
         allowNull: true,
       },
       pagoInicial: {
+        field: "pagoInicial",
         type: DataTypes.DECIMAL(15, 2),
         allowNull: true,
       },
       pagoSubsecuente: {
+        field: "pagoSubsecuente",
         type: DataTypes.DECIMAL(15, 2),
         allowNull: true,
       },
@@ -91,6 +104,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       tipoVencimiento_id: {
+        field: "tipoVencimiento_id",
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 1,
       },
@@ -123,10 +137,12 @@ module.exports = (sequelize) => {
         defaultValue: 0,
       },
       motivoCancelacion: {
+        field: "motivoCancelacion",
         type: DataTypes.STRING,
         allowNull: true,
       },
       fechaCancelado: {
+        field: "fechaCancelado",
         type: DataTypes.STRING(100),
         allowNull: true,
       },
@@ -145,6 +161,13 @@ module.exports = (sequelize) => {
       underscored: true,
     }
   );
+
+  Polizas.associate = (models) => {
+    Polizas.belongsTo(models.Clientes, {
+      foreignKey: "cliente_id",
+      as: "cliente", // Alias para la relación
+    });
+  };
 
   return Polizas;
 };

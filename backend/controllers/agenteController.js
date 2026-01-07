@@ -52,8 +52,14 @@ exports.getAll = async (req, res) => {
     const include = [];
 
     // Llama a la función genérica
-    // prettier-ignore
-    const response = await getAllFromModel({model: Agentes, filtros, fields, include, page, pageSize });
+    const response = await getAllFromModel({
+      attributes: fields,
+      model: Agentes,
+      pageSize,
+      include,
+      filtros,
+      page,
+    });
 
     // Devuelve la respuesta
     return res.json(response);

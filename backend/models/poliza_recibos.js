@@ -14,14 +14,17 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       numeroRecibo: {
+        field: "numeroRecibo",
         type: DataTypes.STRING,
         allowNull: false,
       },
       fechaInicio: {
+        field: "fechaInicio",
         type: DataTypes.STRING,
         allowNull: true,
       },
       fechaFin: {
+        field: "fechaFin",
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -30,10 +33,12 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       fechaPago: {
+        field: "fechaPago",
         type: DataTypes.STRING,
         allowNull: true,
       },
       fechaCancelado: {
+        field: "fechaCancelado",
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -50,6 +55,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       formaPago: {
+        field: "formaPago",
         type: DataTypes.STRING(100),
         allowNull: true,
       },
