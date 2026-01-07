@@ -131,7 +131,9 @@ exports.login = async (req, res) => {
       message: "Usuario o contraseña incorrectos",
     });
   }
-  const expiresIn = process.env.JWT_EXPIRES_IN || "10s"; // Valor por defecto
+  const expiresIn = process.env.JWT_EXPIRES_IN || "10s"; // Valor por defectoç
+  // const expiresIn = "10s"; // Valor por defectoç
+  console.log("Expires In:", expiresIn);
 
   // Genera y cifra el token JWT
   const encryptedToken = createTokenJWT(

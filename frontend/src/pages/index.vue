@@ -298,7 +298,7 @@ onMounted(() => {
     });
   }
 
-  handleGetIndicadores();
+  // handleGetIndicadores();
 });
 </script>
 

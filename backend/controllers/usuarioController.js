@@ -108,7 +108,15 @@ exports.getAll = async (req, res) => {
     const pageSize = parseInt(req.body.pageSize) || 10;
 
     // Define los campos y relaciones a incluir
-    const attributes = ["id", "nombre", "correo", "tipo_id", "estatus"];
+    const attributes = [
+      "id",
+      "nombre",
+      "correo",
+      "tipo_id",
+      "estatus",
+      "created_at",
+      "updated_at",
+    ];
     const include = [
       {
         model: TiposDeUsuarios,

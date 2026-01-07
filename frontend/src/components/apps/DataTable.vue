@@ -69,6 +69,16 @@ function getNestedValue(obj: any, key: string): any {
   return key.split(".").reduce((acc, curr) => acc && acc[curr], obj);
 }
 
+const getFormattedValue = (item: any, header: any) => {
+  const value = getNestedValue(item, header.key);
+
+  if (typeof header.format === "function") {
+    return header.format(value, item);
+  }
+
+  return value ?? "";
+};
+
 watch(selected, () => {
   const selectedById = props.data.filter((item) =>
     selected.value.includes(item.id)
@@ -124,9 +134,9 @@ watch(selected, () => {
       <!-- Datos dinámicos -->
       <!-- prettier-ignore -->
       <template v-for="header in props.headers" :key="header.key" #[`item.${header.key}`]="{ item }">
-        <span>
-          {{ getNestedValue(item, header.key) || '' }}
-        </span>
+<span>
+  {{ getFormattedValue(item, header) }}
+</span>
       </template>
 
       <!-- Acciones -->

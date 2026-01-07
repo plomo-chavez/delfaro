@@ -1,3 +1,5 @@
+const models = require("../models");
+
 const { PrismaClient } = require("@prisma/client");
 const { exportData } = require("./controller");
 const {
@@ -10,7 +12,12 @@ const {
 const prisma = new PrismaClient();
 
 let tablaMap = {
-  "tipos-usuarios": "tipos_de_usuarios",
+  "tipos-usuarios": {
+    tabla: "TiposDeUsuarios",
+    filtros: {
+      estatus: 1,
+    },
+  },
   "estatus-clientes": "estatus_cliente",
   "formas-pagos": "formas_de_pago",
   "metodos-pago": "metodos_de_pago",
@@ -73,7 +80,14 @@ exports.getCatalogo = async (req, res, tabla) => {
       });
     }
 
-    let resultado = await getAllFrom(tablaReal, filtros);
+    // let resultado = await getAllFrom(tablaReal, filtros);
+    console.log("tablaReal ", tablaReal); // IGNORE
+    console.log("tablaReal ", tablaReal.tabla); // IGNORE
+    filtros = { ...tablaReal.filtros, ...filtros };
+
+    let resultado = await models[tablaReal.tabla].findAll({
+      where: filtros,
+    });
 
     return res.json({
       result: true,

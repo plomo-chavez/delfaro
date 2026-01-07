@@ -104,4 +104,10 @@ router.get('/api/recibo/:id',               cobranzaController.getRecord);
 router.post('/api/recibo/pagar',            cobranzaController.pagarRecibo);
 router.post('/api/recibo/cancelar',         cobranzaController.cancelarRecibo);
 
+// Ruta dinámica para todos los catálogos
+router.post('/api/catalogos/:catalogo', (req, res) => {
+  const catalogo = req.params.catalogo; // Captura el valor dinámico de la URL
+  catalogosController.getCatalogo(req, res, catalogo);
+});
+
 module.exports = router;

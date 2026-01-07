@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       reset_token: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       tipo_id: {
         type: DataTypes.BIGINT.UNSIGNED,

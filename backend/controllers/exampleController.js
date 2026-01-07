@@ -1,29 +1,17 @@
 const { Usuarios } = require("../models"); // Asegúrate de importar correctamente tu modelo
 const bcrypt = require("bcryptjs");
 const { updateRecord } = require("../controllers/CRUDController");
-
+const {
+  createTokenJWT,
+  verifyEncryptedJWT,
+} = require("../utils/encryptHelper"); // Importa tu helper
 exports.example = async (req, res) => {
-  const { password, id } = req.body;
+  const { token } = req.body;
 
-  let user = await Usuarios.findOne({
-    where: { id },
-  });
+  // Verifica y decodifica el token JWT
+  const decoded = verifyEncryptedJWT(token);
 
-  console.log("Usuario encontrado:", user.password);
-
-  const passwordValida = await bcrypt.compare(password, user.password);
-
-  console.log("Password válida:", passwordValida);
-
-  let passwordHash = await bcrypt.hash(password, 10);
-
-  console.log("Password hash:", passwordHash);
-
-  await updateRecord("Usuarios", {
-    id,
-    password: passwordHash,
-  });
-
+  console.log("Decoded Token:", decoded);
   return res.json({
     result: true,
     message: "Ejemplo ejecutado correctamente",

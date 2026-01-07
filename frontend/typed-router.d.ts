@@ -38,5 +38,6 @@ declare module 'vue-router/auto-routes' {
     'promotores': RouteRecordInfo<'promotores', '/promotores', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'usuarios': RouteRecordInfo<'usuarios', '/usuarios', Record<never, never>, Record<never, never>>,
+    'usuarios copy': RouteRecordInfo<'usuarios copy', '/usuarios copy', Record<never, never>, Record<never, never>>,
   }
 }

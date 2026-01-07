@@ -3,7 +3,6 @@ import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 import { useTokenExpiringModal } from "@/composables/useTokenExpiringModal"; // o tu función de modal
 import { router } from "@/plugins/1.router";
 import { customRequest } from "@/utils/axiosInstance";
-import { startTokenTimer } from "@/utils/verifyToken";
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
 import loginDelFaro from "@images/delfaro/avatars/login.png";
 import iconoDelFaro from "@images/delfaro/icono.png";
@@ -41,9 +40,9 @@ async function handleLogin() {
     if (userData && token) {
       localStorage.setItem("userData", JSON.stringify(userData));
       localStorage.setItem("token", token);
-      startTokenTimer(() => {
-        showTokenExpiringModal(); // Esto sí muestra el modal
-      });
+      // startTokenTimer(() => {
+      //   showTokenExpiringModal(); // Esto sí muestra el modal
+      // });
       router.push({ name: "root" });
     } else {
       showErrorMessage({
