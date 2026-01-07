@@ -3,25 +3,28 @@ const router = express.Router();
 const upload = require("./multerConfig"); 
 
 //prettier-ignore
-const exampleController             = require('../controllers/exampleController');
-const authController                = require('../controllers/authController');
-const usuarioController             = require('../controllers/usuarioController');
-const agenteController              = require('../controllers/agenteController');
-const agenteClavesController        = require('../controllers/agenteClavesController');
-const agenteSubAgentesController    = require('../controllers/agenteSubAgentesController');
-const agenteAsistentesController    = require('../controllers/agenteAsistentesController');
-const polizasController             = require('../controllers/polizasController');
+const exampleController                 = require('../controllers/exampleController');
+const authController                    = require('../controllers/authController');
+const usuarioController                 = require('../controllers/usuarioController');
+const agenteController                  = require('../controllers/agenteController');
+const agenteClavesController            = require('../controllers/agenteClavesController');
+const agenteSubAgentesController        = require('../controllers/agenteSubAgentesController');
+const agenteAsistentesController        = require('../controllers/agenteAsistentesController');
+const polizasController                 = require('../controllers/polizasController');
+const cotizacionesController            = require('../controllers/cotizacionesController');
+const clienteController                 = require('../controllers/clienteController');
+const aseguradoController               = require('../controllers/aseguradoController');
+const cobranzaController               = require('../controllers/cobranzaController');
+const procesosAutomatizadosController   = require('../controllers/procesosAutomatizadosController');
+
 
 const companiaRepresentantesController = require('../controllers/companiaRepresentantesController');
-const procesosAutomatizadosController = require('../controllers/procesosAutomatizadosController');
 const polizaAseguradosController = require('../controllers/polizaAseguradosController');
-const cotizacionesController = require('../controllers/cotizacionesController');
 const dashboardController = require('../controllers/dashboardController');
 const catalogosController = require('../controllers/catalogosController');
 const historicoController = require('../controllers/historicoController');
 const catalogoController = require('../controllers/catalogoController');
 const companiaController = require('../controllers/companiaController');
-const clienteController = require('../controllers/clienteController');
 const reciboController = require('../controllers/reciboController');
 const robotController = require('../controllers/robotController');
 
@@ -72,6 +75,33 @@ router.post('/api/poliza/historial',        polizasController.getHistorial);
 router.post('/api/poliza/cancelar',         polizasController.cancelarPoliza);
 router.post('/api/poliza/recibos',          polizasController.getRecibos);
 
+// Cotizaciones
+router.post('/api/cotizaciones',            cotizacionesController.getAll);
+router.get('/api/cotizacion/:id',           cotizacionesController.getRecord);
+router.post('/api/cotizacion',              cotizacionesController.createOrUpdate);
+router.post('/api/cotizacion/eliminar',     cotizacionesController.deleteRecord);
+router.post('/api/cotizaciones/cotizar',    procesosAutomatizadosController.estimarCotizaciones);
+router.post('/api/cotizaciones/emitir',     procesosAutomatizadosController.emitirCotizaciones);
+router.post('/api/cotizaciones/reprocesar', procesosAutomatizadosController.reprocesarPoliza);
 
+// Clientes
+router.post('/api/clientes',                clienteController.getAll);
+router.get('/api/cliente/:id',              clienteController.getRecord);
+router.post('/api/cliente',                 clienteController.createOrUpdate);
+router.post('/api/cliente/eliminar',        clienteController.deleteRecord);
+router.post('/api/cliente/polizas',         clienteController.obtenerPolizasCliente);
+
+// Asegurados
+router.post('/api/asegurados',              aseguradoController.getAll);
+router.get('/api/asegurado/:id',            aseguradoController.getRecord);
+router.post('/api/asegurado',               aseguradoController.createOrUpdate);
+router.post('/api/asegurado/eliminar',      aseguradoController.deleteRecord);
+router.post('/api/asegurado/polizas',       aseguradoController.obtenerPolizasCliente);
+
+// Cobranza
+router.post('/api/recibos',                 cobranzaController.getAll);
+router.get('/api/recibo/:id',               cobranzaController.getRecord);
+router.post('/api/recibo/pagar',            cobranzaController.pagarRecibo);
+router.post('/api/recibo/cancelar',         cobranzaController.cancelarRecibo);
 
 module.exports = router;

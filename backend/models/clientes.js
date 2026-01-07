@@ -35,6 +35,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       isCliente: {
+        field: "isCliente",
         type: DataTypes.TINYINT,
         defaultValue: 1,
       },

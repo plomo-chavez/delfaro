@@ -271,9 +271,6 @@ exports.cancelarPoliza = async (req, res) => {
   const id = req.body.poliza_id;
   const motivoCancelacion = req.body.motivoCancelacion || "";
 
-  console.log("ID de póliza recibido para cancelación:", id);
-  console.log("Motivo de cancelación recibido:", motivoCancelacion);
-
   try {
     if (!id || !motivoCancelacion) {
       return res.json({

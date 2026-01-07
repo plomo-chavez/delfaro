@@ -93,7 +93,7 @@ exports.deleteByFilter = async (modelo, filtro = {}) => {
 
 exports.sanitizeData = async (data, config = {}) => {
   let localConfig = {
-    estatusDefault: true,
+    estatusDefault: false,
     keysHaEliminar: ["createdAt", "created_at", "deleted_at", "updated_at"],
     ...config,
   };

@@ -4,38 +4,58 @@ const { enviarCorreo } = require("../utils/emailServiceHelper");
 const { Op } = require("sequelize");
 const moment = require("moment");
 const fs = require("fs");
-const {
-  Cotizaciones,
-  PolizaHistorial,
-  Clientes,
-  PolizaAsegurados,
-  PolizaRecibos,
-} = require("../models");
+const { PolizaRecibos } = require("../models");
 const entidad = "Poliza";
 const fields = false;
 
-async function processRecord(data) {
-  try {
-    let payload = { ...data };
-    const createUserValidation = data.id ? false : true;
-
-    if (createUserValidation) {
-      // proceso de creacion
-    } else {
-      // proceso de actualizacion
-    }
-
-    const response = await createOrUpdatedRecord("Cotizaciones", payload);
-
-    return response;
-  } catch (e) {
+async function procesarRecibo({ id, estatus, motivoCancelacion }) {
+  const isPagar = estatus === "Pagado";
+  if (estatus === "Cancelado" && !motivoCancelacion) {
     return {
       result: false,
-      message: "Error al guardar el registro: " + e.message,
-      data: [],
+      message: "Debe proporcionar un motivo de cancelación",
+    };
+  }
+  try {
+    const record = await PolizaRecibos.findOne({
+      where: { id },
+    });
+
+    if (!record) {
+      return {
+        result: false,
+        message: entidad + " no encontrado",
+      };
+    }
+
+    let payload = {
+      id: record.id,
+      estatus,
+      fechaPago: moment().format("YYYY-MM-DD"),
+    };
+
+    if (!isPagar) {
+      payload.motivoCancelacion = motivoCancelacion;
+    }
+
+    await createOrUpdatedRecord("PolizaRecibos", payload);
+
+    return {
+      result: true,
+      message: entidad + (isPagar ? " pagado" : " cancelado") + " con éxito",
+    };
+  } catch (error) {
+    console.log(
+      "Error al " + (isPagar ? "pagar" : "cancelar") + " " + entidad + ":",
+      error
+    );
+    return {
+      result: false,
+      message: "Error al " + (isPagar ? "pagar" : "cancelar") + " " + entidad,
     };
   }
 }
+
 exports.getAll = async (req, res) => {
   try {
     // Recibe filtros, paginación y otros parámetros desde el body
@@ -49,7 +69,7 @@ exports.getAll = async (req, res) => {
     // Llama a la función genérica
     const response = await getAllFromModel({
       attributes: fields,
-      model: Cotizaciones,
+      model: PolizaRecibos,
       pageSize,
       filtros,
       include,
@@ -72,7 +92,7 @@ exports.getRecord = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const record = await Cotizaciones.findOne({
+    const record = await PolizaRecibos.findOne({
       where: { id },
     });
 
@@ -97,54 +117,28 @@ exports.getRecord = async (req, res) => {
   }
 };
 
-exports.createOrUpdate = async (req, res) => {
-  const data = req.body;
-  const response = await processRecord(data);
-
-  if (response.data) delete response.data;
-
-  res.json(response);
-};
-
-exports.deleteRecord = async (req, res) => {
+exports.pagarRecibo = async (req, res) => {
   const { id } = req.body;
-
-  // Validar que se proporcione un ID
   if (!id) {
     return res.json({
       result: false,
-      message: "ID de " + entidad + " es requerido",
+      message: entidad + " no encontrado",
     });
   }
 
-  try {
-    // Actualizar el estatus del usuario a 0 (eliminado lógico)
-    const response = await createOrUpdatedRecord("Cotizaciones", {
-      id,
-      estatus: "Cancelada",
-    });
-
-    if (!response.result) {
-      return res.json({
-        result: false,
-        message: entidad + " no encontrado o no se pudo eliminar",
-      });
-    }
-
-    // Respuesta exitosa
-    return res.json({
-      result: true,
-      message: entidad + " eliminado con éxito",
-    });
-  } catch (error) {
-    console.log("Error al eliminar " + entidad + ":", error);
-    return res.json({
-      result: false,
-      message: "Error al eliminar " + entidad + ": " + error.message,
-    });
-  }
+  return res.json(await procesarRecibo({ id, estatus: "Pagado" }));
 };
 
-exports.cotizarCotizacion = async (req, res) => {};
+exports.cancelarRecibo = async (req, res) => {
+  const { id, motivoCancelacion } = req.body;
+  if (!id) {
+    return res.json({
+      result: false,
+      message: entidad + " no encontrado",
+    });
+  }
 
-exports.emitirCotizacion = async (req, res) => {};
+  return res.json(
+    await procesarRecibo({ id, estatus: "Cancelado", motivoCancelacion })
+  );
+};

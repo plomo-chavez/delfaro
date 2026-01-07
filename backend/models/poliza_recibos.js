@@ -42,6 +42,11 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      motivoCancelacion: {
+        field: "motivoCancelacion",
+        type: DataTypes.STRING(150),
+        defaultValue: "Pendiente",
+      },
       estatus: {
         type: DataTypes.STRING(100),
         defaultValue: "Pendiente",

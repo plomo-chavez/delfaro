@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 const fs = require("fs");
 const { Clientes, Polizas } = require("../models");
-const entidad = "Cliente";
+const entidad = "Cotizacion";
 const fields = false;
 
 async function processRecord(data) {
@@ -15,7 +15,7 @@ async function processRecord(data) {
 
     if (createUserValidation) {
       // proceso de creacion
-      payload.isCliente = 1;
+      payload.isCliente = 0;
     } else {
       // proceso de actualizacion
     }
@@ -39,7 +39,7 @@ exports.getAll = async (req, res) => {
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
 
-    filtros.isCliente = 1;
+    filtros.isCliente = 0;
 
     // Define los campos y relaciones a incluir
     const include = [];
@@ -71,7 +71,7 @@ exports.getRecord = async (req, res) => {
 
   try {
     const record = await Clientes.findOne({
-      where: { id, isCliente: 1 },
+      where: { id, isCliente: 0 },
     });
 
     if (!record) {
@@ -119,7 +119,7 @@ exports.deleteRecord = async (req, res) => {
     // Actualizar el estatus del usuario a 0 (eliminado lógico)
     const response = await createOrUpdatedRecord("Clientes", {
       id,
-      isCliente: 1,
+      isCliente: 0,
       estatus: 0,
     });
 
@@ -163,7 +163,7 @@ exports.obtenerPolizasCliente = async (req, res) => {
     // Respuesta exitosa
     return res.json({
       result: true,
-      message: entidad + " eliminado con éxito",
+      message: "Información obtenida con éxito",
       data: polizasConsulta,
     });
   } catch (error) {
