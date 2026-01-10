@@ -21,6 +21,7 @@ declare module 'vue-router/auto-routes' {
     'root': RouteRecordInfo<'root', '/', Record<never, never>, Record<never, never>>,
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
     'agenda': RouteRecordInfo<'agenda', '/agenda', Record<never, never>, Record<never, never>>,
+    'agentes': RouteRecordInfo<'agentes', '/agentes', Record<never, never>, Record<never, never>>,
     'asegurados': RouteRecordInfo<'asegurados', '/asegurados', Record<never, never>, Record<never, never>>,
     'catalogos-actividades': RouteRecordInfo<'catalogos-actividades', '/catalogos/actividades', Record<never, never>, Record<never, never>>,
     'catalogos-companias': RouteRecordInfo<'catalogos-companias', '/catalogos/companias', Record<never, never>, Record<never, never>>,
@@ -38,6 +39,5 @@ declare module 'vue-router/auto-routes' {
     'promotores': RouteRecordInfo<'promotores', '/promotores', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'usuarios': RouteRecordInfo<'usuarios', '/usuarios', Record<never, never>, Record<never, never>>,
-    'usuarios copy': RouteRecordInfo<'usuarios copy', '/usuarios copy', Record<never, never>, Record<never, never>>,
   }
 }

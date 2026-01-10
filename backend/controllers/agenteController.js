@@ -5,7 +5,7 @@ const entidad = "Agente";
 
 const { validateRecord, createOrUpdatedRecord } = require("./CRUDController");
 // prettier-ignore
-const fields = ["nombre","segundo_nombre","primer_apellido","segundo_apellido","curp","rfc","estatus"];
+const fields = false;
 
 async function processRecord(data) {
   try {

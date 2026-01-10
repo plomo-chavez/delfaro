@@ -7,6 +7,7 @@ const exampleController                 = require('../controllers/exampleControl
 const authController                    = require('../controllers/authController');
 const usuarioController                 = require('../controllers/usuarioController');
 const agenteController                  = require('../controllers/agenteController');
+const agenteCompaniasController         = require('../controllers/agenteCompaniasController');
 const agenteClavesController            = require('../controllers/agenteClavesController');
 const agenteSubAgentesController        = require('../controllers/agenteSubAgentesController');
 const agenteAsistentesController        = require('../controllers/agenteAsistentesController');
@@ -48,6 +49,8 @@ router.post('/api/agente',                      agenteController.createOrUpdate)
 router.post('/api/agente/eliminar',             agenteController.deleteRecord);
 
 // AgenteClaves
+router.post('/api/agente/companias',            agenteCompaniasController.getCompanias);
+router.post('/api/agente/companias/actualizar', agenteCompaniasController.updateCompanias);
 router.post('/api/agente/claves',               agenteClavesController.getAll);
 router.post('/api/agente/clave',                agenteClavesController.createOrUpdate);
 router.post('/api/agente/clave/eliminar',       agenteClavesController.deleteRecord);

@@ -74,6 +74,10 @@
   color: #ecb100; /* Texto amarillo oscuro */
 }
 
+.textYellow {
+  color: #faee07de; /* Texto amarillo oscuro */
+}
+
 .textTonalblue {
   color: #0152cb; /* Texto azul oscuro */
 }
@@ -337,6 +341,33 @@
   min-width: 90px;
   text-align: left;
   display: inline-block;
+}
+
+
+.custom-switch {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.custom-switch.active {
+  background-color: #0b237b;
+}
+.switch-handle {
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: left 0.3s;
+}
+.custom-switch.active .switch-handle {
+  left: 21px;
 }
 
 [class*="col-"] { padding: 8px!important; }

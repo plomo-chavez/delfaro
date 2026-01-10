@@ -19,6 +19,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       nombreCorto: {
+        field: "nombreCorto",
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -31,6 +32,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       codigoPostal: {
+        field: "codigoPostal",
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -39,10 +41,12 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       limitePrimerPago: {
+        field: "limitePrimerPago",
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
       },
       limitePrimerSubsecuente: {
+        field: "limitePrimerSubsecuente",
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
       },

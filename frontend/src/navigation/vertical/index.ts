@@ -5,11 +5,6 @@ export default [
     icon: { icon: "tabler-smart-home" },
     config: { requiresAuth: true },
   },
-  // {
-  //   title: "Denegado",
-  //   to: { name: "denegado" },
-  //   icon: { icon: "tabler-smart-home" },
-  // },
   {
     title: "Administrador",
     icon: { icon: "tabler-settings" },
@@ -63,6 +58,11 @@ export default [
   {
     title: "Clientes",
     to: { name: "clientes" },
+    icon: { icon: "tabler-users" },
+  },
+  {
+    title: "Agentes",
+    to: { name: "agentes" },
     icon: { icon: "tabler-users" },
   },
   // {

@@ -1,4 +1,4 @@
-const { AgenteClaves } = require("../models"); // Asegúrate de importar correctamente tu modeloString
+const { AgenteClaves, Companias } = require("../models"); // Asegúrate de importar correctamente tu modeloString
 const { getAllFromModel } = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const entidad = "Clave de Agente";
@@ -115,6 +115,51 @@ exports.deleteRecord = async (req, res) => {
     return res.json({
       result: false,
       message: "Error al eliminar " + entidad + ": " + error.message,
+    });
+  }
+};
+
+exports.getCompanias = async (req, res) => {
+  try {
+    const { agente_id } = req.body;
+
+    if (!agente_id) {
+      return res.json({
+        result: false,
+        message: "El ID del agente es requerido",
+        data: [],
+      });
+    }
+
+    const claves = await AgenteClaves.findAll({
+      where: {
+        agente_id: agente_id,
+        estatus: 1,
+      },
+    });
+
+    const idsCompanias = companias.map((c) => c.compania_id);
+
+    const companias = await Companias.findAll({
+      where: {
+        id: {
+          [Op.in]: idsCompanias,
+        },
+        estatus: 1,
+      },
+    });
+
+    return res.json({
+      result: true,
+      message: "Compañías obtenidas con éxito",
+      data: companias,
+    });
+  } catch (error) {
+    console.log("Error al obtener compañías del agente:", error);
+    return res.json({
+      result: false,
+      message: "Error al obtener compañías del agente: " + error.message,
+      data: [],
     });
   }
 };
