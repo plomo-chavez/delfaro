@@ -102,8 +102,9 @@ onMounted(() => {
     <VTabs v-model="currentTab">
       <VTab value="item1">Detalles</VTab>
       <VTab value="item2">Compañías</VTab>
-      <VTab value="item3">SubAgentes</VTab>
-      <VTab value="item4">Asistentes</VTab>
+      <VTab value="item3">Claves</VTab>
+      <VTab value="item4">SubAgentes</VTab>
+      <VTab value="item5">Asistentes</VTab>
     </VTabs>
 
     <VCardText>
@@ -136,7 +137,7 @@ onMounted(() => {
             :agenteID="props.data.id"
           />
         </VWindowItem>
-        <!-- SubAgentes -->
+        <!-- Claves -->
         <VWindowItem :value="`item3`">
           <AgenteTeam
             :isActual="currentTab === 'item3'"
@@ -144,10 +145,18 @@ onMounted(() => {
             :isAgente="true"
           />
         </VWindowItem>
-        <!-- Asistentes -->
+        <!-- SubAgentes -->
         <VWindowItem :value="`item4`">
           <AgenteTeam
             :isActual="currentTab === 'item4'"
+            :agenteID="props.data.id"
+            :isAgente="true"
+          />
+        </VWindowItem>
+        <!-- Asistentes -->
+        <VWindowItem :value="`item5`">
+          <AgenteTeam
+            :isActual="currentTab === 'item5'"
             :agenteID="props.data.id"
           />
         </VWindowItem>
