@@ -32,10 +32,11 @@ const emit = defineEmits<{
 
 const props = withDefaults(
   defineProps<{
-    title: string; // Título del módulo
+    title?: string; // Título del módulo
     formSchema?: any; // Esquema del formulario
     refreshTable?: boolean; // Indica si se debe refrescar la tabla
     tableHeaders: TableHeader[]; // Esquema de la tabla
+    showStyleCard?: boolean; // Indica si el formulario será un modal
     showBtnNuevo?: boolean; // Indica si el formulario será un modal
     formModal?: boolean; // Indica si el formulario será un modal
     customAction?: boolean; // Indica si el formulario será un modal
@@ -60,12 +61,14 @@ const props = withDefaults(
   }>(),
   {
     formSchema: [],
+    title: "",
     configTable: { actions: ["Editar", "Eliminar"] },
     filtroAgrupadorInicial: null,
     subtitulos: null,
     filtroAgrupador: null,
     payloadDefault: null, // Valor predeterminado
     showTitle: true, // Valor predeterminado
+    showStyleCard: true, // Valor predeterminado
     refreshTable: false, // Valor predeterminado
     customAction: false, // Valor predeterminado
     exportSubmit: false, // Valor predeterminado
@@ -338,7 +341,7 @@ watch(
 <template>
   <div class="">
     <h1 v-if="showTitle">{{ title }}</h1>
-    <div class="card">
+    <div :class="showStyleCard ? ' card ' : ''">
       <div v-if="showForm || props.formModal">
         <ModuladorFormFactory
           :title="title"

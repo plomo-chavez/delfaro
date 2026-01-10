@@ -1,9 +1,4 @@
-const { AgenteClaves, Compania, AgenteCompanias } = require("../models"); // Asegúrate de importar correctamente tu modeloString
-const { getAllFromModel } = require("../db/customFunctions");
-const { Op } = require("sequelize");
-const entidad = "Clave de Agente";
-const modeloString = "AgenteClaves";
-const model = AgenteClaves;
+const { Compania, AgenteCompanias } = require("../models"); // Asegúrate de importar correctamente tu modeloString
 
 exports.getCompanias = async (req, res) => {
   try {

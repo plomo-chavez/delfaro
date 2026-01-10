@@ -15,6 +15,7 @@ declare module 'vue' {
     AgenteClaves: typeof import('./src/components/managers/agentes/agenteClaves.vue')['default']
     AgenteCompanias: typeof import('./src/components/managers/agentes/agenteCompanias.vue')['default']
     AgenteTeam: typeof import('./src/components/managers/agentes/agenteTeam.vue')['default']
+    AgenteTeamV1: typeof import('./src/components/managers/agentes/agenteTeamV1.vue')['default']
     AppAutocomplete: typeof import('./src/@core/components/app-form-elements/AppAutocomplete.vue')['default']
     AppBarSearch: typeof import('./src/@core/components/AppBarSearch.vue')['default']
     AppCardActions: typeof import('./src/@core/components/cards/AppCardActions.vue')['default']

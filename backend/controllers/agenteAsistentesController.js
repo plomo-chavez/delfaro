@@ -4,23 +4,42 @@ const { Op } = require("sequelize");
 const entidad = "Asistente de Agente";
 const modeloString = "AgenteTeam";
 const model = AgenteTeam;
+const tipoIDDefault = 3; // Asistente
 
 const { validateRecord, createOrUpdatedRecord } = require("./CRUDController");
 // prettier-ignore
-const fields = ["id", "agente_id", "team_id", "tipo_id"];
+const fields = ["id", "agente_id", "team_id", "tipo_id","estatus"];
 
 async function processRecord(data) {
   try {
     let payload = { ...data };
+    let registroRelacionID = payload.id;
+    delete payload.filtros;
     const createValidation = data.id ? false : true;
 
     if (createValidation) {
       // proceso de creacion
     } else {
       // proceso de actualizacion
+      payload.id = payload.team_id;
     }
+    payload.isAgente = 0;
 
     const response = await createOrUpdatedRecord("Agentes", payload);
+
+    let tmp = {
+      agente_id: payload.agente_id,
+      team_id: response.data.id,
+      tipo_id: tipoIDDefault, // Subagente
+      estatus: payload.estatus,
+    };
+
+    if (!createValidation) {
+      tmp.team_id = payload.team_id;
+      tmp.id = registroRelacionID;
+    }
+
+    await createOrUpdatedRecord("AgenteTeam", tmp);
 
     return response;
   } catch (e) {
@@ -38,12 +57,11 @@ exports.getAll = async (req, res) => {
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
     let filtros = req.body.filtros || {};
-    filtros.tipo_id = 3; // Asistente
+    filtros.tipo_id = tipoIDDefault; // Subagente
 
     // Define los campos y relaciones a incluir
     const include = [
       {
-        attributes: ["id", "nombre"],
         required: false,
         model: Agentes,
         as: "elemento",
@@ -62,12 +80,29 @@ exports.getAll = async (req, res) => {
       filtros,
       attributes: fields,
       include,
-      page,
-      pageSize,
+      pagination: false,
     });
 
+    let data = response.data.map((item) => {
+      let elemento = item.elemento || {};
+      let estatus = item.estatus;
+      delete item.elemento;
+      delete item.estatus;
+      return {
+        ...item,
+        ...elemento,
+        id: item.id,
+        estatus,
+      };
+    });
+
+    response.data = data;
+
     // Devuelve la respuesta
-    return res.json(response);
+    return res.json({
+      ...response,
+      data,
+    });
   } catch (error) {
     console.log("Error en getAll:", error);
     return res.json({
@@ -81,22 +116,7 @@ exports.getAll = async (req, res) => {
 exports.createOrUpdate = async (req, res) => {
   const data = req.body;
 
-  const createValidation = data.id ? false : true;
-
   const response = await processRecord(data);
-
-  if (createValidation) {
-    let dataRelacionada = {
-      agente_id: data.agente_id,
-      team_id: response.data.id,
-      tipo_id: 3, // Asistente
-    };
-
-    const responseRelacion = await createOrUpdatedRecord(
-      "AgenteTeam",
-      dataRelacionada
-    );
-  }
 
   if (response.data) delete response.data;
 

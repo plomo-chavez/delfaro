@@ -46,6 +46,7 @@ exports.getAll = async (req, res) => {
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
+    filtros.isAgente = 1;
 
     // Define los campos y relaciones a incluir
     // prettier-ignore

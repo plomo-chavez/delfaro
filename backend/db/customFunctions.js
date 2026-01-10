@@ -47,6 +47,7 @@ async function getAllFromModel({
   include = [],
   page = 1,
   pageSize = 10,
+  pagination = true, // Nueva propiedad booleana
 }) {
   try {
     // Calcula el offset para la paginación
@@ -57,8 +58,8 @@ async function getAllFromModel({
       where: filtros,
       attributes,
       include,
-      limit: pageSize,
-      offset,
+      limit: pagination ? pageSize : null, // Aplica paginación solo si pagination es true
+      offset: pagination ? offset : null, // Aplica offset solo si pagination es true
       raw: true,
       nest: true,
     });
@@ -70,12 +71,14 @@ async function getAllFromModel({
       result: true,
       message: "Registros obtenidos con éxito",
       data: rows,
-      pagination: {
-        total: count,
-        page,
-        pageSize,
-        totalPages: Math.ceil(count / pageSize),
-      },
+      pagination: pagination
+        ? {
+            total: count,
+            page,
+            pageSize,
+            totalPages: Math.ceil(count / pageSize),
+          }
+        : null, // Si pagination es false, no incluye información de paginación
     };
   } catch (error) {
     console.error("Error al obtener registros:", error);
@@ -83,6 +86,7 @@ async function getAllFromModel({
       result: false,
       message: "Error al obtener registros: " + error.message,
       data: [],
+      pagination: null, // En caso de error, no incluye información de paginación
     };
   }
 }

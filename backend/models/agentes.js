@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      isAgente: {
+        field: "isAgente",
+        type: DataTypes.TINYINT,
+        defaultValue: 1,
+      },
       estatus: {
         type: DataTypes.TINYINT,
         defaultValue: 1,

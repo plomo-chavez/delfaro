@@ -138,11 +138,18 @@ onMounted(() => {
         </VWindowItem>
         <!-- SubAgentes -->
         <VWindowItem :value="`item3`">
-          <AgenteTeam />
+          <AgenteTeam
+            :isActual="currentTab === 'item3'"
+            :agenteID="props.data.id"
+            :isAgente="true"
+          />
         </VWindowItem>
         <!-- Asistentes -->
         <VWindowItem :value="`item4`">
-          <AgenteTeam />
+          <AgenteTeam
+            :isActual="currentTab === 'item4'"
+            :agenteID="props.data.id"
+          />
         </VWindowItem>
       </VWindow>
     </VCardText>
