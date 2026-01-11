@@ -1,6 +1,7 @@
 const { Compania, AgenteCompanias } = require("../models"); // Asegúrate de importar correctamente tu modeloString
 
 exports.getCompanias = async (req, res) => {
+  console.log("Entrando a getCompanias");
   try {
     const { agente_id } = req.body;
 

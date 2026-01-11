@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ModuladorFormFactory from "@/components/apps/ModuladorFormFactory.vue";
 import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
+import AgenteClaves from "@/components/managers/agentes/agenteClaves.vue";
 import AgenteCompanias from "@/components/managers/agentes/agenteCompanias.vue";
 import AgenteTeam from "@/components/managers/agentes/agenteTeam.vue";
 import { ref } from "vue";
@@ -139,7 +140,7 @@ onMounted(() => {
         </VWindowItem>
         <!-- Claves -->
         <VWindowItem :value="`item3`">
-          <AgenteTeam
+          <AgenteClaves
             :isActual="currentTab === 'item3'"
             :agenteID="props.data.id"
             :isAgente="true"

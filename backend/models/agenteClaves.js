@@ -37,5 +37,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  AgenteClaves.associate = (models) => {
+    AgenteClaves.belongsTo(models.Compania, {
+      foreignKey: "compania_id",
+      as: "compania", // Alias para la relación
+    });
+  };
+
   return AgenteClaves;
 };

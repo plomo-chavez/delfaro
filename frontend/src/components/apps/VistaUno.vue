@@ -43,8 +43,8 @@ const props = withDefaults(
     emitNew?: boolean; // Indica si el formulario será un modal
     emitCreate?: boolean; // Indica si el formulario será un modal
     emitEdit?: boolean; // Indica si el formulario será un modal
-    exportSubmit?: boolean; // Indica si el formulario será un modal
     emitDelete?: boolean; // Indica si el formulario será un modal
+    exportSubmit?: boolean; // Indica si el formulario será un modal
     payloadDefault?: any; // Indica si se debe mostrar el título
     showTitle?: boolean; // Indica si se debe mostrar el título
     filtroAgrupador?: string | null; // Indica si se debe mostrar el título

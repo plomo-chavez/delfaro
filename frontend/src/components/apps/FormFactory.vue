@@ -326,12 +326,12 @@ onMounted(async () => {
 
     if (field.type === "select" && formLocal[field.model]) {
       if (field.options) {
-        let valor = toRaw(formLocal[field.model].label);
-        let options = field.options;
+        let labelKey = field.config?.labelKey || "label";
+        let valor = toRaw(formLocal[field.model][labelKey]);
+        let options = toRaw(field.options);
+        // prettier-ignore
         let option = options.find((option: any) => {
-          return (
-            String(option.label).toLowerCase() == String(valor).toLowerCase()
-          );
+          return (String(option.label).toLowerCase() == String(valor).toLowerCase());
         });
         formLocal[field.model] = option ? toRaw(option) : null;
       } else {

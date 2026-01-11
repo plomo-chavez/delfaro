@@ -13,6 +13,7 @@ declare module 'vue' {
     AddEditRoleDialog: typeof import('./src/components/dialogs/AddEditRoleDialog.vue')['default']
     AddPaymentMethodDialog: typeof import('./src/components/dialogs/AddPaymentMethodDialog.vue')['default']
     AgenteClaves: typeof import('./src/components/managers/agentes/agenteClaves.vue')['default']
+    AgenteClavesV1: typeof import('./src/components/managers/agentes/agenteClavesV1.vue')['default']
     AgenteCompanias: typeof import('./src/components/managers/agentes/agenteCompanias.vue')['default']
     AgenteTeam: typeof import('./src/components/managers/agentes/agenteTeam.vue')['default']
     AgenteTeamV1: typeof import('./src/components/managers/agentes/agenteTeamV1.vue')['default']

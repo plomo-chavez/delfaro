@@ -46,12 +46,8 @@ const dataLoaded: any = ref(false); // Estado temporal para modificaciones
 
 const handleFetchData = async () => {
   if (!dataLoaded.value) {
-    console.log(
-      "fetchData llamado",
-      props.isAgente ? "Subagentes" : "Asistentes"
-    );
     dataLoaded.value = true;
-    // await fetchData();
+    await fetchData();
   }
 };
 

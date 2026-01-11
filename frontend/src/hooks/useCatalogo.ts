@@ -25,6 +25,7 @@ export function useCatalogo() {
         case "estatus-polizas":   url = "/api/catalogos/estatus-polizas"; break;
         case "ramos":             url = "/api/catalogos/ramos"; break;
         case "ramosByCompania":   url = "/api/catalogos/ramosByCompania"; break;
+        case "companiaByAgente":   url = "/api/catalogos/companiaByAgente"; break;
       }
 
       let payload: any = item.payload || {};
@@ -37,9 +38,12 @@ export function useCatalogo() {
 
       data = response.data.data;
 
+      console.log("Datos recibidos para el catálogo", item.catalogo, ":", data);
+
       if (!item.formatCatalogo) {
         let config = {
-          label: "label",
+          labelKey: "label",
+          valueKey: "id",
           fullInfo: false,
         };
         if (item.config) {
@@ -49,13 +53,13 @@ export function useCatalogo() {
           if (config.fullInfo) {
             return {
               ...item,
-              label: item[config.label],
-              id: item.id,
+              label: item[config.labelKey],
+              id: item[config.valueKey],
             };
           } else {
             return {
-              label: item[config.label],
-              id: item.id,
+              label: item[config.labelKey],
+              id: item[config.valueKey],
             };
           }
         });

@@ -1,4 +1,4 @@
-const { AgenteClaves, Companias } = require("../models"); // Asegúrate de importar correctamente tu modeloString
+const { AgenteClaves, Compania } = require("../models"); // Asegúrate de importar correctamente tu modeloString
 const { getAllFromModel } = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const entidad = "Clave de Agente";
@@ -16,6 +16,10 @@ async function processRecord(data) {
 
     if (createValidation) {
       // proceso de creacion
+      if (typeof payload.compania == "object") {
+        payload.compania_id = payload.compania.id;
+        delete payload.compania;
+      }
     } else {
       // proceso de actualizacion
     }
@@ -38,10 +42,27 @@ exports.getAll = async (req, res) => {
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
+    const { agente_id } = req.body;
+
+    if (!agente_id) {
+      return res.json({
+        result: false,
+        message: "El ID del agente es requerido",
+        data: [],
+      });
+    }
+
+    filtros.agente_id = agente_id;
 
     // Define los campos y relaciones a incluir
     // prettier-ignore
-    const include = [];
+    const include = [
+      {
+        model: Compania,
+        as: "compania",
+        attributes: ["id", "nombre", "nombreCorto"],
+      },
+    ];
 
     // Llama a la función genérica
     const response = await getAllFromModel({
@@ -140,7 +161,7 @@ exports.getCompanias = async (req, res) => {
 
     const idsCompanias = companias.map((c) => c.compania_id);
 
-    const companias = await Companias.findAll({
+    const companias = await Compania.findAll({
       where: {
         id: {
           [Op.in]: idsCompanias,

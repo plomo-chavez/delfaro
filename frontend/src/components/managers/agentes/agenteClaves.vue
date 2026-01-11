@@ -1,97 +1,58 @@
-<script lang="ts" setup>
-import { watch } from "vue";
-
-// prettier-ignore
-const props = withDefaults(
-  defineProps<{
-    agenteID: any;
-    isActual: boolean;
-  }>(),{
-    isActual: false,
-  });
-
-const dataLoaded: any = ref(true);
-const handleFetchCompanias = () => {
-  console.log("handleFetchCompanias ejecutado");
-  if (!dataLoaded.value) {
-    fetchCompanias();
-  }
-};
-
-const fetchCompanias = async (data: any) => {
-  let payload = {
-    contrasenia: data.password,
-    id: data.id,
-  };
-
-  try {
-    const response = await customRequest({
-      url: "/api/usuario/cambiar",
-      method: "POST",
-      data: payload,
-    });
-    const dataResponse = response.data;
-    if (dataResponse.result) {
-      toast.success("Usuario actualizado!", { theme: "dark" });
-      return {
-        result: true,
-        cliente: dataResponse.data,
-      };
-    } else {
-      showErrorMessage({
-        title: "Error",
-        message: dataResponse.message,
-      });
-      return {
-        result: false,
-        message: dataResponse.message,
-      };
-    }
-  } catch (error: any) {
-    showErrorMessage({
-      title: "Error",
-      message: error?.message || "Error de conexión",
-    });
-    return {
-      result: false,
-      message: error?.message || "Error de conexión",
-    };
-  }
-};
-// Observa los cambios en isActual
-watch(
-  () => props.isActual,
-  (newVal) => {
-    if (newVal) {
-      handleFetchCompanias();
-    }
-  },
-  { immediate: true } // Esto asegura que se ejecute al montar si isActual ya es true
-);
-</script>
-
 <template>
   <div>
     <div>
-      <!-- titulo -->
+      <!-- Título -->
       <div class="d-flex">
-        <!-- prettier-ignore -->
-        <h1 class="mb-2">Companias</h1>
+        <h1 class="mb-2">Claves</h1>
         <VIcon
           icon="tabler-refresh"
           class="ml-auto fontBold cursor-pointer textTonalblue"
           size="24"
-          @click="fetchCompanias"
+          @click="fetchData"
         />
       </div>
       <!-- Indicaciones -->
       <div class="mb-4">
         <span class="text-base textSecondary">
-          Aquí puedes gestionar las compañías asociadas al agente.
+          Aquí puedes gestionar la informacion de las claves asociadas al
+          agente.
         </span>
       </div>
+      <AgenteClavesV1
+        :isAgente="props.isAgente"
+        :refreshTable="refreshTable"
+        :agenteID="props.agenteID"
+      />
     </div>
   </div>
 </template>
+
+<script lang="ts" setup>
+import { ref } from "vue";
+import AgenteClavesV1 from "./agenteClavesV1.vue";
+
+const props = withDefaults(
+  defineProps<{
+    agenteID: any;
+    isActual: boolean;
+    isAgente?: boolean;
+  }>(),
+  {
+    isActual: false,
+    isAgente: false,
+  }
+);
+
+const refreshTable = ref(false);
+const dataLoaded: any = ref(false); // Estado temporal para modificaciones
+
+// Función para obtener las compañías
+const fetchData = async () => {
+  refreshTable.value = false;
+  setTimeout(() => {
+    refreshTable.value = true;
+  }, 100);
+};
+</script>
 
 <style scoped></style>

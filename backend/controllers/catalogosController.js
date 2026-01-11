@@ -1,3 +1,5 @@
+const { AgenteCompanias, Compania } = require("../models"); // Asegúrate de importar correctamente tu modelo
+const { Op } = require("sequelize");
 const models = require("../models");
 
 const { PrismaClient } = require("@prisma/client");
@@ -35,7 +37,6 @@ exports.getCatalogo = async (req, res, tabla) => {
 
     // Caso especial: ramosByCompania
     if (tabla === "ramosByCompania") {
-      console.log("tabla ", tabla); // IGNORE
       let companiaId = req.body.compania_id;
       if (!companiaId) {
         return res.json({
@@ -45,7 +46,6 @@ exports.getCatalogo = async (req, res, tabla) => {
         });
       }
 
-      console.log("companiaId ", companiaId); // IGNORE
       let rows = await getAllFrom(
         "companias_ramos",
         { compania_id: companiaId, estatus: 1 },
@@ -68,6 +68,50 @@ exports.getCatalogo = async (req, res, tabla) => {
         data: rows,
       });
     }
+    // Caso especial: companiaByAgente
+    if (tabla === "companiaByAgente") {
+      let agenteID = req.body.agente_id;
+      console.log("Agente ID recibido:", agenteID);
+      if (!agenteID) {
+        return res.json({
+          result: false,
+          message: "El id del agente es requerido",
+          data: [],
+        });
+      }
+
+      let RowsIDsCompanias = await AgenteCompanias.findAll({
+        where: { agente_id: agenteID, estatus: 1 },
+        attributes: ["compania_id"],
+      });
+
+      const idsCompanias = RowsIDsCompanias.map((c) => c.compania_id);
+
+      console.log("IDs de compañías encontradas:", idsCompanias);
+
+      const rows = await Compania.findAll({
+        where: {
+          id: {
+            [Op.in]: idsCompanias,
+          },
+          estatus: 1,
+        },
+        attributes: ["id", "nombre", "nombreCorto"],
+      });
+
+      // const data = rows.map((compania) => ({
+      //   id: compania.id,
+      //   nombre: compania.nombre,
+      //   label: compania.nombreCorto,
+      // }));
+
+      const data = rows;
+      return res.json({
+        result: true,
+        message: "Registros obtenidos con éxito",
+        data,
+      });
+    }
 
     // Mapear tabla si es necesario
     let tablaReal = tablaMap[tabla];
@@ -81,8 +125,6 @@ exports.getCatalogo = async (req, res, tabla) => {
     }
 
     // let resultado = await getAllFrom(tablaReal, filtros);
-    console.log("tablaReal ", tablaReal); // IGNORE
-    console.log("tablaReal ", tablaReal.tabla); // IGNORE
     filtros = { ...tablaReal.filtros, ...filtros };
 
     let resultado = await models[tablaReal.tabla].findAll({
