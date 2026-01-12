@@ -16,10 +16,9 @@ export const apiRequest = async (params = {}) => {
 
   try {
     if (!url) {
-      console.error("Falta URL en la solicitud API");
+      console.log("Falta URL en la solicitud API");
       return;
     }
-    console.log(`API Request - Payload:`, payload);
     const response = await customRequest({
       url,
       method: method,
@@ -28,15 +27,15 @@ export const apiRequest = async (params = {}) => {
     const dataResponse = response.data;
 
     if (dataResponse.result) {
+      if (showMessages) {
+        console.log(dataResponse);
+        showSuccessMessage({
+          title: "Éxito",
+          message: dataResponse.message ?? "Operación realizada con éxito.",
+        });
+      }
       if (typeof onSuccess === "function") {
         onSuccess(dataResponse.data);
-      } else {
-        if (showMessages) {
-          showSuccessMessage({
-            title: "Éxito",
-            message: dataResponse.message ?? "Operación realizada con éxito.",
-          });
-        }
       }
     } else {
       showErrorMessage({

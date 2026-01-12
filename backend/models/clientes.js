@@ -9,11 +9,6 @@ module.exports = (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      rfc: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
       nombre: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -21,6 +16,28 @@ module.exports = (sequelize) => {
       curp: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+      },
+      rfc: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
+      correo: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telefono: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isCliente: {
+        field: "isCliente",
+        type: DataTypes.TINYINT,
+        defaultValue: 1,
+      },
+      data: {
+        type: DataTypes.TEXT("long"),
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,
@@ -29,19 +46,6 @@ module.exports = (sequelize) => {
       updated_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
-      },
-      data: {
-        type: DataTypes.TEXT("long"),
-        allowNull: true,
-      },
-      isCliente: {
-        field: "isCliente",
-        type: DataTypes.TINYINT,
-        defaultValue: 1,
-      },
-      correo: {
-        type: DataTypes.STRING,
-        allowNull: true,
       },
     },
     {

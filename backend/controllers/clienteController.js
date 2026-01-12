@@ -6,7 +6,16 @@ const moment = require("moment");
 const fs = require("fs");
 const { Clientes, Polizas } = require("../models");
 const entidad = "Cliente";
-const fields = false;
+const fields = [
+  "id",
+  "nombre",
+  "rfc",
+  "telefono",
+  "correo",
+  "curp",
+  "created_at",
+  "updated_at",
+];
 
 async function processRecord(data) {
   try {
@@ -18,6 +27,26 @@ async function processRecord(data) {
       payload.isCliente = 1;
     } else {
       // proceso de actualizacion
+      let dataTmp = payload;
+      delete dataTmp.created_at;
+      delete dataTmp.updated_at;
+      delete dataTmp.isCliente;
+      delete dataTmp.createdAt;
+      delete dataTmp.updatedAt;
+      delete dataTmp.data;
+      delete dataTmp.id;
+
+      payload = {
+        id: data.id,
+        rfc: data.rfc,
+        curp: data.curp,
+        correo: data.correo,
+        telefono: data.telefonoFijo,
+        data: JSON.stringify(dataTmp),
+        nombre: `${data.nombre} ${data?.segundoNombre ?? ""} ${
+          data?.apellidoPaterno ?? ""
+        } ${data?.apellidoMaterno ?? ""}`,
+      };
     }
 
     const response = await createOrUpdatedRecord("Clientes", payload);

@@ -102,7 +102,9 @@ async function fetchTableData() {
         let tmp = response.data.data.map((item: any) => ({
           ...item,
           created_at: formatToAmPm(item.created_at),
-          createdAt: formatToAmPm(item.created_at),
+          updated_at: formatToAmPm(item.updated_at),
+          // createdAt: formatToAmPm(item.created_at),
+          // updateAt: formatToAmPm(item.updated_at),
         }));
 
         if (props.estatusDefault) {

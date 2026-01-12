@@ -20,6 +20,7 @@ const props = defineProps<{
     busqueda?: boolean;
     exportar?: boolean;
     seleccionar?: boolean;
+    noWrap?: boolean; // Nueva propiedad para controlar el truncado del texto
     columnsBySearch?: string[]; // Columnas específicas para la búsqueda
   };
 }>();
@@ -36,6 +37,7 @@ const defaultConfig = {
   busqueda: true,
   exportar: false,
   seleccionar: false,
+  noWrap: true,
 };
 
 const mergedConfig = { ...defaultConfig, ...props.config };
@@ -124,6 +126,7 @@ watch(selected, () => {
       no-data-text="No hay datos disponibles"
       items-per-page-text="Elementos por página:"
       fixed-header
+      :class="{ 'no-wrap': mergedConfig.noWrap }"
     >
       <!-- height="300" -->
       <!-- Numerador -->
@@ -134,9 +137,9 @@ watch(selected, () => {
       <!-- Datos dinámicos -->
       <!-- prettier-ignore -->
       <template v-for="header in props.headers" :key="header.key" #[`item.${header.key}`]="{ item }">
-<span>
-  {{ getFormattedValue(item, header) }}
-</span>
+        <span :class="{ 'no-wrap': mergedConfig.noWrap }">
+          {{ getFormattedValue(item, header) }}
+        </span>
       </template>
 
       <!-- Acciones -->
@@ -204,5 +207,19 @@ watch(selected, () => {
 
 .action-button:hover {
   background-color: #e2e6ea;
+}
+
+/* Estilo predeterminado para las celdas */
+.v-data-table td {
+  white-space: normal !important; /* Permite que el texto se ajuste automáticamente */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Estilo para evitar que el texto se divida en varias líneas */
+::v-deep(.v-data-table__td) {
+  white-space: nowrap !important; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden !important; /* Oculta el texto que exceda el ancho */
+  text-overflow: ellipsis !important; /* Agrega puntos suspensivos si el texto es muy largo */
 }
 </style>

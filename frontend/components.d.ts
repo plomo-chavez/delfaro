@@ -69,7 +69,7 @@ declare module 'vue' {
     FormFactory: typeof import('./src/components/apps/FormFactory.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     ManagerAgentes: typeof import('./src/components/managers/ManagerAgentes.vue')['default']
-    ManagerClientes: typeof import('./src/components/forms/clientes/ManagerClientes.vue')['default']
+    ManagerClientes: typeof import('./src/components/managers/ManagerClientes.vue')['default']
     ManagerPolizas: typeof import('./src/components/managers/ManagerPolizas.vue')['default']
     ManagerUsuario: typeof import('./src/components/managers/ManagerUsuario.vue')['default']
     ManagerUsuarioV2: typeof import('./src/components/managers/ManagerUsuarioV2.vue')['default']

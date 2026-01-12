@@ -37,18 +37,16 @@ export default [
         ],
       },
       {
-        title: "Asegurados",
-        to: { name: "asegurados" },
-      },
-      // {
-      //   title: "Promotores",
-      //   to: { name: "promotores" },
-      // },
-      {
         title: "Usuarios",
         to: { name: "usuarios" },
       },
     ],
+  },
+  {
+    title: "Cotizaciones",
+    to: { name: "cotizaciones" },
+    icon: { icon: "tabler-calendar" },
+    meta: { requiresAuth: true },
   },
   {
     title: "Polizas",
@@ -70,10 +68,4 @@ export default [
   //   to: { name: "agenda" },
   //   icon: { icon: "tabler-calendar" },
   // },
-  {
-    title: "Cotizaciones",
-    to: { name: "cotizaciones" },
-    icon: { icon: "tabler-calendar" },
-    meta: { requiresAuth: true },
-  },
 ];

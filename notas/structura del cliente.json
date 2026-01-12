@@ -1,0 +1,90 @@
+{
+    "id": 33,
+    "created_at": "2025-10-24T19:11:43.000Z",
+    "updated_at": "2025-12-01T23:54:11.000Z",
+    "data": {
+        "conductorHabitual": "Maria",
+        "placas": "GDX789A",
+        "numeroSerie": "1HGCM82633A00499",
+        "fechaNacimiento": "1994-06-10",
+        "nacionalidad": "Mexicana",
+        "estadoNacimiento": {
+            "label": "Guerrero",
+            "id": 13
+        },
+        "nombre": "Jesu",
+        "segundoNombre": "Ramon",
+        "apellidoPaterno": "Chavez",
+        "apellidoMaterno": "Quirox",
+        "curp": "CAQJ940610HGRHRS03",
+        "rfc": "CAQJ9406101G5",
+        "tipoIdentificacion": "INE",
+        "referenciaIdentificacion": "IDMEX2851988388",
+        "genero": true,
+        "pais": "Mexico",
+        "estado": {
+            "label": "Guerrero",
+            "id": 13
+        },
+        "municipio": "Acapulco",
+        "colonia": "La Laja",
+        "calle": "Andador Los lririos",
+        "numeroExterior": "65",
+        "codigoPostal": "39600",
+        "telefonoFijo": "7442077733",
+        "celular": "7442077733",
+        "correo": "de@de.com",
+        "profesion": "Desarrollador",
+        "ocupacion": "Desarrlllador",
+        "giro": "Servicios",
+        "isCliente": true
+    },
+
+    "createdAt": "2025-10-24T19:11:43.000Z",
+    "updatedAt": "2025-12-01T23:54:11.000Z",
+    "isCliente": true,
+    
+    
+    
+    
+    "nombre": "Jesu",
+    "segundoNombre": "Ramon",
+    "apellidoPaterno": "Chavez",
+    "apellidoMaterno": "Quirox",
+    "curp": "CAQJ940610HGRHRS03",
+    "rfc": "CAQJ9406101G5",
+    "genero": true,
+    "fechaNacimiento": "1994-06-10",
+    "telefonoFijo": "7442077733",
+    "celular": "7442077733",
+    "correo": "de@de.com",
+    "nacionalidad": "Mexicana",
+
+    "estadoNacimiento": {
+        "label": "Guerrero",
+        "id": 13
+    },
+
+    "tipoIdentificacion": "INE",
+    "referenciaIdentificacion": "IDMEX2851988388",
+    
+    "pais": "Mexico",
+    "estado": {
+        "label": "Guerrero",
+        "id": 13
+    },
+    "municipio": "Acapulco",
+    "colonia": "La Laja",
+    "calle": "Andador Los lririos",
+    "numeroExterior": "65",
+    "codigoPostal": "39600",
+    
+    "profesion": "Desarrollador",
+    "ocupacion": "Desarrlllador",
+    "giro": "Servicios",
+
+
+    "conductorHabitual": "Maria",
+    "placas": "GDX789A",
+    "numeroSerie": "1HGCM82633A00499",
+}

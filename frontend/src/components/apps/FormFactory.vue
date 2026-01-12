@@ -616,6 +616,7 @@ onMounted(async () => {
                 :key="`${field.model}`"
                 v-model="formLocal[field.model] "
                 :placeholder="field?.placeholder ?? 'Ingresa un fecha'"
+                :disabled="props.isDisabled"
                 :config="{
                   ...(field?.config || { dateFormat: 'Y-m-d' }),
                   minDate: field.config?.minDate ? formLocal[field.config.minDate] : undefined,

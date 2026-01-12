@@ -1,42 +1,16 @@
 <script setup lang="ts">
 import CrudManager from "@/components/apps/VistaUno.vue";
-import ManagerUsuario from "@/components/managers/ManagerUsuario.vue";
+import ManagerRecord from "@/components/managers/ManagerClientes.vue";
 // prettier-ignore
 const formSchema = [
   { label: "Nombre",              type: "text",   model: "nombre",          },
-  { label: "RFC",                 type: "text",   model: "rfc",             },
-  { label: "Fecha de nacimiento", type: "date",   model: "fechaNacimiento", },
-  { label: "Direccion",           type: "text", model: "direccion",         },
-  { label: "Colonia",             type: "text", model: "colonia",           },
-  { label: "Codigo Postal",       type: "text", model: "codigoPostal",      },
-  { label: "Estado",              type: "select", model: "estado",          catalogo:"estados"},
-  { label: "Ciudad",              type: "text", model: "ciudad",            },
-  { label: "Correo electronico",  type: "text", model: "correo", },
-  { label: "Telefono",            type: "text", model: "telefono",          },
-  { label: "Celular",             type: "text", model: "celular",           },
-  { label: "Oficina",             type: "text", model: "oficina",           },
-  { label: "Casa",                type: "text", model: "casa",              },
+  { label: "Segundo Nombre",      type: "text",   model: "segundoNombre",   },
+  { label: "Apellido Paterno",    type: "text",   model: "apellidoPaterno", },
+  { label: "Apellido Materno",    type: "text",   model: "apellidoMaterno", },
+  { label: "CURP",                type: "text",   model: "curp",            },
 ];
 const showFormEdit = ref(false); // Referencia al componente FormFactory
-const data = ref({
-  nombre: "fr",
-  rfc: "fr",
-  fechaNacimiento: "2025-05-02",
-  direccion: "fr",
-  colonia: "fr",
-  codigoPostal: "fr",
-  estado: {
-    label: "Baja California",
-    id: 2,
-  },
-  ciudad: "fr",
-  correo: "fr",
-  telefono: "fr",
-  celular: "fr",
-  oficina: "fr",
-  casa: "fr",
-}); // Referencia al componente FormFactory
-const configTable = ref({ actions: ["Seleccionar"] });
+const data = ref({}); // Referencia al componente FormFactory
 
 const tableHeaders = [
   { title: "ID", key: "id" },
@@ -44,16 +18,16 @@ const tableHeaders = [
   { title: "RFC", key: "rfc" },
   { title: "Telefono", key: "telefono" },
   { title: "Correo", key: "correo" },
-  { title: "Estatus", key: "estatus" },
   { title: "Creación", key: "created_at" },
+  { title: "Ult Act", key: "updated_at" },
 ];
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/clientes/get", // Endpoint para obtener datos
-  create: "/api/clientes/create", // Endpoint para crear un elemento
-  update: "/api/clientes/update", // Endpoint para actualizar un elemento
-  delete: "/api/clientes/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/clientes", // Endpoint para obtener datos
+  create: "/api/cliente", // Endpoint para crear un elemento
+  update: "/api/cliente", // Endpoint para actualizar un elemento
+  // delete: "/api/cliente/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -67,7 +41,7 @@ const handleCancelar = () => {
 
 <template>
   <!-- prettier-ignore -->
-  <ManagerUsuario v-if="showFormEdit" :data="data" @cancelar="handleCancelar" />
+  <ManagerRecord v-if="showFormEdit" :data="data" @cancelar="handleCancelar" />
   <div v-else>
     <h1>Clientes</h1>
     <!-- prettier-ignore -->
@@ -78,6 +52,7 @@ const handleCancelar = () => {
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"
       :apiEndpoints="apiEndpoints"
+      :config-table="{ actions: ['Editar'] }"
       @customEdit="handleActionsEdit"
     />
   </div>

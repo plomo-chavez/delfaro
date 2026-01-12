@@ -453,3 +453,8 @@
 .border-black-800 {
   border-color: #1f2937 !important;
 }
+
+/* Estilo global para evitar la capitalización automática en las pestañas */
+.v-tab {
+  text-transform: none !important; /* Evita la capitalización automática */
+}
