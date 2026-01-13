@@ -33,6 +33,8 @@ const props = withDefaults(
     showIconButtonCancel?: boolean;
     showButtonSubmit?: boolean;
     showButtonCancel?: boolean;
+    iconButtonCancel?: string;
+    iconButtonSubmit?: string;
     formRequired?: boolean;
   }>(),
   {
@@ -51,6 +53,8 @@ const props = withDefaults(
     showButtonCancel: true,
     textButtonCancel: null,
     textButtonSubmit: null,
+    iconButtonCancel: "tabler-x",
+    iconButtonSubmit: "tabler-check",
     titleClass: "",
   }
 );
@@ -122,6 +126,8 @@ function handleCancel() {
           :showButtonCancel="props.showButtonCancel"
           :textButtonCancel="props.textButtonCancel"
           :textButtonSubmit="props.textButtonSubmit"
+          :iconButtonCancel="props.iconButtonCancel"
+          :iconButtonSubmit="props.iconButtonSubmit"
           @submit="handleSubmit"
           @cancel="handleCancel"
         />

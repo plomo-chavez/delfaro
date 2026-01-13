@@ -9,9 +9,58 @@ export function formatearFechaHumana(fecha: string): string {
   return format(fechaObjeto, "dd 'de' MMMM 'de' yyyy, HH:mm", { locale: es });
 }
 
-// Función para calcular la diferencia de tiempo desde la fecha hasta ahora
-export function calcularDiferenciaTiempo(fecha: string): string {
+export function calcularDiferenciaTiempo(
+  fecha: string,
+  limite: any = null
+): string {
   const fechaObjeto = new Date(fecha);
+  const ahora = new Date();
+  const diferenciaMs = ahora.getTime() - fechaObjeto.getTime();
+  if (limite != null) {
+    if (typeof limite.valor !== "number" || limite.valor < 0) {
+      let error = "El valor del límite debe ser un número positivo";
+      console.log(error);
+      return error;
+    }
+    const unidadesValidas = ["minutos", "horas", "dias", "meses", "años"];
+    if (!unidadesValidas.includes(limite.unidad)) {
+      let error = `La unidad del límite debe ser una de las siguientes: ${unidadesValidas.join(
+        ", "
+      )}`;
+      console.log(error);
+      return error;
+    }
+    // Convertir la diferencia según la unidad
+    let diferencia;
+    switch (limite.unidad) {
+      case "minutos":
+        diferencia = diferenciaMs / (1000 * 60); // Milisegundos a minutos
+        break;
+      case "horas":
+        diferencia = diferenciaMs / (1000 * 60 * 60); // Milisegundos a horas
+        break;
+      case "dias":
+        diferencia = diferenciaMs / (1000 * 60 * 60 * 24); // Milisegundos a días
+        break;
+      case "meses":
+        diferencia = diferenciaMs / (1000 * 60 * 60 * 24 * 30); // Aproximación: 30 días por mes
+        break;
+      case "años":
+        diferencia = diferenciaMs / (1000 * 60 * 60 * 24 * 365); // Aproximación: 365 días por año
+        break;
+      default:
+        throw new Error("Unidad de tiempo no válida");
+    }
+    // Si la diferencia excede el límite, devolver la fecha formateada
+    if (limite.valor > 0 && diferencia > limite.valor) {
+      let formato = limite?.format ?? "dd/MM/yyyy hh:mm a";
+      return format(fechaObjeto, formato, {
+        locale: es,
+      });
+    }
+  }
+
+  // Si está dentro del límite, devolver la diferencia relativa
   return formatDistanceToNow(fechaObjeto, { addSuffix: true, locale: es });
 }
 

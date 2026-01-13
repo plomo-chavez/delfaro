@@ -38,8 +38,6 @@ export function useCatalogo() {
 
       data = response.data.data;
 
-      console.log("Datos recibidos para el catálogo", item.catalogo, ":", data);
-
       if (!item.formatCatalogo) {
         let config = {
           labelKey: "label",

@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import {
-  showConfirmationMessage,
-  showErrorMessage,
-} from "@/components/apps/sweetAlerts/SweetAlets";
+import { showSuccessMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 // Props y eventos
 const props = withDefaults(
   defineProps<{
@@ -17,6 +14,7 @@ const emit = defineEmits<{
   (event: "changePanel", idx?: any): void;
 }>();
 
+const dataform: any = reactive({});
 const schemaResumenPoliza = [
   {
     label: "Número de póliza",
@@ -43,59 +41,39 @@ const schemaResumenPoliza = [
     classElement: " col-sm-12 col-md-6  col-lg-6 ",
   },
   {
-    label: "Motivo de cancelación",
+    label: "Nuevo número de póliza",
     type: "text",
-    model: "motivoCancelacion",
+    model: "numeroPolizaNuevo",
+    classElement: " col-12 ",
+  },
+  {
+    label: "Motivo de cambio de número",
+    type: "text",
+    model: "motivoCambioNumero",
     classElement: " col-12 ",
   },
 ];
 
-const dataform: any = reactive({});
-
-const handleCancelarPoliza = () => {
-  console.log("Iniciar proceso de cancelación de póliza");
-  console.log("Datos del formulario:", toRaw(dataform));
-  if (toRaw(dataform.motivoCancelacion)) {
-    showConfirmationMessage({
-      title: "¿Deseas cancelar esta póliza?",
-      message: "Este proceso no se puede revertir.",
-      confirmText: "Sí, continuar",
-      cancelText: "Cancelar",
-      onConfirm: async () => {
-        cancelarPoliza();
-      },
-      onCancel: () => {},
-    });
-  } else {
-    showErrorMessage({
-      title: "Error",
-      message: "El motivo de cancelación es obligatorio.",
-    });
-  }
-};
-
-const cancelarPoliza = async () => {
-  console.log("Cancelar póliza");
+const cambioDeNumeroPoliza = async () => {
   let tmp = dataform;
   console.log("Data del formulario:", tmp);
   let payload = {
     poliza_id: tmp.id,
-    motivo: tmp.motivoCancelacion,
+    numeroPoliza: tmp.numeroPolizaNuevo,
+    motivoCambioNumero: tmp.motivoCambioNumero,
   };
 
-  console.log("Data del formulario:", tmp);
-  console.log("Data del formulario:", payload);
-
   await apiRequest({
-    url: `/api/poliza/cancelar`,
-    showMessages: false,
+    url: "/api/poliza/corregir",
     payload,
-    onSuccess: onSuccess,
+    onSuccess: (response: any) => {
+      showSuccessMessage({
+        title: "Cambio de número de poliza",
+        message: "La poliza se ha cambiado de número correctamente.",
+      });
+      emit("goInicio");
+    },
   });
-};
-
-const onSuccess = (data: any) => {
-  emit("goInicio");
 };
 
 onMounted(() => {
@@ -113,8 +91,8 @@ onMounted(() => {
 
 <template>
   <div class="d-flex mb-6">
-    <VIcon :icon="'tabler-progress-x'" size="40" />
-    <h1 class="pl-4 my-auto fontBold">Cancelar Póliza</h1>
+    <VIcon :icon="'tabler-refresh'" size="40" />
+    <h1 class="pl-4 my-auto fontBold">Cambio de número de póliza</h1>
   </div>
   <VCard class="rounded-lg w400 p20 mx-auto">
     <FormFactory
@@ -127,13 +105,13 @@ onMounted(() => {
       <VBtn
         block
         size="small"
-        color="error"
+        color="success"
         variant="outlined"
         rounded
-        @click="handleCancelarPoliza"
+        @click="cambioDeNumeroPoliza"
       >
-        <VIcon start icon="tabler-eraser" />
-        Cancelar poliza
+        <VIcon start icon="tabler-refresh" />
+        Cambiar número de póliza
       </VBtn>
     </div>
   </VCard>

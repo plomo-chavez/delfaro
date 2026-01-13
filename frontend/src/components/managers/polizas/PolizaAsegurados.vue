@@ -2,10 +2,11 @@
 // Props y eventos
 const props = withDefaults(
   defineProps<{
-    registroId: any;
-    asegurados: any;
+    polizaID: any;
   }>(),
-  {}
+  {
+    polizaID: null,
+  }
 );
 
 const emit = defineEmits<{
@@ -65,10 +66,21 @@ const schemaAsegurado = [
   },
 ];
 
+const handleFetchAsegurados = async () => {
+  await apiRequest({
+    showMessages: false,
+    url: `/api/poliza/asegurados`,
+    payload: { poliza_id: props.polizaID },
+    onSuccess: onSuccess,
+  });
+};
+
+const onSuccess = (data: any) => {
+  asegurados.value = data;
+};
+
 onMounted(() => {
-  if (props.asegurados) {
-    asegurados.value = props.asegurados;
-  }
+  handleFetchAsegurados();
 });
 </script>
 
@@ -78,7 +90,10 @@ onMounted(() => {
       <VIcon :icon="'tabler-users'" size="40" />
       <h1 class="pl-4 my-auto fontBold">Asegurados</h1>
     </div>
-    <div class="wFull gap-4 d-flex flex-column">
+    <div v-if="asegurados.length == 0" class="wFull gap-4 d-flex flex-column">
+      <span class="wFull text-center">No hay asegurados registrados</span>
+    </div>
+    <div v-else class="wFull gap-4 d-flex flex-column">
       <template v-for="(row, index) in asegurados" :key="index">
         <VCard class="rounded-lg text-sm">
           <div class="w-full">

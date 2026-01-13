@@ -3,6 +3,7 @@ import {
   showConfirmationMessage,
   showErrorMessage,
 } from "@/components/apps/sweetAlerts/SweetAlets";
+import { customRequest } from "@/utils/axiosInstance";
 // Props y eventos
 const props = withDefaults(
   defineProps<{
@@ -86,16 +87,20 @@ const cancelarPoliza = async () => {
   console.log("Data del formulario:", tmp);
   console.log("Data del formulario:", payload);
 
-  await apiRequest({
-    url: `/api/poliza/cancelar`,
-    showMessages: false,
-    payload,
-    onSuccess: onSuccess,
+  const response = await customRequest({
+    url: "/api/polizas/cancelar",
+    method: "POST",
+    data: payload,
   });
-};
-
-const onSuccess = (data: any) => {
-  emit("goInicio");
+  console.log("Respuesta de cancelar póliza:", response);
+  if (response.data.result) {
+    emit("goInicio");
+  } else {
+    showErrorMessage({
+      title: "Error",
+      message: response.data.message,
+    });
+  }
 };
 
 onMounted(() => {

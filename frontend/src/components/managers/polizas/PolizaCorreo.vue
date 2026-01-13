@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
-import { customRequest } from "@/utils/axiosInstance";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+} from "@/components/apps/sweetAlerts/SweetAlets";
+
 // Props y eventos
 const props = withDefaults(
   defineProps<{
@@ -69,30 +72,29 @@ const handleEnviarCorreo = async () => {
     });
     return;
   } else {
-    const response = await customRequest({
-      url: "/api/polizas/enviar",
-      method: "POST",
-      data: {
-        poliza_id: props.data.id,
-        correo: dataform.correoElectronico,
+    let payload = {
+      poliza_id: props.data.id,
+      correo: dataform.correoElectronico,
+    };
+
+    await apiRequest({
+      url: "/api/poliza/envio/correo",
+      payload,
+      onSuccess: (response: any) => {
+        showSuccessMessage({
+          title: "Envio de documentos",
+          message: "Se han enviado los documentos exitosamente.",
+        });
+        emit("goInicio");
       },
     });
-    console.log("Respuesta de cancelar póliza:", response);
-    if (response.data.result) {
-      emit("goInicio");
-    } else {
-      showErrorMessage({
-        title: "Error",
-        message: response.data.message,
-      });
-    }
   }
 };
 
 onMounted(() => {
   let tmp = toRaw(props.data);
 
-  console.log("Datos de la póliza para enviar por correo:", tmp);
+  console.log("Data de la póliza recibida:", tmp);
 
   Object.assign(dataform, {
     numeroPoliza: tmp.numeroPoliza,

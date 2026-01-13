@@ -141,6 +141,11 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      motivoCambioNumero: {
+        field: "motivoCambioNumero",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       fechaCancelado: {
         field: "fechaCancelado",
         type: DataTypes.STRING(100),
@@ -163,9 +168,33 @@ module.exports = (sequelize) => {
   );
 
   Polizas.associate = (models) => {
+    Polizas.belongsTo(models.Compania, {
+      foreignKey: "compania_id",
+      as: "compania", // Alias para la relación
+    });
+    Polizas.belongsTo(models.Ramos, {
+      foreignKey: "ramo_id",
+      as: "ramo", // Alias para la relación
+    });
+    Polizas.belongsTo(models.Agentes, {
+      foreignKey: "subAgente_id",
+      as: "agente", // Alias para la relación
+    });
     Polizas.belongsTo(models.Clientes, {
       foreignKey: "cliente_id",
       as: "cliente", // Alias para la relación
+    });
+    Polizas.belongsTo(models.EstatusPolizas, {
+      foreignKey: "estatus_id",
+      as: "estatus", // Alias para la relación
+    });
+    Polizas.belongsTo(models.CompaniasProductos, {
+      foreignKey: "producto_id",
+      as: "producto", // Alias para la relación
+    });
+    Polizas.belongsTo(models.Monedas, {
+      foreignKey: "moneda_id",
+      as: "moneda", // Alias para la relación
     });
   };
 

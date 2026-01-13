@@ -12,27 +12,26 @@ const formSchema = [
   { label: "Estatus",             type: "switch", model: "estatus" },
 ];
 const showFormEdit = ref(false); // Referencia al componente FormFactory
-const data = ref(null); // Referencia al componente FormFactory
+const data: any = ref(null); // Referencia al componente FormFactory
 const showWizard = ref(false); // Referencia al componente FormFactory
 
 const tableHeaders = [
   { title: "ID", key: "id" },
   { title: "No. Poliza", key: "numeroPoliza" },
-  { title: "No. Cliente", key: "cliente_id" },
   { title: "Cliente", key: "cliente.nombre" },
   { title: "Compañia", key: "compania.nombreCorto" },
   { title: "Ramo", key: "ramo.label" },
-  { title: "Producto", key: "producto.nombre" },
-  { title: "Estatus", key: "estatusPoliza.label" },
+  { title: "Estatus", key: "estatus.label" },
   { title: "Creación", key: "created_at" },
+  { title: "Ult. Act.", key: "updated_at" },
 ];
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/polizas/get", // Endpoint para obtener datos
-  create: "/api/polizas/create", // Endpoint para crear un elemento
-  update: "/api/polizas/update", // Endpoint para actualizar un elemento
-  delete: "/api/polizas/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/polizas", // Endpoint para obtener datos
+  create: "/api/poliza", // Endpoint para crear un elemento
+  update: "/api/poliza", // Endpoint para actualizar un elemento
+  delete: "/api/poliza/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -63,7 +62,7 @@ const handleActionsCreate = () => {
 
 <template>
   <!-- prettier-ignore -->
-  <ManagerPolizas v-if="showFormEdit" :data="data" @cancelar="handleCancelar" />
+  <ManagerPolizas v-if="showFormEdit" :polizaID="data.id" @cancelar="handleCancelar" />
   <PolizasWizard v-if="showWizard" @cancel="handleCancelar" />
   <div v-if="!showWizard && !showFormEdit">
     <h1>Polizas</h1>

@@ -23,11 +23,12 @@ interface TableHeader {
 }
 
 const emit = defineEmits<{
-  (event: "exportSubmit", item: any): void;
-  (event: "customAction", item: any): void;
   (event: "customEdit", item: any): void;
   (event: "customCreate", item: any): void;
   (event: "customDelete", item: any): void;
+  (event: "exportSubmit", item: any): void;
+  (event: "customAction", item: any): void;
+  (event: "customSeleccionar", item: any): void;
 }>();
 
 const props = withDefaults(
@@ -44,6 +45,7 @@ const props = withDefaults(
     emitCreate?: boolean; // Indica si el formulario será un modal
     emitEdit?: boolean; // Indica si el formulario será un modal
     emitDelete?: boolean; // Indica si el formulario será un modal
+    emitSeleccionar?: boolean; // Indica si el formulario será un modal
     exportSubmit?: boolean; // Indica si el formulario será un modal
     payloadDefault?: any; // Indica si se debe mostrar el título
     showTitle?: boolean; // Indica si se debe mostrar el título
@@ -84,6 +86,8 @@ const respaldoData = ref<any[]>([]);
 const filtroAgrupador = ref<any[]>([]);
 const filtroAgrupadorSelected = ref(null);
 const isDialogVisible = ref(false);
+const showButtonsForms = ref(true);
+const formDisabled = ref(false);
 
 async function fetchTableData() {
   try {
@@ -293,12 +297,27 @@ function handleActionClick({ action, item }: { action: string; item: any }) {
         onCancel: () => {},
       });
     } else if (action === "Editar") {
+      showButtonsForms.value = true;
+      formDisabled.value = false;
       if (props.emitEdit) {
         emit("customEdit", item); // Emite el evento personalizado con la información del elemento
       } else if (props.emitEdit) {
         emit("customEdit", item); // Emite el evento personalizado con la información del elemento
       } else {
         // Comportamiento predeterminado
+        let tmp = { ...item };
+        tmp.estatus = tmp.estatus === "Activo" ? true : false;
+        handleShowForm(tmp);
+      }
+    } else if (action === "Seleccionar") {
+      if (props.emitSeleccionar) {
+        emit("customSeleccionar", item); // Emite el evento personalizado con la información del elemento
+      } else if (props.emitSeleccionar) {
+        emit("customSeleccionar", item); // Emite el evento personalizado con la información del elemento
+      } else {
+        // Comportamiento predeterminado
+        showButtonsForms.value = false;
+        formDisabled.value = true;
         let tmp = { ...item };
         tmp.estatus = tmp.estatus === "Activo" ? true : false;
         handleShowForm(tmp);
@@ -351,6 +370,10 @@ watch(
           :modelValue="formData"
           :formModal="props.formModal"
           :isDialogVisible="isDialogVisible"
+          :showButtonSubmit="showButtonsForms"
+          :textButtonCancel="'Atrás'"
+          :iconButtonCancel="'tabler-arrow-left'"
+          :isDisabled="formDisabled"
           @update:isDialogVisible="handleCancelarForm"
           @submit="handleFormSubmit"
         />

@@ -5,14 +5,36 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 const fs = require("fs");
 const {
+  Clientes,
   Polizas,
   PolizaHistorial,
-  Clientes,
   PolizaAsegurados,
   PolizaRecibos,
+  EstatusPolizas,
+  Compania,
+  CompaniasProductos,
+  Monedas,
+  Ramos,
+  Agentes,
 } = require("../models");
 const entidad = "Poliza";
-const fields = false;
+const fields = [
+  "id",
+  "numeroPoliza",
+  "compania_id",
+  "ramo_id",
+  "subAgente_id",
+  "cliente_id",
+  "estatus_id",
+  "created_at",
+  "updated_at",
+];
+function registrarAccion({ polizaID, accion }) {
+  return PolizaHistorial.create({
+    poliza_id: polizaID,
+    accion,
+  });
+}
 
 exports.getAll = async (req, res) => {
   try {
@@ -22,7 +44,44 @@ exports.getAll = async (req, res) => {
     const pageSize = parseInt(req.body.pageSize) || 10;
 
     // Define los campos y relaciones a incluir
-    const include = [];
+    const include = [
+      {
+        required: false,
+        attributes: ["id", "nombre", "nombreCorto"],
+        model: Compania,
+        as: "compania",
+      },
+      {
+        required: false,
+        attributes: ["id", "label"],
+        model: Ramos,
+        as: "ramo",
+      },
+      {
+        required: false,
+        attributes: [
+          "id",
+          "nombre",
+          "segundo_nombre",
+          "primer_apellido",
+          "segundo_apellido",
+        ],
+        model: Agentes,
+        as: "agente",
+      },
+      {
+        required: false,
+        attributes: ["id", "nombre", "curp"],
+        model: Clientes,
+        as: "cliente",
+      },
+      {
+        required: false,
+        attributes: ["id", "label"],
+        model: EstatusPolizas,
+        as: "estatus",
+      },
+    ];
 
     // Llama a la función genérica
     const response = await getAllFromModel({
@@ -52,6 +111,49 @@ exports.getRecord = async (req, res) => {
   try {
     const record = await Polizas.findOne({
       where: { id },
+      include: [
+        {
+          model: Clientes,
+          as: "cliente",
+          attributes: ["id", "nombre", "curp", "rfc", "correo"],
+        },
+        {
+          model: Compania,
+          as: "compania",
+          attributes: ["id", "nombre", "nombreCorto"],
+        },
+        {
+          model: Ramos,
+          as: "ramo",
+          attributes: ["id", "label"],
+        },
+        {
+          model: CompaniasProductos,
+          as: "producto",
+        },
+        {
+          model: Agentes,
+          as: "agente",
+          attributes: [
+            "id",
+            "nombre",
+            "segundo_nombre",
+            "primer_apellido",
+            "segundo_apellido",
+          ],
+        },
+        {
+          model: EstatusPolizas,
+          as: "estatus",
+          attributes: ["id", "label"],
+        },
+        {
+          required: false,
+          attributes: ["id", "label"],
+          model: Monedas,
+          as: "moneda",
+        },
+      ],
     });
 
     if (!record) {
@@ -108,10 +210,10 @@ exports.getArchivos = async (req, res) => {};
 exports.renovarPoliza = async (req, res) => {};
 
 exports.corregirPoliza = async (req, res) => {
-  const { poliza_id, numeroPoliza } = req.body;
+  const { poliza_id, numeroPoliza, motivoCambioNumero } = req.body;
 
   try {
-    if (!poliza_id || !numeroPoliza) {
+    if (!poliza_id || !numeroPoliza || !motivoCambioNumero) {
       return res.json({
         result: false,
         message: "Faltan datos obligatorios",
@@ -129,11 +231,22 @@ exports.corregirPoliza = async (req, res) => {
         message: "El número de póliza ya existe",
       });
     }
+    const polizaActual = await Polizas.findOne({
+      where: { id: poliza_id },
+      attributes: ["numeroPoliza"], // Solo necesitamos el número de póliza actual
+    });
 
-    // 0810330577
+    const numeroPolizaAnterior = polizaActual.numeroPoliza;
+
     const response = await createOrUpdatedRecord("Polizas", {
       id: poliza_id,
       numeroPoliza,
+      motivoCambioNumero,
+    });
+
+    await registrarAccion({
+      polizaID: poliza_id,
+      accion: `Número de póliza cambiado de ${numeroPolizaAnterior} a ${numeroPoliza}. Motivo: ${motivoCambioNumero}`,
     });
 
     return res.json({
@@ -242,11 +355,11 @@ exports.getHistorial = async (req, res) => {
   const { poliza_id } = req.body;
 
   try {
-    const record = await PolizaHistorial.findAll({
+    const records = await PolizaHistorial.findAll({
       where: { poliza_id },
     });
 
-    if (!record) {
+    if (!records) {
       return res.json({
         result: false,
         message: "Poliza no encontrada",
@@ -256,7 +369,7 @@ exports.getHistorial = async (req, res) => {
     return res.json({
       result: true,
       message: "Información obtenida con éxito",
-      data: record,
+      data: records,
     });
   } catch (error) {
     console.log("Error al obtener la información:", error);
@@ -269,7 +382,7 @@ exports.getHistorial = async (req, res) => {
 
 exports.cancelarPoliza = async (req, res) => {
   const id = req.body.poliza_id;
-  const motivoCancelacion = req.body.motivoCancelacion || "";
+  const motivoCancelacion = req.body.motivo || "";
 
   try {
     if (!id || !motivoCancelacion) {

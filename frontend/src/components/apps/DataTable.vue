@@ -149,7 +149,7 @@ watch(selected, () => {
 
           <!-- prettier-ignore -->
           <button v-for="(action, index) in props.config.actions" :key="index" @click="() => emit('action', { action, item })" class="action-button">
-            <VIcon icon="tabler-click"  size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
+            <VIcon icon="tabler-eye"  size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
             <VIcon icon="tabler-edit"  size="27" v-if="action == 'Editar'" :style="{ color: colors?.warning, fontWeight: 'bold' }" />
             <VIcon icon="tabler-trash"  size="27" v-if="action == 'Eliminar'" :style="{ color: colors?.error, fontWeight: 'bold' }" />
             

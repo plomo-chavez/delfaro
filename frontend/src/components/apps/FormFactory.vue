@@ -34,6 +34,8 @@ const props = withDefaults(
     showIconButtonCancel?: boolean;
     showButtonSubmit?: boolean;
     showButtonCancel?: boolean;
+    iconButtonCancel?: string;
+    iconButtonSubmit?: string;
     formRequired?: boolean;
     validarCambios?: boolean;
     showMessageRequired?: boolean;
@@ -53,6 +55,8 @@ const props = withDefaults(
     showButtonCancel: true,
     textButtonCancel: null,
     textButtonSubmit: null,
+    iconButtonCancel: "tabler-x",
+    iconButtonSubmit: "tabler-check",
     showMessageRequired: true,
   }
 );
@@ -699,20 +703,15 @@ onMounted(async () => {
           </template>
         </v-row>
       </div>
+      <!-- prettier-ignore -->
       <div v-if="showButtonsAction" class="d-flex justify-end gap-3 mt-4">
-        <!-- prettier-ignore -->
         <VBtn v-if="showButtonCancel" variant="outlined" color="secondary" @click.prevent="handleCancel"  > 
-          <VIcon v-if="showIconButtonCancel"  start icon="tabler-x" />
+          <VIcon v-if="showIconButtonCancel"  start :icon="props?.iconButtonCancel" />
           {{ props.textButtonCancel || "Cancelar" }} 
         </VBtn>
 
-        <VBtn
-          v-if="showButtonSubmit"
-          @click="handleSubmit"
-          type="submit"
-          color="success"
-        >
-          <VIcon v-if="showIconButtonSubmit" start icon="tabler-check" />
+        <VBtn v-if="showButtonSubmit" variant="elevated" color="success"  @click="handleSubmit" > 
+          <VIcon v-if="showIconButtonSubmit" start :icon="props?.iconButtonSubmit"/>
           {{ props.textButtonSubmit || "Enviar" }}
         </VBtn>
       </div>

@@ -3,11 +3,8 @@ import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 import { ref, watch } from "vue";
 
 const currentTab = ref("item1");
-const modalContrasenia = ref(false);
 const formDisabled = ref(true);
-const dataContrasenia = ref({});
 const recibos: any = ref({});
-const formSchema: any = ref({});
 const historial: any = ref([]);
 
 // Props y eventos
@@ -51,19 +48,19 @@ const schemaResumenPoliza = [
   {
     label: "Inicio de vigencia",
     type: "label",
-    model: "data.detalles.inicioVigencia",
+    model: "inicioVigencia",
     classElement: " col-sm-12 col-md-6  col-lg-6 ",
   },
   {
     label: "Fin de vigencia",
     type: "label",
-    model: "data.detalles.finVigencia",
+    model: "finVigencia",
     classElement: " col-sm-12 col-md-6  col-lg-6 ",
   },
   {
     label: "Estatus",
     type: "label",
-    model: "estatusPoliza.label",
+    model: "estatus.label",
     classElement: " col-sm-12 col-md-6  col-lg-6 ",
   },
   {
@@ -208,15 +205,6 @@ watch(
 <template>
   <div v-if="true" class="w-full">
     <div class="text-right w-full mb-3">
-      <!-- <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleShowModalContrasenia"
-      >
-        <VIcon start icon="tabler-edit" />
-        Editar
-      </VBtn> -->
       <VBtn
         class="ml-2"
         size="small"
@@ -257,7 +245,7 @@ watch(
         class="ml-2"
         size="small"
         variant="outlined"
-        @click="handleShowModalContrasenia"
+        @click="handleChangePanel(9)"
       >
         <VIcon start icon="tabler-key" />
         Corregir póliza
@@ -321,7 +309,7 @@ watch(
             <FormFactory
               :schema="schemaAutos"
               :formLive="true"
-              :modelValue="props.data.data.carro"
+              :modelValue="props.data.detalles.carro"
               :showButtonsAction="false"
             />
           </div>
@@ -445,7 +433,7 @@ watch(
             <div class="wFull flex flex-wrap gap-4">
                 <div class="w-full d-flex">
                     <div class="mr-auto font-medium text-gray-700">Creación</div>
-                    <div class="ml-auto font-bold">{{ (props.data.createdAt) }}</div>
+                    <div class="ml-auto font-bold">{{ formatDateMoment(props.data.created_at, "DD/MM/YYYY hh:mm A") }}</div>
                 </div>
                 <div class="w-full d-flex">
                     <div class="mr-auto font-medium text-gray-700">Utl. Actualización</div>
