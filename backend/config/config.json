@@ -4,7 +4,12 @@
     "password": "z4thMUpEeGrC",
     "database": "desar257_DelFaro",
     "host": "mx66.hostgator.mx",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    }
   },
   "test": {
     "username": "desar257_dev",
@@ -12,7 +17,12 @@
     "database": "desar257_DelFaro",
     "host": "mx66.hostgator.mx",
     "logging": false,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    }
   },
   "production": {
     "username": "desar257_dev",
@@ -20,6 +30,11 @@
     "database": "desar257_DelFaro",
     "host": "mx66.hostgator.mx",
     "logging": false,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at"
+    }
   }
 }

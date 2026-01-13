@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import PolizaAsegurados from "./polizas/PolizaAsegurados.vue";
 import PolizaHistorial from "./polizas/PolizaHistorial.vue";
+import PolizaRecibos from "./polizas/PolizaRecibos.vue";
 
 const dataPoliza: any = ref(null);
 const section = ref(1);
@@ -73,7 +74,7 @@ onMounted(() => {
       <!-- Recibo de pago -->
       <PolizaReciboPago   v-if="section == 3" :data="dataPoliza" :recibo="dataPoliza.recibo" @changePanel="handleChangePanel" />
       <!-- Recibos -->
-      <PolizaRecibos      v-if="section == 4" :data="dataPoliza" :registroId="dataPoliza.id" :recibos="dataPoliza.recibos" @changePanel="handleChangePanel" />
+      <PolizaRecibos      v-if="section == 4" :data="dataPoliza"@changePanel="handleChangePanel" />
       <!-- Historial -->
       <PolizaHistorial    v-if="section == 5" :polizaID="dataPoliza.id" @goInicio="handleBack" />
       <!-- Archivos -->

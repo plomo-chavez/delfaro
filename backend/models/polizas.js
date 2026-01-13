@@ -168,6 +168,10 @@ module.exports = (sequelize) => {
   );
 
   Polizas.associate = (models) => {
+    Polizas.belongsTo(models.PolizaRecibos, {
+      foreignKey: "recibo_id", // Clave foránea en la tabla Polizas
+      as: "recibo", // Alias para la relación
+    });
     Polizas.belongsTo(models.Compania, {
       foreignKey: "compania_id",
       as: "compania", // Alias para la relación

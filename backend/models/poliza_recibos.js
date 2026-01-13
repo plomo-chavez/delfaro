@@ -76,9 +76,13 @@ module.exports = (sequelize) => {
     {
       tableName: "poliza_recibos",
       timestamps: true,
-      underscored: true,
     }
   );
-
+  PolizaRecibos.associate = (models) => {
+    PolizaRecibos.hasOne(models.Polizas, {
+      foreignKey: "recibo_id", // Clave foránea en la tabla Polizas
+      as: "poliza", // Alias para la relación
+    });
+  };
   return PolizaRecibos;
 };

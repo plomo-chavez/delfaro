@@ -113,6 +113,10 @@ exports.getRecord = async (req, res) => {
       where: { id },
       include: [
         {
+          model: PolizaRecibos,
+          as: "recibo",
+        },
+        {
           model: Clientes,
           as: "cliente",
           attributes: ["id", "nombre", "curp", "rfc", "correo"],
@@ -419,10 +423,10 @@ exports.cancelarPoliza = async (req, res) => {
       estatus: "Vencido0000",
     });
 
-    // await registrarAccion({
-    //   polizaID: id,
-    //   accion: `Póliza cancelada. Motivo: ${motivoCancelacion}`,
-    // });
+    await registrarAccion({
+      polizaID: id,
+      accion: `Póliza cancelada. Motivo: ${motivoCancelacion}`,
+    });
 
     return res.json({
       result: true,
@@ -439,4 +443,31 @@ exports.cancelarPoliza = async (req, res) => {
   }
 };
 
-exports.getRecibos = async (req, res) => {};
+exports.getRecibos = async (req, res) => {
+  const { poliza_id } = req.body;
+
+  try {
+    const records = await PolizaRecibos.findAll({
+      where: { poliza_id },
+    });
+
+    if (!records) {
+      return res.json({
+        result: false,
+        message: "Poliza no encontrada",
+      });
+    }
+
+    return res.json({
+      result: true,
+      message: "Información obtenida con éxito",
+      data: records,
+    });
+  } catch (error) {
+    console.log("Error al obtener la información:", error);
+    return res.json({
+      result: false,
+      message: "Error al obtener la información",
+    });
+  }
+};
