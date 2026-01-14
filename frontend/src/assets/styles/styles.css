@@ -2,6 +2,7 @@
 .bgRed { background-color: red !important; }
 .textDanger { color: red !important; } 
 .textSuccess { color: var(--v-theme-success)!important; } 
+.textSuccess { color: #0bac30!important; } 
 .textSecondary { color: #717171 !important; } 
 .textSecondary { color: #717171 !important; } 
 .bgDiv { background-color: #ffffff!important; }

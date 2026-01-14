@@ -9,6 +9,7 @@ export const apiRequest = async (params = {}) => {
     url = null,
     method = "POST",
     payload = {},
+    headers = {}, // Agregar soporte para headers personalizados
     onSuccess = null,
     onError = null,
     showMessages = true,
@@ -23,6 +24,7 @@ export const apiRequest = async (params = {}) => {
       url,
       method: method,
       data: payload,
+      headers: headers, // Pasar los headers personalizados
     });
     const dataResponse = response.data;
 

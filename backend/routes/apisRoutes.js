@@ -104,8 +104,8 @@ router.post('/api/asegurado/polizas',       aseguradoController.obtenerPolizasCl
 // Cobranza
 router.post('/api/recibos',                 cobranzaController.getAll);
 router.get('/api/recibo/:id',               cobranzaController.getRecord);
-router.post('/api/recibo/pagar',            cobranzaController.pagarRecibo);
 router.post('/api/recibo/cancelar',         cobranzaController.cancelarRecibo);
+router.post('/api/recibo/pagar', upload.single("soporte"), cobranzaController.pagarRecibo);
 
 // Ruta dinámica para todos los catálogos
 router.post('/api/catalogos/:catalogo', (req, res) => {

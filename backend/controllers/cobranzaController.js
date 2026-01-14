@@ -1,25 +1,31 @@
 const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
-const { getAllFromModel } = require("../db/customFunctions");
+const {
+  existeCarpeta,
+  escribirArchivo,
+  filePathToPublicUrl,
+  getPathFolderFiles,
+} = require("../utils/filesHelper");
+const { PolizaRecibos, Polizas, Compania } = require("../models");
 const { enviarCorreo } = require("../utils/emailServiceHelper");
+const { getAllFromModel } = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const moment = require("moment");
+const path = require("path");
 const fs = require("fs");
-const { PolizaRecibos } = require("../models");
 const entidad = "Poliza";
 const fields = false;
 
-async function procesarRecibo({ id, estatus, motivoCancelacion }) {
-  const isPagar = estatus === "Pagado";
-  if (estatus === "Cancelado" && !motivoCancelacion) {
+async function procesarRecibo(data) {
+  const isPagar = data.estatus == "Pagado";
+  if (data.estatus === "Cancelado" && !data.motivoCancelacion) {
     return {
       result: false,
       message: "Debe proporcionar un motivo de cancelación",
     };
   }
   try {
-    const record = await PolizaRecibos.findOne({
-      where: { id },
-    });
+    // prettier-ignore
+    const record = await PolizaRecibos.findOne({ where: { id: data.id } });
 
     if (!record) {
       return {
@@ -28,17 +34,7 @@ async function procesarRecibo({ id, estatus, motivoCancelacion }) {
       };
     }
 
-    let payload = {
-      id: record.id,
-      estatus,
-      fechaPago: moment().format("YYYY-MM-DD"),
-    };
-
-    if (!isPagar) {
-      payload.motivoCancelacion = motivoCancelacion;
-    }
-
-    await createOrUpdatedRecord("PolizaRecibos", payload);
+    await createOrUpdatedRecord("PolizaRecibos", data);
 
     return {
       result: true,
@@ -52,6 +48,39 @@ async function procesarRecibo({ id, estatus, motivoCancelacion }) {
     return {
       result: false,
       message: "Error al " + (isPagar ? "pagar" : "cancelar") + " " + entidad,
+    };
+  }
+}
+
+async function validarRecibo(reciboID, modoPago = true) {
+  const reciboHaValidar = await PolizaRecibos.findOne({
+    where: { id: reciboID },
+  });
+
+  if (!reciboHaValidar) {
+    return {
+      result: false,
+      message: "Recibo no encontrado",
+    };
+  }
+
+  if (
+    reciboHaValidar.estatus == "Pagado" ||
+    reciboHaValidar.estatus == "Cancelado"
+  ) {
+    // prettier-ignore
+    let extraMessage = modoPago ? "No puede ser pagado" : "No puede ser cancelado";
+
+    // prettier-ignore
+    return ({
+      result: false,
+      message: extraMessage+ ", ya que el recibo se encuentra " + reciboHaValidar.estatus.toLowerCase() 
+    });
+  } else {
+    return {
+      result: true,
+      message: "Recibo válido para pago",
+      data: reciboHaValidar,
     };
   }
 }
@@ -118,27 +147,122 @@ exports.getRecord = async (req, res) => {
 };
 
 exports.pagarRecibo = async (req, res) => {
-  const { id } = req.body;
-  if (!id) {
+  const { reciboID, formaPago, fechaPago, comentarios } = req.body;
+  let fileResponse = null;
+
+  // Verificar si se envió el ID
+  if (!reciboID) {
     return res.json({
       result: false,
-      message: entidad + " no encontrado",
+      message: "Falta el ID del recibo a pagar",
     });
   }
 
-  return res.json(await procesarRecibo({ id, estatus: "Pagado" }));
+  let validacionRecibo = await validarRecibo(reciboID);
+
+  if (validacionRecibo.result === false) {
+    return res.json(validacionRecibo);
+  }
+
+  const recibohaPagar = validacionRecibo.data;
+
+  // Verificar si se cargó un archivo
+  const archivoSoporte = req.file; // El archivo cargado estará aquí gracias a upload.single("soporte")
+  if (archivoSoporte) {
+    // prettier-ignore
+    const poliza = await Polizas.findOne({
+      where: { id: recibohaPagar.poliza_id },
+      include: [
+        {
+          model: Compania,
+          as: "compania",
+          attributes: ["id", "nombre", "nombreCorto"],
+        },
+      ],
+    });
+    // Construir la ruta base
+    const basePath = await getPathFolderFiles();
+    const companiaFolder = path.join(basePath, poliza.compania.nombreCorto);
+    const polizaFolder = path.join(companiaFolder, poliza.numeroPoliza);
+    const recibosFolder = path.join(polizaFolder, "recibos");
+
+    // Crear las carpetas si no existen
+    existeCarpeta(companiaFolder, { crearSiNoExiste: true });
+    existeCarpeta(polizaFolder, { crearSiNoExiste: true });
+    existeCarpeta(recibosFolder, { crearSiNoExiste: true });
+
+    // Copiar el archivo al destino
+    // prettier-ignore
+    const nuevoNombreArchivo = `recibo_${poliza.numeroPoliza}_${recibohaPagar.numeroRecibo}${path.extname(archivoSoporte.originalname)}`;
+    const rutaDestino = path.join(recibosFolder, nuevoNombreArchivo);
+
+    const contenidoArchivo = fs.readFileSync(archivoSoporte.path);
+    let responseFile = escribirArchivo(rutaDestino, contenidoArchivo);
+    let fileUrl = await filePathToPublicUrl(responseFile.rutaArchivo);
+
+    fileResponse = {
+      url: fileUrl,
+      nombre: nuevoNombreArchivo,
+      ruta: responseFile.rutaArchivo,
+    };
+  }
+
+  try {
+    let payload = {
+      id: recibohaPagar.id,
+      estatus: "Pagado",
+      formaPago,
+      fechaPago,
+      comentarios,
+      fechaCancelado: null,
+      motivoCancelacion: null,
+    };
+
+    if (fileResponse != null) {
+      payload.evidencia = JSON.stringify(fileResponse);
+    }
+
+    const resultado = await procesarRecibo(payload);
+
+    return res.json({
+      result: true,
+      message: "Recibo pagado con éxito",
+    });
+  } catch (error) {
+    console.error("Error al procesar el recibo:", error);
+    return res.status(500).json({
+      result: false,
+      message: "Error interno al procesar el recibo.",
+    });
+  }
 };
 
 exports.cancelarRecibo = async (req, res) => {
-  const { id, motivoCancelacion } = req.body;
+  let { reciboID, motivoCancelacion, fechaCancelado } = req.body;
+  const id = reciboID;
   if (!id) {
     return res.json({
       result: false,
       message: entidad + " no encontrado",
     });
   }
+  let validacionRecibo = await validarRecibo(reciboID, false);
+
+  if (validacionRecibo.result === false) {
+    return res.json(validacionRecibo);
+  }
+
+  fechaCancelado = fechaCancelado || moment().format("DD/MM/YYYY");
 
   return res.json(
-    await procesarRecibo({ id, estatus: "Cancelado", motivoCancelacion })
+    await procesarRecibo({
+      id,
+      estatus: "Cancelado",
+      motivoCancelacion,
+      fechaCancelado,
+      evidencia: null,
+      fechaPago: null,
+      formaPago: null,
+    })
   );
 };
