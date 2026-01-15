@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
+import authV2MaskDark from "@images/pages/misc-mask-dark.png";
+import authV2MaskLight from "@images/pages/misc-mask-light.png";
 import { layoutConfig } from "@layouts";
 import {
   VerticalNavGroup,
@@ -16,6 +19,8 @@ import type {
 import type { Component } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import { VNodeRenderer } from "./VNodeRenderer";
+
+const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
 
 interface Props {
   tag?: string | Component;
@@ -91,7 +96,7 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered);
           <VNodeRenderer :nodes="layoutConfig.app.logo" />
 
           <Transition name="vertical-nav-app-title">
-            <h1 v-show="!hideTitleAndIcon" class="app-logo-title">
+            <h1 v-show="!hideTitleAndIcon" class="app-logo-title text-primary">
               {{ layoutConfig.app.title }}
             </h1>
           </Transition>

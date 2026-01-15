@@ -45,6 +45,44 @@ const userData = JSON.parse(localStorage.getItem("userData") || "null");
             }}</VListItemSubtitle>
           </VListItem>
 
+          <VDivider class="my-2" />
+
+          <!-- 👉 Profile -->
+          <VListItem link>
+            <template #prepend>
+              <VIcon class="me-2" icon="tabler-user" size="22" />
+            </template>
+
+            <VListItemTitle>Profile</VListItemTitle>
+          </VListItem>
+
+          <!-- 👉 Settings -->
+          <VListItem link>
+            <template #prepend>
+              <VIcon class="me-2" icon="tabler-settings" size="22" />
+            </template>
+
+            <VListItemTitle>Settings</VListItemTitle>
+          </VListItem>
+
+          <!-- 👉 Pricing -->
+          <VListItem link>
+            <template #prepend>
+              <VIcon class="me-2" icon="tabler-currency-dollar" size="22" />
+            </template>
+
+            <VListItemTitle>Pricing</VListItemTitle>
+          </VListItem>
+
+          <!-- 👉 FAQ -->
+          <VListItem link>
+            <template #prepend>
+              <VIcon class="me-2" icon="tabler-help" size="22" />
+            </template>
+
+            <VListItemTitle>FAQ</VListItemTitle>
+          </VListItem>
+
           <!-- Divider -->
           <VDivider class="my-2" />
 
@@ -54,7 +92,7 @@ const userData = JSON.parse(localStorage.getItem("userData") || "null");
               <VIcon class="me-2" icon="tabler-logout" size="22" />
             </template>
 
-            <VListItemTitle>Cerrar sesión</VListItemTitle>
+            <VListItemTitle>Logout</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>

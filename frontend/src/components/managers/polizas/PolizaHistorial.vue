@@ -33,7 +33,9 @@ const handleFetchHistorial = async () => {
 };
 
 const onSuccessFetchHistorial = (data: any) => {
-  dataHistorial.value = data.reverse();
+  if (data.length != 0) {
+    dataHistorial.value = data.reverse();
+  }
 };
 
 onMounted(() => {
@@ -70,7 +72,7 @@ onMounted(() => {
           </div>
         </VTimelineItem>
       </VTimeline>
-      <h3 v-else class="wFull text-center">No hay historial disponible</h3>
+      <h3 v-else class="wFull text-center">No hay registros</h3>
     </VCardText>
   </VCard>
 </template>

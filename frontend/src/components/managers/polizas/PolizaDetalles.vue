@@ -204,79 +204,31 @@ watch(
 
 <template>
   <div v-if="true" class="w-full">
+    <!-- prettier-ignore -->
     <div class="text-right w-full mb-3">
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleChangePanel(2)"
-      >
-        <VIcon start icon="tabler-users" />
-        Ver asegurados
+      <VBtn class="ml-2" size="small" variant="outlined" @click="handleChangePanel(2)"> 
+        <VIcon start icon="tabler-users" /> Ver asegurados
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleChangePanel(6)"
-      >
-        <VIcon start icon="tabler-eye" />
-        Ver Archivos
+      <VBtn class="ml-2" size="small" variant="outlined" @click="handleChangePanel(6)"> 
+        <VIcon start icon="tabler-eye" /> Ver Archivos
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleVerPoliza"
-      >
-        <VIcon start icon="tabler-eye" />
-        Siniestrar
+      <VBtn class="ml-2" disabled size="small" variant="outlined" @click="handleVerPoliza"> 
+        <VIcon start icon="tabler-eye" /> Siniestrar
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleVerPoliza"
-      >
-        <VIcon start icon="tabler-eye" />
-        Renovar póliza
+      <VBtn class="ml-2" disabled size="small" variant="outlined" @click="handleVerPoliza"> 
+        <VIcon start icon="tabler-eye" /> Renovar póliza
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleChangePanel(9)"
-      >
-        <VIcon start icon="tabler-key" />
-        Corregir póliza
+      <VBtn class="ml-2" size="small" variant="outlined" @click="handleChangePanel(9)"> 
+        <VIcon start icon="tabler-key" /> Corregir póliza
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleChangePanel(8)"
-      >
-        <VIcon start icon="tabler-mail" />
-        Enviar por correo
+      <VBtn class="ml-2" size="small" variant="outlined" @click="handleChangePanel(8)"> 
+        <VIcon start icon="tabler-mail" /> Enviar por correo
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="outlined"
-        @click="handleShowModalContrasenia"
-      >
-        <VIcon start icon="tabler-send" />
-        Enviar mensaje
+      <VBtn class="ml-2" disabled size="small" variant="outlined" @click="handleShowModalContrasenia"> 
+        <VIcon start icon="tabler-send" /> Enviar mensaje
       </VBtn>
-      <VBtn
-        class="ml-2"
-        size="small"
-        variant="flat"
-        color="error"
-        @click="handleChangePanel(7)"
-      >
-        <VIcon start icon="tabler-cancel" />
-        Cancelar póliza
+      <VBtn class="ml-2" size="small" variant="flat" color="error" @click="handleChangePanel(7)"> 
+        <VIcon start icon="tabler-cancel" /> Cancelar póliza
       </VBtn>
     </div>
     <div class="d-flex">

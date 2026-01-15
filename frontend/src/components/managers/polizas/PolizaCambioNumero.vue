@@ -105,7 +105,7 @@ onMounted(() => {
       <VBtn
         block
         size="small"
-        color="success"
+        color="primary"
         variant="outlined"
         rounded
         @click="cambioDeNumeroPoliza"
