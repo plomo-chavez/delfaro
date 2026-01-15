@@ -1,6 +1,4 @@
 const { DataTypes } = require("sequelize");
-const { fields } = require("../routes/multerConfig");
-
 module.exports = (sequelize) => {
   const PolizaAsegurados = sequelize.define(
     "PolizaAsegurados",

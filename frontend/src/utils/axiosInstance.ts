@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+
 const baseURL = import.meta.env.VITE_API_URL; // Usa VITE_API_URL en tu .env
 const axiosInstance = axios.create({
   baseURL, // No agregues "http://" ni el puerto si ya está en la variable
@@ -7,6 +8,20 @@ const axiosInstance = axios.create({
   },
   timeout: 600000,
 });
+
+// Interceptor para agregar el token a las solicitudes
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token"); // Obtén el token del localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Agrega el token al header Authorization
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Función para manejar configuraciones personalizadas
 function customRequest(

@@ -29,6 +29,7 @@ const emit = defineEmits<{
   (event: "exportSubmit", item: any): void;
   (event: "customAction", item: any): void;
   (event: "customSeleccionar", item: any): void;
+  (event: "customSoftDelete", item: any): void;
 }>();
 
 const props = withDefaults(
@@ -59,6 +60,7 @@ const props = withDefaults(
       create?: string; // Endpoint para crear un elemento
       update?: string; // Endpoint para actualizar un elemento
       delete?: string; // Endpoint para eliminar un elemento
+      deleteSoft?: string; // Endpoint para eliminar un elemento
     };
   }>(),
   {
@@ -162,40 +164,6 @@ async function handleFormSubmit(data: Record<string, any>) {
     }
   } catch (error) {
     console.error("Error al enviar el formulario:", error);
-  }
-}
-
-async function handleDeleteItem(item: any) {
-  try {
-    if (props.emitDelete) {
-      // Emitir evento personalizado para manejar la eliminación
-      emit("customDelete", item);
-    } else {
-      let url = props?.apiEndpoints?.delete ?? "";
-      let payload = { id: item.id };
-      if (props.payloadDefault) {
-        payload = { ...props.payloadDefault, ...payload };
-      }
-      let response = await customRequest({
-        url: url,
-        method: "POST",
-        data: payload,
-      });
-      if (response.data.result) {
-        showSuccessMessage({
-          title: "Eliminado",
-          message: "El elemento ha sido eliminado correctamente.",
-        });
-      } else {
-        showSuccessMessage({
-          title: "Error",
-          message: "No se pudo eliminar el elemento.",
-        });
-      }
-      await fetchTableData();
-    }
-  } catch (error) {
-    console.error("Error al eliminar el elemento:", error);
   }
 }
 
@@ -320,7 +288,88 @@ function handleActionClick({ action, item }: { action: string; item: any }) {
         tmp.estatus = tmp.estatus === "Activo" ? true : false;
         handleShowForm(tmp);
       }
+    } else if (action === "EliminarSoft") {
+      showDeleteItem({
+        title: "¿Estás seguro de eliminar permanentemente este registro?",
+        message: "Esta acción no se puede deshacer.",
+        confirmText: "Sí, eliminar",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          handleSoftDeleteItem(item);
+        },
+        onCancel: () => {},
+      });
+    } else {
+      console.log(`Acción no manejada: ${action}`);
     }
+  }
+}
+
+async function handleDeleteItem(item: any) {
+  try {
+    if (props.emitDelete) {
+      // Emitir evento personalizado para manejar la eliminación
+      emit("customDelete", item);
+    } else {
+      let url = props?.apiEndpoints?.delete ?? "";
+      let payload = { id: item.id };
+      if (props.payloadDefault) {
+        payload = { ...props.payloadDefault, ...payload };
+      }
+      let response = await customRequest({
+        url: url,
+        method: "POST",
+        data: payload,
+      });
+      if (response.data.result) {
+        showSuccessMessage({
+          title: "Eliminado",
+          message: "El elemento ha sido eliminado correctamente.",
+        });
+      } else {
+        showSuccessMessage({
+          title: "Error",
+          message: "No se pudo eliminar el elemento.",
+        });
+      }
+      await fetchTableData();
+    }
+  } catch (error) {
+    console.error("Error al eliminar el elemento:", error);
+  }
+}
+async function handleSoftDeleteItem(item: any) {
+  try {
+    if (props.emitDelete) {
+      // Emitir evento personalizado para manejar la eliminación
+      emit("customSoftDelete", item);
+    } else {
+      let url = props?.apiEndpoints?.deleteSoft ?? "";
+      let payload = { id: item.id };
+
+      if (props.payloadDefault) {
+        payload = { ...props.payloadDefault, ...payload };
+      }
+      let response = await customRequest({
+        url: url,
+        method: "POST",
+        data: payload,
+      });
+      if (response.data.result) {
+        showSuccessMessage({
+          title: "Eliminado",
+          message: "El elemento ha sido eliminado correctamente.",
+        });
+      } else {
+        showSuccessMessage({
+          title: "Error",
+          message: "No se pudo eliminar el elemento.",
+        });
+      }
+      await fetchTableData();
+    }
+  } catch (error) {
+    console.error("Error al eliminar el elemento:", error);
   }
 }
 

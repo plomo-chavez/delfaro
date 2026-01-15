@@ -103,6 +103,7 @@ async function saveUser(data) {
 exports.getAll = async (req, res) => {
   try {
     // Recibe filtros, paginación y otros parámetros desde el body
+    const paranoid = true; // Habilitar modo paranoid para excluir registros soft-deleted
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
@@ -116,7 +117,9 @@ exports.getAll = async (req, res) => {
       "estatus",
       "created_at",
       "updated_at",
+      "deleted_at",
     ];
+
     const include = [
       {
         model: TiposDeUsuarios,
@@ -126,8 +129,15 @@ exports.getAll = async (req, res) => {
     ];
 
     // Llama a la función genérica
-    // prettier-ignore
-    const response = await getAllFromModel({model: Usuarios, filtros, attributes, include, page, pageSize });
+    const response = await getAllFromModel({
+      model: Usuarios,
+      filtros,
+      attributes,
+      include,
+      page,
+      pageSize,
+      paranoid,
+    });
 
     // Devuelve la respuesta
     return res.json(response);
@@ -205,6 +215,44 @@ exports.delete = async (req, res) => {
   try {
     // Actualizar el estatus del usuario a 0 (eliminado lógico)
     const response = await updateRecord("Usuarios", { id, estatus: 0 });
+
+    if (!response.result) {
+      return res.json({
+        result: false,
+        message: "Usuario no encontrado o no se pudo eliminar",
+      });
+    }
+
+    // Respuesta exitosa
+    return res.json({
+      result: true,
+      message: "Usuario eliminado con éxito",
+    });
+  } catch (error) {
+    console.log("Error al eliminar usuario:", error);
+    return res.json({
+      result: false,
+      message: "Error al eliminar usuario: " + error.message,
+    });
+  }
+};
+
+exports.softDelete = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de usuario es requerido",
+    });
+  }
+
+  try {
+    // Eliminar el usuario completamente de la base de datos
+    const response = await Usuarios.destroy({
+      where: { id },
+    });
 
     if (!response.result) {
       return res.json({

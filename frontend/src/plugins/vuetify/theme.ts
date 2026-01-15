@@ -22,6 +22,7 @@ export const themes: Record<string, ThemeDefinition> = {
       warning: "#FF9F43",
       "on-warning": "#fff",
       "warning-darken-1": "#E68F3C",
+      soft: "#8f0005",
       error: "#FF4C51",
       "on-error": "#fff",
       "error-darken-1": "#E64449",

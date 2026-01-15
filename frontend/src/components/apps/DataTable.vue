@@ -152,6 +152,7 @@ watch(selected, () => {
             <VIcon icon="tabler-eye"  size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
             <VIcon icon="tabler-edit"  size="27" v-if="action == 'Editar'" :style="{ color: colors?.warning, fontWeight: 'bold' }" />
             <VIcon icon="tabler-trash"  size="27" v-if="action == 'Eliminar'" :style="{ color: colors?.error, fontWeight: 'bold' }" />
+            <VIcon icon="tabler-database-x"  size="27" v-if="action == 'EliminarSoft'" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
             
           </button>
         </div>

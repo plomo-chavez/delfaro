@@ -48,6 +48,7 @@ async function getAllFromModel({
   page = 1,
   pageSize = 10,
   pagination = true, // Nueva propiedad booleana
+  paranoid = false,
 }) {
   try {
     // Calcula el offset para la paginación
@@ -62,6 +63,7 @@ async function getAllFromModel({
       offset: pagination ? offset : null, // Aplica offset solo si pagination es true
       raw: true,
       nest: true,
+      paranoid,
     });
 
     rows = normalizeNullRelations(rows);

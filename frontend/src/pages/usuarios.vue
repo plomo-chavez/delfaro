@@ -19,6 +19,7 @@ const tableHeaders = [
   { title: "Tipo", key: "tipo.label" },
   { title: "Estatus", key: "estatus", format: (value : any) => (value === 1 ? "Activo" : "Inactivo"), },
   { title: "Creación", key: "created_at" },
+  { title: "Eliminación", key: "deleted_at" },
 ];
 
 const apiEndpoints = {
@@ -27,6 +28,7 @@ const apiEndpoints = {
   create: "/api/usuario", // Endpoint para crear un elemento
   update: "/api/usuarios", // Endpoint para actualizar un elemento
   delete: "/api/usuario/eliminar", // Endpoint para eliminar un elemento
+  deleteSoft: "/api/usuario/eliminar/soft", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -36,6 +38,8 @@ const handleActionsEdit = (dataRow: any) => {
 const handleCancelar = () => {
   showFormEdit.value = false;
 };
+
+const configTable = ref({ actions: ["Editar", "Eliminar", "EliminarSoft"] });
 </script>
 
 <template>
@@ -53,6 +57,7 @@ const handleCancelar = () => {
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"
       :apiEndpoints="apiEndpoints"
+      :configTable="configTable"
       @customEdit="handleActionsEdit"
     />
   </div>
