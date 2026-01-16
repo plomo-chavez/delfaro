@@ -18,19 +18,15 @@ import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
     <template #navbar>
       <RouterLink to="/" class="app-logo d-flex align-center gap-x-3">
         <VNodeRenderer :nodes="themeConfig.app.logo" />
-
-        <h1
-          class="app-title font-weight-bold leading-normal text-xl text-capitalize"
-        >
+        <!-- prettier-ignore -->
+        <h1 class="app-title font-weight-bold leading-normal text-xl text-capitalize" >
           {{ themeConfig.app.title }}
         </h1>
       </RouterLink>
       <VSpacer />
-
+      <!-- prettier-ignore -->
       <NavBarI18n
-        v-if="
-          themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length
-        "
+        v-if=" themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length "
         :languages="themeConfig.app.i18n.langConfig"
       />
 

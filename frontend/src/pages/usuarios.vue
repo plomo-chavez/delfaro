@@ -19,7 +19,6 @@ const tableHeaders = [
   { title: "Tipo", key: "tipo.label" },
   { title: "Estatus", key: "estatus", format: (value : any) => (value === 1 ? "Activo" : "Inactivo"), },
   { title: "Creación", key: "created_at" },
-  { title: "Eliminación", key: "deleted_at" },
 ];
 
 const apiEndpoints = {
@@ -38,7 +37,7 @@ const handleCancelar = () => {
   showFormEdit.value = false;
 };
 
-const configTable = ref({ actions: ["Editar", "Eliminar", "EliminarSoft"] });
+const configTable = ref({ actions: ["Editar", "Eliminar"] });
 </script>
 
 <template>

@@ -11,6 +11,7 @@ export const apiRequest = async (params = {}) => {
     payload = {},
     headers = {}, // Agregar soporte para headers personalizados
     onSuccess = null,
+    responseFull = false,
     onError = null,
     showMessages = true,
   }: any = params;
@@ -37,7 +38,7 @@ export const apiRequest = async (params = {}) => {
         });
       }
       if (typeof onSuccess === "function") {
-        onSuccess(dataResponse.data);
+        onSuccess(responseFull ? dataResponse : dataResponse.data);
       }
     } else {
       showErrorMessage({
@@ -45,7 +46,7 @@ export const apiRequest = async (params = {}) => {
         message: dataResponse.message,
       });
       if (onError) {
-        onError(dataResponse.message);
+        onError(responseFull ? dataResponse : dataResponse.data);
       }
     }
   } catch (error: any) {

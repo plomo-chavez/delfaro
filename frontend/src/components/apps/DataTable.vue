@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { themes } from "@/plugins/vuetify/theme";
+import { isUserAdmin } from "@/utils/userUtils"; // Importa la función desde userUtils
 import { computed, ref, watch } from "vue";
 const colors = ref(themes.light.colors); // Accede a los colores del tema
 
 const selected: any = ref([]);
 
 interface Header {
+  columnCenter?: boolean;
   title: string;
   key: string;
 }
@@ -28,7 +30,7 @@ const props = withDefaults(
   }>(),
   {
     softDelete: false, // Valor predeterminado
-  }
+  },
 );
 
 const emit = defineEmits<{
@@ -63,8 +65,8 @@ const filteredData = computed(() => {
 
   return props.data.filter((item) =>
     searchColumns.some((column) =>
-      String(item[column]).toLowerCase().includes(query)
-    )
+      String(item[column]).toLowerCase().includes(query),
+    ),
   );
 });
 
@@ -91,9 +93,18 @@ const itsSoftDelete = (item: any) => {
   return !!props.softDelete && !!item?.deleted_at;
 };
 
+const getHeaders = () => {
+  // prettier-ignore
+  return [
+    ...(mergedConfig.numerador ? [{ title: "#", key: "numerador", }] : []),
+    ...props.headers.map((header) => ({ ...header })),
+    ...(props.config.actions.length ? [ { title: "Acciones", key: "actions", }, ] : []),
+  ];
+};
+
 watch(selected, () => {
   const selectedById = props.data.filter((item) =>
-    selected.value.includes(item.id)
+    selected.value.includes(item.id),
   );
   emit("selection-change", selectedById); // Emitir los IDs seleccionados
 });
@@ -121,13 +132,7 @@ watch(selected, () => {
     </div>
     <!-- Tabla -->
     <VDataTable
-      :headers="[
-        ...(mergedConfig.numerador ? [{ title: '#', key: 'numerador' }] : []),
-        ...props.headers,
-        ...(props.config.actions.length
-          ? [{ title: 'Acciones', key: 'actions' }]
-          : []),
-      ]"
+      :headers="getHeaders()"
       :items="filteredData"
       :items-per-page="mergedConfig.paginador ? 10 : filteredData.length"
       :show-select="mergedConfig.seleccionar"
@@ -138,7 +143,13 @@ watch(selected, () => {
       fixed-header
       :class="{ 'no-wrap': mergedConfig.noWrap }"
     >
-      <!-- height="300" -->
+      <!-- prettier-ignore -->
+      <template v-for="header in getHeaders()" :key="`header.${header.key}`" #[`header.${header.key}`]>
+        <div :class="{ 'centerHeader': header.key == 'actions' || (header?.columnCenter ?? false )}">
+          {{ header.title }}
+        </div>
+      </template>
+
       <!-- Numerador -->
       <template #item.numerador="{ index }">
         {{ index + 1 }}
@@ -147,7 +158,7 @@ watch(selected, () => {
       <!-- Datos dinámicos -->
       <!-- prettier-ignore -->
       <template v-for="header in props.headers" :key="header.key" #[`item.${header.key}`]="{ item }">
-        <span :class="{ 'no-wrap': mergedConfig.noWrap }">
+        <span :class="{ 'no-wrap': mergedConfig.noWrap }" class="">
           {{ getFormattedValue(item, header) }}
         </span>
       </template>
@@ -156,8 +167,7 @@ watch(selected, () => {
       <template #item.actions="{ item }">
         <div class="actions">
           <!-- prettier-ignore -->
-          <template v-if="itsSoftDelete(item)">
-            <pre>{{ item.deleted_at }}</pre>
+          <template v-if="itsSoftDelete(item)&& isUserAdmin()">
             <button v-if="item.deleted_at == null" @click="() => emit('action', { action: 'EliminarSoft', item })" class="action-button">
               <VIcon icon="tabler-database-x"  size="27" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
             </button>
@@ -165,14 +175,14 @@ watch(selected, () => {
               <VIcon icon="tabler-refresh"  size="27" :style="{ color: colors?.success, fontWeight: 'bold' }" />
             </button>
           </template>
+          <!-- prettier-ignore -->
           <template v-else>
-            <!-- prettier-ignore -->
             <button v-for="(action, index) in props.config.actions" :key="index" @click="() => emit('action', { action, item })" class="action-button">
               <VIcon icon="tabler-eye"        size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
               <VIcon icon="tabler-edit"       size="27" v-if="action == 'Editar'" :style="{ color: colors?.warning, fontWeight: 'bold' }" />
               <VIcon icon="tabler-trash"      size="27" v-if="action == 'Eliminar'" :style="{ color: colors?.error, fontWeight: 'bold' }" />
-              <VIcon icon="tabler-database-x" size="27" v-if="action == 'EliminarSoft'" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
             </button>
+            <VIcon v-if="props.softDelete && isUserAdmin()" icon="tabler-database-x" size="27" :style="{ color: colors?.soft, fontWeight: 'bold' }" @click="() => emit('action', { action: 'EliminarSoft', item })" />
           </template>
         </div>
       </template>
@@ -181,6 +191,10 @@ watch(selected, () => {
 </template>
 
 <style scoped>
+/* ::v-deep(.v-data-table__th span) {
+  width: 100%;
+  text-align: center !important;
+} */
 .d-flex {
   display: flex;
   gap: 8px;
@@ -188,9 +202,13 @@ watch(selected, () => {
 .align-center {
   align-items: center;
 }
+
 .actions {
   display: flex;
-  gap: 8px;
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  text-align: center; /* Centra el texto dentro de los elementos */
+  gap: 8px; /* Espaciado entre los elementos */
 }
 .search-input {
   width: 200px;
@@ -212,6 +230,7 @@ watch(selected, () => {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .action-button {
   display: flex;
   align-items: center;
@@ -220,9 +239,7 @@ watch(selected, () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  background-color: #f8f9fa;
   color: #212529;
-  transition: background-color 0.3s ease;
 }
 
 .action-button:hover {
@@ -241,5 +258,11 @@ watch(selected, () => {
   white-space: nowrap !important; /* Evita que el texto se divida en varias líneas */
   overflow: hidden !important; /* Oculta el texto que exceda el ancho */
   text-overflow: ellipsis !important; /* Agrega puntos suspensivos si el texto es muy largo */
+}
+
+/* Define una clase CSS para centrar los encabezados */
+.centerHeader {
+  width: 100% !important;
+  text-align: center !important;
 }
 </style>

@@ -68,6 +68,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getFechaAMPM: typeof import('./src/utils/dateHelper')['getFechaAMPM']
   const getTokenRemainingSeconds: typeof import('./src/utils/authHelper')['getTokenRemainingSeconds']
+  const getUserData: typeof import('./src/utils/userUtils')['getUserData']
   const h: typeof import('vue')['h']
   const handleLogOut: typeof import('./src/utils/authHelper')['handleLogOut']
   const hexToRgb: typeof import('./src/@core/utils/colorConverter')['hexToRgb']
@@ -88,6 +89,8 @@ declare global {
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
   const isToday: typeof import('./src/@core/utils/helpers')['isToday']
+  const isUserAdmin: typeof import('./src/utils/userUtils')['isUserAdmin']
+  const isUserLoggedIn: typeof import('./src/utils/userUtils')['isUserLoggedIn']
   const kFormatter: typeof import('./src/@core/utils/formatters')['kFormatter']
   const lengthValidator: typeof import('./src/@core/utils/validators')['lengthValidator']
   const logicAnd: typeof import('@vueuse/math')['logicAnd']
@@ -458,6 +461,7 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getFechaAMPM: UnwrapRef<typeof import('./src/utils/dateHelper')['getFechaAMPM']>
     readonly getTokenRemainingSeconds: UnwrapRef<typeof import('./src/utils/authHelper')['getTokenRemainingSeconds']>
+    readonly getUserData: UnwrapRef<typeof import('./src/utils/userUtils')['getUserData']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly handleLogOut: UnwrapRef<typeof import('./src/utils/authHelper')['handleLogOut']>
     readonly hexToRgb: UnwrapRef<typeof import('./src/@core/utils/colorConverter')['hexToRgb']>
@@ -477,6 +481,8 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isToday: UnwrapRef<typeof import('./src/@core/utils/helpers')['isToday']>
+    readonly isUserAdmin: UnwrapRef<typeof import('./src/utils/userUtils')['isUserAdmin']>
+    readonly isUserLoggedIn: UnwrapRef<typeof import('./src/utils/userUtils')['isUserLoggedIn']>
     readonly kFormatter: UnwrapRef<typeof import('./src/@core/utils/formatters')['kFormatter']>
     readonly lengthValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['lengthValidator']>
     readonly logicAnd: UnwrapRef<typeof import('@vueuse/math')['logicAnd']>

@@ -7,6 +7,8 @@ import {
   showSuccessMessage,
 } from "@/components/apps/sweetAlerts/SweetAlets";
 import { customRequest } from "@/utils/axiosInstance";
+import { deepToRaw } from "@/utils/helper";
+import { isUserAdmin } from "@/utils/userUtils"; // Importa la función desde userUtils
 import { onBeforeMount, ref, watch } from "vue";
 
 interface FormSchemaField {
@@ -81,9 +83,10 @@ const props = withDefaults(
     showBtnNuevo: true, // Valor predeterminado
     emitDelete: false, // Valor predeterminado
     softDelete: false, // Valor predeterminado
-  }
+  },
 );
 
+const headersLocal: any = ref([]);
 const showForm = ref(false); // Referencia al componente FormFactory
 const formData = ref<Record<string, any>>({});
 const tableData = ref<any[]>([]);
@@ -108,11 +111,17 @@ async function fetchTableData() {
         data: payload,
       });
       if (response.data.result && response.data.data) {
+        console.log("Respuesta de datos recibida:", response.data.data);
         let tmp = response.data.data.map((item: any) => ({
           ...item,
           created_at: formatToAmPm(item.created_at),
           updated_at: formatToAmPm(item.updated_at),
+          ...(isUserAdmin() && props.softDelete && item.deleted_at != null
+            ? { deleted_at: formatToAmPm(item.deleted_at) }
+            : {}),
         }));
+
+        console.log("Datos obtenidos:", tmp);
 
         if (props.estatusDefault) {
           tmp.map((item: any) => {
@@ -192,14 +201,16 @@ function processFiltroagrupador(dataHaProcesar: any) {
     new Set(
       dataHaProcesar
         .map((item: any) =>
-          filtroAgrupadorProps.split(".").reduce((acc, key) => acc?.[key], item)
+          filtroAgrupadorProps
+            .split(".")
+            .reduce((acc, key) => acc?.[key], item),
         )
-        .filter((value: any) => value) // Filtrar valores no nulos o no definidos
-    )
+        .filter((value: any) => value), // Filtrar valores no nulos o no definidos
+    ),
   );
   filtroAgrupador.value = ["Todos", ...uniqueOptions];
   handleSelectFiltroAgrupador(
-    props.filtroAgrupadorInicial ? props.filtroAgrupadorInicial : "Todos"
+    props.filtroAgrupadorInicial ? props.filtroAgrupadorInicial : "Todos",
   );
 }
 
@@ -221,7 +232,6 @@ function handleSelectFiltroAgrupador(item: any) {
       .reduce((acc, key) => acc?.[key], data);
     return agrupadorValue === item;
   });
-  console.log(exists);
   // Si no existe, mostrar todos los registros
   if (!exists) {
     filtroAgrupadorSelected.value = "Todos";
@@ -362,11 +372,15 @@ async function requestDeleteItem(item: any, soft: boolean = false) {
   await apiRequest({
     url,
     payload: payload,
+    responseFull: true,
     showMessages: false,
     onSuccess: (response: any) => {
+      // prettier-ignore
+      const titulo = "Registro " + (response.message.includes("restaurado") ? "restaurado" : "eliminado");
+
       showSuccessMessage({
-        title: "Eliminado",
-        message: "El elemento ha sido eliminado correctamente.",
+        title: titulo,
+        message: "Proceso realizado con éxito.",
       });
     },
     onError: (error: any) => {
@@ -399,6 +413,11 @@ const countRegistros = computed(() => {
 
 onBeforeMount(() => {
   fetchTableData();
+  let tmpHeaders = deepToRaw(props.tableHeaders);
+  if (isUserAdmin()) {
+    tmpHeaders.push({ title: "Eliminación", key: "deleted_at" });
+  }
+  headersLocal.value = [...tmpHeaders];
 });
 
 // --- Agrega este watch ---
@@ -408,13 +427,12 @@ watch(
     if (nuevoValor) {
       fetchTableData();
     }
-  }
+  },
 );
 </script>
 
 <template>
   <div class="">
-    <pre>softDelete {{ props.softDelete }}</pre>
     <h1 v-if="showTitle">{{ title }}</h1>
     <div :class="showStyleCard ? ' card ' : ''">
       <div v-if="showForm || props.formModal">
@@ -466,7 +484,7 @@ watch(
           </div>
         </div>
         <DataTable
-          :headers="tableHeaders"
+          :headers="headersLocal"
           :data="tableData"
           :softDelete="props.softDelete"
           :config="props.configTable"
