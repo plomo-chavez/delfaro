@@ -10,20 +10,26 @@ interface Header {
   key: string;
 }
 
-const props = defineProps<{
-  headers: Header[];
-  data: any[];
-  config: {
-    actions: string[];
-    numerador?: boolean;
-    paginador?: boolean;
-    busqueda?: boolean;
-    exportar?: boolean;
-    seleccionar?: boolean;
-    noWrap?: boolean; // Nueva propiedad para controlar el truncado del texto
-    columnsBySearch?: string[]; // Columnas específicas para la búsqueda
-  };
-}>();
+const props = withDefaults(
+  defineProps<{
+    softDelete?: boolean;
+    headers: Header[];
+    data: any[];
+    config: {
+      actions: string[];
+      numerador?: boolean;
+      paginador?: boolean;
+      busqueda?: boolean;
+      exportar?: boolean;
+      seleccionar?: boolean;
+      noWrap?: boolean; // Nueva propiedad para controlar el truncado del texto
+      columnsBySearch?: string[]; // Columnas específicas para la búsqueda
+    };
+  }>(),
+  {
+    softDelete: false, // Valor predeterminado
+  }
+);
 
 const emit = defineEmits<{
   (event: "action", payload: { action: string; item: any }): void;
@@ -79,6 +85,10 @@ const getFormattedValue = (item: any, header: any) => {
   }
 
   return value ?? "";
+};
+
+const itsSoftDelete = (item: any) => {
+  return !!props.softDelete && !!item?.deleted_at;
 };
 
 watch(selected, () => {
@@ -145,16 +155,25 @@ watch(selected, () => {
       <!-- Acciones -->
       <template #item.actions="{ item }">
         <div class="actions">
-          <!-- Botones con íconos de Font Awesome -->
-
           <!-- prettier-ignore -->
-          <button v-for="(action, index) in props.config.actions" :key="index" @click="() => emit('action', { action, item })" class="action-button">
-            <VIcon icon="tabler-eye"  size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
-            <VIcon icon="tabler-edit"  size="27" v-if="action == 'Editar'" :style="{ color: colors?.warning, fontWeight: 'bold' }" />
-            <VIcon icon="tabler-trash"  size="27" v-if="action == 'Eliminar'" :style="{ color: colors?.error, fontWeight: 'bold' }" />
-            <VIcon icon="tabler-database-x"  size="27" v-if="action == 'EliminarSoft'" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
-            
-          </button>
+          <template v-if="itsSoftDelete(item)">
+            <pre>{{ item.deleted_at }}</pre>
+            <button v-if="item.deleted_at == null" @click="() => emit('action', { action: 'EliminarSoft', item })" class="action-button">
+              <VIcon icon="tabler-database-x"  size="27" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
+            </button>
+            <button v-else @click="() => emit('action', { action: 'EliminarSoft', item })" class="action-button">
+              <VIcon icon="tabler-refresh"  size="27" :style="{ color: colors?.success, fontWeight: 'bold' }" />
+            </button>
+          </template>
+          <template v-else>
+            <!-- prettier-ignore -->
+            <button v-for="(action, index) in props.config.actions" :key="index" @click="() => emit('action', { action, item })" class="action-button">
+              <VIcon icon="tabler-eye"        size="27" v-if="action == 'Seleccionar'" :style="{ color: colors?.secondary, fontWeight: 'bold' }" />
+              <VIcon icon="tabler-edit"       size="27" v-if="action == 'Editar'" :style="{ color: colors?.warning, fontWeight: 'bold' }" />
+              <VIcon icon="tabler-trash"      size="27" v-if="action == 'Eliminar'" :style="{ color: colors?.error, fontWeight: 'bold' }" />
+              <VIcon icon="tabler-database-x" size="27" v-if="action == 'EliminarSoft'" :style="{ color: colors?.soft, fontWeight: 'bold' }" />
+            </button>
+          </template>
         </div>
       </template>
     </VDataTable>

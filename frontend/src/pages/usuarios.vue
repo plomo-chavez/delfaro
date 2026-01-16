@@ -28,7 +28,6 @@ const apiEndpoints = {
   create: "/api/usuario", // Endpoint para crear un elemento
   update: "/api/usuarios", // Endpoint para actualizar un elemento
   delete: "/api/usuario/eliminar", // Endpoint para eliminar un elemento
-  deleteSoft: "/api/usuario/eliminar/soft", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -51,6 +50,7 @@ const configTable = ref({ actions: ["Editar", "Eliminar", "EliminarSoft"] });
       title="Usuarios"
       :emitEdit="true"
       :formModal="true"
+      :softDelete="true"
       :show-title="false"
       :filtroAgrupador="'tipo.label'"
       :filtroAgrupadorInicial="'Agente'"

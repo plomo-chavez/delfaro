@@ -36,6 +36,7 @@ const props = withDefaults(
   defineProps<{
     title?: string; // Título del módulo
     formSchema?: any; // Esquema del formulario
+    softDelete?: boolean; // Indica si se debe refrescar la tabla
     refreshTable?: boolean; // Indica si se debe refrescar la tabla
     tableHeaders: TableHeader[]; // Esquema de la tabla
     showStyleCard?: boolean; // Indica si el formulario será un modal
@@ -79,14 +80,16 @@ const props = withDefaults(
     estatusDefault: false, // Valor predeterminado
     showBtnNuevo: true, // Valor predeterminado
     emitDelete: false, // Valor predeterminado
+    softDelete: false, // Valor predeterminado
   }
 );
+
 const showForm = ref(false); // Referencia al componente FormFactory
 const formData = ref<Record<string, any>>({});
 const tableData = ref<any[]>([]);
 const respaldoData = ref<any[]>([]);
 const filtroAgrupador = ref<any[]>([]);
-const filtroAgrupadorSelected = ref(null);
+const filtroAgrupadorSelected = ref<string | null>(null);
 const isDialogVisible = ref(false);
 const showButtonsForms = ref(true);
 const formDisabled = ref(false);
@@ -211,6 +214,21 @@ function handleSelectFiltroAgrupador(item: any) {
     return;
   }
 
+  // Verificar si el valor existe en los datos
+  const exists = respaldoData.value.some((data: any) => {
+    const agrupadorValue = filtroAgrupadorProps
+      .split(".")
+      .reduce((acc, key) => acc?.[key], data);
+    return agrupadorValue === item;
+  });
+  console.log(exists);
+  // Si no existe, mostrar todos los registros
+  if (!exists) {
+    filtroAgrupadorSelected.value = "Todos";
+    tableData.value = [...respaldoData.value];
+    return;
+  }
+
   // Filtrar los registros según el valor seleccionado
   tableData.value = respaldoData.value.filter((data: any) => {
     const agrupadorValue = filtroAgrupadorProps
@@ -311,66 +329,54 @@ async function handleDeleteItem(item: any) {
       // Emitir evento personalizado para manejar la eliminación
       emit("customDelete", item);
     } else {
-      let url = props?.apiEndpoints?.delete ?? "";
-      let payload = { id: item.id };
-      if (props.payloadDefault) {
-        payload = { ...props.payloadDefault, ...payload };
-      }
-      let response = await customRequest({
-        url: url,
-        method: "POST",
-        data: payload,
-      });
-      if (response.data.result) {
-        showSuccessMessage({
-          title: "Eliminado",
-          message: "El elemento ha sido eliminado correctamente.",
-        });
-      } else {
-        showSuccessMessage({
-          title: "Error",
-          message: "No se pudo eliminar el elemento.",
-        });
-      }
-      await fetchTableData();
+      requestDeleteItem(item);
     }
   } catch (error) {
     console.error("Error al eliminar el elemento:", error);
   }
 }
+
 async function handleSoftDeleteItem(item: any) {
   try {
     if (props.emitDelete) {
       // Emitir evento personalizado para manejar la eliminación
       emit("customSoftDelete", item);
     } else {
-      let url = props?.apiEndpoints?.deleteSoft ?? "";
-      let payload = { id: item.id };
-
-      if (props.payloadDefault) {
-        payload = { ...props.payloadDefault, ...payload };
-      }
-      let response = await customRequest({
-        url: url,
-        method: "POST",
-        data: payload,
-      });
-      if (response.data.result) {
-        showSuccessMessage({
-          title: "Eliminado",
-          message: "El elemento ha sido eliminado correctamente.",
-        });
-      } else {
-        showSuccessMessage({
-          title: "Error",
-          message: "No se pudo eliminar el elemento.",
-        });
-      }
-      await fetchTableData();
+      requestDeleteItem(item, true);
     }
   } catch (error) {
     console.error("Error al eliminar el elemento:", error);
   }
+}
+
+async function requestDeleteItem(item: any, soft: boolean = false) {
+  let url = props?.apiEndpoints?.delete ?? "";
+  let payload = { id: item.id };
+
+  url = url + (soft ? "/soft" : "");
+
+  if (props.payloadDefault) {
+    payload = { ...props.payloadDefault, ...payload };
+  }
+
+  await apiRequest({
+    url,
+    payload: payload,
+    showMessages: false,
+    onSuccess: (response: any) => {
+      showSuccessMessage({
+        title: "Eliminado",
+        message: "El elemento ha sido eliminado correctamente.",
+      });
+    },
+    onError: (error: any) => {
+      showSuccessMessage({
+        title: "Error",
+        message: "No se pudo eliminar el elemento.",
+      });
+    },
+  });
+  await fetchTableData();
 }
 
 const countRegistros = computed(() => {
@@ -408,6 +414,7 @@ watch(
 
 <template>
   <div class="">
+    <pre>softDelete {{ props.softDelete }}</pre>
     <h1 v-if="showTitle">{{ title }}</h1>
     <div :class="showStyleCard ? ' card ' : ''">
       <div v-if="showForm || props.formModal">
@@ -461,6 +468,7 @@ watch(
         <DataTable
           :headers="tableHeaders"
           :data="tableData"
+          :softDelete="props.softDelete"
           :config="props.configTable"
           @action="handleActionClick"
         />

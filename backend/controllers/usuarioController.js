@@ -1,5 +1,10 @@
 const { Usuarios, TiposDeUsuarios } = require("../models"); // Asegúrate de importar correctamente tu modelo
-const { toPlain, getAllFromModel } = require("../db/customFunctions");
+const {
+  toPlain,
+  getAllFromModel,
+  processSoftDelete,
+  handleIsAdmin,
+} = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const {
@@ -103,7 +108,8 @@ async function saveUser(data) {
 exports.getAll = async (req, res) => {
   try {
     // Recibe filtros, paginación y otros parámetros desde el body
-    const paranoid = true; // Habilitar modo paranoid para excluir registros soft-deleted
+    const isAdmin = handleIsAdmin(req);
+    const paranoid = !isAdmin; // Habilitar modo paranoid para excluir registros soft-deleted
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
@@ -248,31 +254,9 @@ exports.softDelete = async (req, res) => {
     });
   }
 
-  try {
-    // Eliminar el usuario completamente de la base de datos
-    const response = await Usuarios.destroy({
-      where: { id },
-    });
+  const response = await processSoftDelete(Usuarios, id);
 
-    if (!response.result) {
-      return res.json({
-        result: false,
-        message: "Usuario no encontrado o no se pudo eliminar",
-      });
-    }
-
-    // Respuesta exitosa
-    return res.json({
-      result: true,
-      message: "Usuario eliminado con éxito",
-    });
-  } catch (error) {
-    console.log("Error al eliminar usuario:", error);
-    return res.json({
-      result: false,
-      message: "Error al eliminar usuario: " + error.message,
-    });
-  }
+  return res.json(response);
 };
 
 exports.cambiarContrasenia = async (req, res) => {

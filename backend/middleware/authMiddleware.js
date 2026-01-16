@@ -9,7 +9,6 @@ const authMiddleware = (req, res, next) => {
 
   const token = authHeader.split(" ")[1]; // Extraer el token después de "Bearer"
 
-  console.log("token:", token);
   try {
     // Verifica y decodifica el token JWT
     const decoded = verifyEncryptedJWT(token);

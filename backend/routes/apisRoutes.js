@@ -4,6 +4,7 @@ const upload = require("../middleware/multerConfig");
 const authMiddleware = require("../middleware/authMiddleware");
 
 //prettier-ignore
+const catalogosController  = require('../controllers/catalogosController');
 const exampleController = require('../controllers/exampleController');
 const authController  = require('../controllers/authController');
 

@@ -40,59 +40,6 @@ function normalizeNullRelations(rows) {
   });
 }
 
-async function getAllFromModel({
-  model,
-  filtros = {},
-  attributes = [],
-  include = [],
-  page = 1,
-  pageSize = 10,
-  pagination = true, // Nueva propiedad booleana
-  paranoid = false,
-}) {
-  try {
-    // Calcula el offset para la paginación
-    const offset = (page - 1) * pageSize;
-
-    // Realiza la consulta con Sequelize
-    let { count, rows } = await model.findAndCountAll({
-      where: filtros,
-      attributes,
-      include,
-      limit: pagination ? pageSize : null, // Aplica paginación solo si pagination es true
-      offset: pagination ? offset : null, // Aplica offset solo si pagination es true
-      raw: true,
-      nest: true,
-      paranoid,
-    });
-
-    rows = normalizeNullRelations(rows);
-
-    // Devuelve los resultados con información de paginación
-    return {
-      result: true,
-      message: "Registros obtenidos con éxito",
-      data: rows,
-      pagination: pagination
-        ? {
-            total: count,
-            page,
-            pageSize,
-            totalPages: Math.ceil(count / pageSize),
-          }
-        : null, // Si pagination es false, no incluye información de paginación
-    };
-  } catch (error) {
-    console.error("Error al obtener registros:", error);
-    return {
-      result: false,
-      message: "Error al obtener registros: " + error.message,
-      data: [],
-      pagination: null, // En caso de error, no incluye información de paginación
-    };
-  }
-}
-
 function toPlain(data) {
   if (Array.isArray(data)) {
     // Si es un array, aplica .toJSON() a cada elemento
@@ -168,8 +115,125 @@ const updateCompania = async (data) => {
   };
 };
 
+async function getAllFromModel({
+  model,
+  filtros = {},
+  attributes = [],
+  include = [],
+  page = 1,
+  pageSize = 10,
+  pagination = true, // Nueva propiedad booleana
+  paranoid = false,
+}) {
+  try {
+    // Calcula el offset para la paginación
+    const offset = (page - 1) * pageSize;
+
+    // Realiza la consulta con Sequelize
+    let { count, rows } = await model.findAndCountAll({
+      where: filtros,
+      attributes,
+      include,
+      limit: pagination ? pageSize : null, // Aplica paginación solo si pagination es true
+      offset: pagination ? offset : null, // Aplica offset solo si pagination es true
+      raw: true,
+      nest: true,
+      paranoid,
+    });
+
+    rows = normalizeNullRelations(rows);
+
+    // Devuelve los resultados con información de paginación
+    return {
+      result: true,
+      message: "Registros obtenidos con éxito",
+      data: rows,
+      pagination: pagination
+        ? {
+            total: count,
+            page,
+            pageSize,
+            totalPages: Math.ceil(count / pageSize),
+          }
+        : null, // Si pagination es false, no incluye información de paginación
+    };
+  } catch (error) {
+    console.error("Error al obtener registros:", error);
+    return {
+      result: false,
+      message: "Error al obtener registros: " + error.message,
+      data: [],
+      pagination: null, // En caso de error, no incluye información de paginación
+    };
+  }
+}
+
+const processSoftDelete = async (model, id) => {
+  try {
+    let record = await model.findByPk(id, { paranoid: false });
+    if (!record) {
+      return {
+        result: false,
+        message: "Registro no encontrado",
+      };
+    }
+
+    let isDestroyOrRestore = (record?.deleted_at ?? null) != null;
+
+    if (isDestroyOrRestore) {
+      // Si el registro ya está eliminado, lo restauramos
+      await record.restore();
+      return {
+        result: true,
+        message: "Registro restaurado con éxito",
+      };
+    }
+    // Si el registro no está eliminado, lo eliminamos suavemente
+    await record.destroy();
+
+    return {
+      result: true,
+      message: "Registro eliminado  con éxito",
+    };
+  } catch (error) {
+    console.log("Error al procesar eliminación suave:", error);
+    return {
+      result: false,
+      message: "Error al procesar eliminación suave: " + error.message,
+    };
+  }
+};
+
+const handleIsAdmin = (req) => {
+  try {
+    const userRole = req?.user ?? null;
+
+    // Validar si existe el usuario
+    if (!userRole) {
+      console.log(
+        "handleIsAdmin: El objeto 'user' no está definido en la solicitud."
+      );
+    }
+
+    // Validar si existe tipo_id
+    if (typeof userRole.tipo_id === "undefined") {
+      console.log(
+        "handleIsAdmin: El atributo 'tipo_id' no está definido en el usuario."
+      );
+    }
+
+    // Verificar si el usuario es administrador
+    return userRole.tipo_id === 2 || userRole.tipo_id === 1;
+  } catch (error) {
+    console.log("Error en handleIsAdmin:", error.message);
+    return false; // Retorna false en caso de error
+  }
+};
+
 module.exports = {
   toPlain,
+  processSoftDelete,
+  handleIsAdmin,
   getAllFromModel,
   findOneUser,
   updateCompania,
