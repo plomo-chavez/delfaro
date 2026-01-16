@@ -1,5 +1,9 @@
 const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
-const { getAllFromModel } = require("../db/customFunctions");
+const {
+  getAllFromModel,
+  processSoftDelete,
+  handleIsAdmin,
+} = require("../db/customFunctions");
 const { enviarCorreo } = require("../utils/emailServiceHelper");
 const { Op } = require("sequelize");
 const moment = require("moment");
@@ -12,6 +16,7 @@ const {
   PolizaRecibos,
 } = require("../models");
 const entidad = "Poliza";
+const modelo = Cotizaciones;
 const fields = false;
 
 async function processRecord(data) {
@@ -36,9 +41,12 @@ async function processRecord(data) {
     };
   }
 }
+
 exports.getAll = async (req, res) => {
   try {
-    // Recibe filtros, paginación y otros parámetros desde el body
+    const isAdmin = handleIsAdmin(req);
+
+    const paranoid = !isAdmin;
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
@@ -54,6 +62,7 @@ exports.getAll = async (req, res) => {
       filtros,
       include,
       page,
+      paranoid,
     });
 
     // Devuelve la respuesta
@@ -143,6 +152,22 @@ exports.deleteRecord = async (req, res) => {
       message: "Error al eliminar " + entidad + ": " + error.message,
     });
   }
+};
+
+exports.softDelete = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID del registro es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(modelo, id);
+
+  return res.json(response);
 };
 
 exports.cotizarCotizacion = async (req, res) => {};

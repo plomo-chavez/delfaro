@@ -17,9 +17,9 @@ const tableHeaders = [
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
   fetch: "/api/cotizaciones", // Endpoint para obtener datos
-  create: "/api/cotizaciones/create", // Endpoint para crear un elemento
-  update: "/api/cotizaciones/update", // Endpoint para actualizar un elemento
-  delete: "/api/cotizaciones/delete", // Endpoint para eliminar un elemento
+  create: "/api/cotizacion/create", // Endpoint para crear un elemento
+  update: "/api/cotizacion/update", // Endpoint para actualizar un elemento
+  delete: "/api/cotizacion/eliminar", // Endpoint para eliminar un elemento
 };
 
 function safeParseConfig(configString: any) {
@@ -62,7 +62,7 @@ function safeParseConfig(configString: any) {
         // 3. Comillas dobles dentro de strings
         fixedConfig = fixedConfig.replace(
           /"([^"]*)"([^"]*)"([^"]*)"/g,
-          '"$1\\"$2\\"$3"'
+          '"$1\\"$2\\"$3"',
         );
 
         // 4. Limpiar caracteres invisibles más agresivamente
@@ -76,7 +76,7 @@ function safeParseConfig(configString: any) {
         try {
           // Intentar parsear como JavaScript en lugar de JSON estricto
           const result = Function(
-            '"use strict"; return (' + configString + ")"
+            '"use strict"; return (' + configString + ")",
           )();
           return result;
         } catch (finalError) {
@@ -149,10 +149,11 @@ const handleActionsCancel = () => {
   <div v-if="!showWizard && !showFormEdit">
     <CrudManager
       title="Cotizaciones"
+      :emitNew="true"
+      :emitEdit="true"
       :formModal="true"
       :show-title="true"
-      :emitEdit="true"
-      :emitNew="true"
+      :softDelete="true"
       :tableHeaders="tableHeaders"
       :filtroAgrupador="'compania.nombreCorto'"
       :filtroAgrupadorInicial="'Todos'"

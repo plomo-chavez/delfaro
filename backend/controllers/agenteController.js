@@ -1,5 +1,9 @@
 const { Agentes } = require("../models"); // Asegúrate de importar correctamente tu modelo
-const { getAllFromModel } = require("../db/customFunctions");
+const {
+  getAllFromModel,
+  processSoftDelete,
+  handleIsAdmin,
+} = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const entidad = "Agente";
 
@@ -42,7 +46,8 @@ async function processRecord(data) {
 
 exports.getAll = async (req, res) => {
   try {
-    // Recibe filtros, paginación y otros parámetros desde el body
+    const isAdmin = handleIsAdmin(req);
+    const paranoid = !isAdmin;
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
@@ -60,6 +65,7 @@ exports.getAll = async (req, res) => {
       include,
       filtros,
       page,
+      paranoid,
     });
 
     // Devuelve la respuesta
@@ -147,4 +153,20 @@ exports.deleteRecord = async (req, res) => {
       message: "Error al eliminar " + entidad + ": " + error.message,
     });
   }
+};
+
+exports.softDelete = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de agente es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(Agentes, id);
+
+  return res.json(response);
 };

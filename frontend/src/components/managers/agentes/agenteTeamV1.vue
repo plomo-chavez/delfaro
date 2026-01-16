@@ -10,7 +10,7 @@ const props = withDefaults(
   {
     agenteID: null,
     isAgente: false,
-  }
+  },
 );
 // prettier-ignore
 const formSchema = [
@@ -73,8 +73,9 @@ const handleCancelar = () => {
     <CrudManager
       :title="title"
       :formModal="true"
-      :showStyleCard="false"
+      :softDelete="true"
       :showTitle="false"
+      :showStyleCard="false"
       :payloadDefault="payloadDefault"
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"

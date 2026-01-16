@@ -3,10 +3,13 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const polizasController = require("../controllers/polizasController");
 
+router.use(authMiddleware);
+
 // Polizas
 router.post('/polizas',                 polizasController.getAll);
 router.get('/poliza/:id',               polizasController.getRecord);
 router.post('/poliza/asegurados',       polizasController.getAsegurados);
+router.post('/poliza/eliminar/soft',    polizasController.softDelete);
 router.post('/poliza/archivos',         polizasController.getArchivos);
 router.post('/poliza/renovar',          polizasController.renovarPoliza);
 router.post('/poliza/corregir',         polizasController.corregirPoliza);

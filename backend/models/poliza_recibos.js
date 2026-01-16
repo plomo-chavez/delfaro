@@ -74,9 +74,12 @@ module.exports = (sequelize) => {
       },
     },
     {
+      paranoid: true,
+      timestamps: false,
+      underscored: true,
+      deletedAt: "deleted_at",
       tableName: "poliza_recibos",
-      timestamps: true,
-    }
+    },
   );
   PolizaRecibos.associate = (models) => {
     PolizaRecibos.hasOne(models.Polizas, {

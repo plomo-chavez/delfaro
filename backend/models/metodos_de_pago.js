@@ -32,11 +32,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "metodos_de_pago",
-      timestamps: true,
       paranoid: true,
+      timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "metodos_de_pago",
+    },
   );
 
   return MetodosDePago;

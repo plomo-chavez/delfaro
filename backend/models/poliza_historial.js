@@ -31,11 +31,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "poliza_historial",
-      timestamps: true,
       paranoid: true,
+      timestamps: false,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "poliza_historial",
+    },
   );
 
   return PolizaHistorial;

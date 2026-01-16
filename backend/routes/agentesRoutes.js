@@ -14,6 +14,7 @@ router.post('/agentes',                     agenteController.getAll);
 router.get( '/agente/:id',                  agenteController.getRecord);
 router.post('/agente',                      agenteController.createOrUpdate);
 router.post('/agente/eliminar',             agenteController.deleteRecord);
+router.post('/agente/eliminar/soft',        agenteController.softDelete);
 
 // AgenteClaves
 router.post('/agente/companias',            agenteCompaniasController.getCompanias);
@@ -26,10 +27,13 @@ router.post('/agente/clave/eliminar',       agenteClavesController.deleteRecord)
 router.post('/agente/subagentes',           agenteSubAgentesController.getAll);
 router.post('/agente/subagente',            agenteSubAgentesController.createOrUpdate);
 router.post('/agente/subagente/eliminar',   agenteSubAgentesController.deleteRecord);
+router.post('/agente/subagente/eliminar/soft',  agenteSubAgentesController.softDelete);
+
 
 // AgenteAsistentes
-router.post('/agente/asistentes',           agenteAsistentesController.getAll);
-router.post('/agente/asistente',            agenteAsistentesController.createOrUpdate);
-router.post('/agente/asistente/eliminar',   agenteAsistentesController.deleteRecord);
+router.post('/agente/asistentes',               agenteAsistentesController.getAll);
+router.post('/agente/asistente',                agenteAsistentesController.createOrUpdate);
+router.post('/agente/asistente/eliminar',       agenteAsistentesController.deleteRecord);
+router.post('/agente/asistente/eliminar/soft',  agenteAsistentesController.softDelete);
 
 module.exports = router;

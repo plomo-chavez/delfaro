@@ -43,8 +43,6 @@ const updateRecord = async (tabla, data) => {
   try {
     let id = data.id ?? null;
 
-    console.log("ID para actualizar:", data);
-
     if (!id) {
       return {
         result: false,

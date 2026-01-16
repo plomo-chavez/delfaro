@@ -27,7 +27,7 @@ const apiEndpoints = {
   fetch: "/api/clientes", // Endpoint para obtener datos
   create: "/api/cliente", // Endpoint para crear un elemento
   update: "/api/cliente", // Endpoint para actualizar un elemento
-  // delete: "/api/cliente/eliminar", // Endpoint para eliminar un elemento
+  delete: "/api/cliente/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -48,6 +48,7 @@ const handleCancelar = () => {
     <CrudManager
       title="Cliente"
       :emitEdit="true"
+      :softDelete="true"
       :show-title="false"
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"

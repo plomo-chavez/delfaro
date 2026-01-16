@@ -19,10 +19,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "agente_companias",
-      timestamps: false,
+      paranoid: true,
+      timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "agente_companias",
+    },
   );
 
   return AgenteCompanias;

@@ -31,10 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "agente_claves",
+      paranoid: true,
       timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "agente_claves",
+    },
   );
 
   AgenteClaves.associate = (models) => {

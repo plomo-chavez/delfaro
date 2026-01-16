@@ -1,5 +1,9 @@
 const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
-const { getAllFromModel } = require("../db/customFunctions");
+const {
+  getAllFromModel,
+  processSoftDelete,
+  handleIsAdmin,
+} = require("../db/customFunctions");
 const { enviarCorreo } = require("../utils/emailServiceHelper");
 const { Op } = require("sequelize");
 const moment = require("moment");
@@ -18,6 +22,7 @@ const {
   Agentes,
 } = require("../models");
 const entidad = "Poliza";
+const modelo = Polizas;
 const fields = [
   "id",
   "numeroPoliza",
@@ -28,6 +33,7 @@ const fields = [
   "estatus_id",
   "created_at",
   "updated_at",
+  "deleted_at",
 ];
 function registrarAccion({ polizaID, accion }) {
   return PolizaHistorial.create({
@@ -38,7 +44,8 @@ function registrarAccion({ polizaID, accion }) {
 
 exports.getAll = async (req, res) => {
   try {
-    // Recibe filtros, paginación y otros parámetros desde el body
+    const isAdmin = handleIsAdmin(req);
+    const paranoid = !isAdmin;
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
@@ -91,6 +98,7 @@ exports.getAll = async (req, res) => {
       filtros,
       include,
       page,
+      paranoid,
     });
 
     // Devuelve la respuesta
@@ -470,4 +478,20 @@ exports.getRecibos = async (req, res) => {
       message: "Error al obtener la información",
     });
   }
+};
+
+exports.softDelete = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID del registro es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(modelo, id);
+
+  return res.json(response);
 };

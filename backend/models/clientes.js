@@ -47,12 +47,17 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+      deleted_at: {
+        type: DataTypes.DATE, // Campo para soft delete
+      },
     },
     {
-      tableName: "clientes",
+      paranoid: true,
       timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "clientes",
+    },
   );
 
   return Clientes;

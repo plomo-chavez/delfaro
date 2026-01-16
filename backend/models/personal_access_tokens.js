@@ -48,9 +48,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "personal_access_tokens",
+      paranoid: true,
       timestamps: false,
-    }
+      underscored: true,
+      deletedAt: "deleted_at",
+      tableName: "personal_access_tokens",
+    },
   );
 
   return PersonalAccessTokens;

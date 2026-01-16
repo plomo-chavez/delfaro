@@ -44,9 +44,12 @@ module.exports = (sequelize) => {
       },
     },
     {
+      paranoid: true,
+      timestamps: true,
+      underscored: true,
+      deletedAt: "deleted_at",
       tableName: "compania_representantes",
-      timestamps: false,
-    }
+    },
   );
 
   CompaniaRepresentantes.associate = (models) => {

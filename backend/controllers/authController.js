@@ -133,7 +133,6 @@ exports.login = async (req, res) => {
   }
   const expiresIn = process.env.JWT_EXPIRES_IN || "10s"; // Valor por defectoç
   // const expiresIn = "10s"; // Valor por defectoç
-  console.log("Expires In:", expiresIn);
 
   // Genera y cifra el token JWT
   const encryptedToken = createTokenJWT(
@@ -143,7 +142,7 @@ exports.login = async (req, res) => {
       tipo: user.tipo.label,
       tipo_id: user.tipo.id,
     },
-    expiresIn
+    expiresIn,
   );
 
   return res.json({

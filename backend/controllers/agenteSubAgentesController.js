@@ -1,14 +1,18 @@
 const { AgenteTeam, Agentes, CatTiposAgente } = require("../models"); // Asegúrate de importar correctamente tu modeloString
-const { getAllFromModel } = require("../db/customFunctions");
+const {
+  getAllFromModel,
+  processSoftDelete,
+  handleIsAdmin,
+} = require("../db/customFunctions");
 const { Op } = require("sequelize");
 const entidad = "Subagente de Agente";
 const modeloString = "AgenteTeam";
-const model = AgenteTeam;
+const modelo = Agentes;
 const tipoIDDefault = 2; // Subagente
 
 const { validateRecord, createOrUpdatedRecord } = require("./CRUDController");
 // prettier-ignore
-const fields = ["id", "agente_id", "team_id", "tipo_id","estatus"];
+const fields = ["id", "agente_id", "team_id", "tipo_id","estatus", "created_at", "updated_at", "deleted_at"];
 
 async function processRecord(data) {
   try {
@@ -53,7 +57,8 @@ async function processRecord(data) {
 
 exports.getAll = async (req, res) => {
   try {
-    // Recibe filtros, paginación y otros parámetros desde el body
+    const isAdmin = handleIsAdmin(req);
+    const paranoid = !isAdmin;
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;
     let filtros = req.body.filtros || {};
@@ -76,17 +81,20 @@ exports.getAll = async (req, res) => {
 
     // Llama a la función genérica
     const response = await getAllFromModel({
-      model,
+      model: AgenteTeam,
       filtros,
       attributes: fields,
       include,
       pagination: false,
+      paranoid,
     });
 
     let data = response.data.map((item) => {
       let elemento = item.elemento || {};
       let estatus = item.estatus;
       delete item.elemento;
+      delete elemento.updated_at;
+      delete elemento.deleted_at;
       delete item.estatus;
       return {
         ...item,
@@ -160,4 +168,20 @@ exports.deleteRecord = async (req, res) => {
       message: "Error al eliminar " + entidad + ": " + error.message,
     });
   }
+};
+
+exports.softDelete = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID del registro es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(AgenteTeam, id);
+
+  return res.json(response);
 };

@@ -88,10 +88,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "poliza_asegurados",
-      timestamps: true,
+      paranoid: true,
+      timestamps: false,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "poliza_asegurados",
+    },
   );
 
   return PolizaAsegurados;

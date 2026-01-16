@@ -28,12 +28,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+      deleted_at: {
+        type: DataTypes.DATE, // Campo para soft delete
+      },
     },
     {
-      tableName: "agente_team",
       timestamps: true,
       underscored: true,
-    }
+      paranoid: true,
+      deletedAt: "deleted_at",
+      tableName: "agente_team",
+    },
   );
 
   Model.associate = (models) => {

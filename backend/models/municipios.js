@@ -19,9 +19,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "municipios",
+      paranoid: true,
       timestamps: false,
-    }
+      underscored: true,
+      deletedAt: "deleted_at",
+      tableName: "municipios",
+    },
   );
 
   return Municipios;

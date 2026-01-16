@@ -25,10 +25,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "tipos_de_usuarios",
-      timestamps: true,
+      paranoid: true,
+      timestamps: false,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "tipos_de_usuarios",
+    },
   );
 
   TiposDeUsuarios.associate = (models) => {

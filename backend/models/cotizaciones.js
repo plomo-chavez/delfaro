@@ -14,6 +14,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       fechaNacimiento: {
+        field: "fechaNacimiento",
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
@@ -44,11 +45,17 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+      deleted_at: {
+        type: DataTypes.DATE, // Campo para soft delete
+      },
     },
     {
+      paranoid: true,
+      timestamps: true,
+      underscored: true,
+      deletedAt: "deleted_at",
       tableName: "cotizaciones",
-      timestamps: false,
-    }
+    },
   );
 
   return Cotizaciones;

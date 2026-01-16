@@ -107,9 +107,8 @@ async function saveUser(data) {
 
 exports.getAll = async (req, res) => {
   try {
-    // Recibe filtros, paginación y otros parámetros desde el body
     const isAdmin = handleIsAdmin(req);
-    const paranoid = !isAdmin; // Habilitar modo paranoid para excluir registros soft-deleted
+    const paranoid = !isAdmin;
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;
     const pageSize = parseInt(req.body.pageSize) || 10;

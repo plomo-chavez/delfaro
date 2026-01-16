@@ -68,10 +68,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "compania",
+      paranoid: true,
       timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "compania",
+    },
   );
 
   return Compania;

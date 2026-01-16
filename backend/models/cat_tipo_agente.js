@@ -25,10 +25,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "cat_tipo_agente",
+      paranoid: true,
       timestamps: true,
       underscored: true,
-    }
+      deletedAt: "deleted_at",
+      tableName: "cat_tipo_agente",
+    },
   );
 
   return Model;

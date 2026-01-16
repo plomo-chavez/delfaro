@@ -45,12 +45,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "usuarios",
-      timestamps: true,
+      paranoid: true,
+      timestamps: false,
       underscored: true,
-      paranoid: true, // Habilitar soft delete
-      deletedAt: "deleted_at", // Nombre de la columna para soft delete
-    }
+      deletedAt: "deleted_at",
+      tableName: "usuarios",
+    },
   );
 
   Usuarios.associate = (models) => {

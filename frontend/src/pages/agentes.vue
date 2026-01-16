@@ -48,6 +48,7 @@ const handleCancelar = () => {
       title="Agentes"
       :emitEdit="true"
       :formModal="true"
+      :softDelete="true"
       :show-title="false"
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"

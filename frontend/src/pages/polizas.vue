@@ -72,6 +72,7 @@ const handleActionsCreate = () => {
       :formModal="true"
       :show-title="false"
       :showBtnNuevo="false"
+      :softDelete="true"
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"
       :apiEndpoints="apiEndpoints"

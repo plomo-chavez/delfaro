@@ -18,9 +18,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      tableName: "password_reset_tokens",
+      paranoid: true,
       timestamps: false,
-    }
+      underscored: true,
+      deletedAt: "deleted_at",
+      tableName: "password_reset_tokens",
+    },
   );
 
   return PasswordResetTokens;
