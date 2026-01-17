@@ -25,7 +25,6 @@ const handleFetchRamos = async () => {
     method: "GET",
     showMessages: false,
     onSuccess: (response: any) => {
-      console.log(response);
       ramos.value = response;
     },
   });
@@ -36,9 +35,7 @@ const handleUpdateRamos = async () => {
     url: "/api/compania/ramos",
     payload: { id: props.data.id, ramos: ramos.value },
     showMessages: false,
-    onSuccess: (response: any) => {
-      console.log(response);
-    },
+    onSuccess: (response: any) => {},
   });
 };
 
