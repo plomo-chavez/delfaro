@@ -1,4 +1,10 @@
-const { Compania, CompaniasRamos, Ramos } = require("../models"); // Asegúrate de importar correctamente tu modelo
+const {
+  Compania,
+  CompaniasRamos,
+  Ramos,
+  CompaniaRepresentantes,
+  CompaniasProductos,
+} = require("../models"); // Asegúrate de importar correctamente tu modelo
 const {
   toPlain,
   getAllFromModel,
@@ -17,7 +23,6 @@ const modeloString = "Compania";
 const entidad = "Compañía";
 
 async function validateRecordData(data) {
-  console.log("Validando datos para:", data);
   if (!data.nombreCorto || !data.nombre || !data.rfc) {
     return {
       result: false,
@@ -56,9 +61,58 @@ async function validateRecordData(data) {
   return { result: true };
 }
 
+async function processProducto(data) {
+  try {
+    const modoCreacion = !data?.id;
+
+    // Crear o actualizar registro
+    const response = modoCreacion
+      ? await createRecord("CompaniasProductos", data)
+      : await updateRecord("CompaniasProductos", data);
+
+    return {
+      result: true,
+      message: !modoCreacion
+        ? "Registro actualizado con éxito"
+        : "Registro creado con éxito",
+    };
+  } catch (e) {
+    return {
+      result: false,
+      message: "Error al guardar el registro: " + e.message,
+      data: [],
+    };
+  }
+}
+
+async function processRepresentante(data) {
+  try {
+    const modoCreacion = !data?.id;
+
+    // Crear o actualizar registro
+    const response = modoCreacion
+      ? await createRecord("CompaniaRepresentantes", data)
+      : await updateRecord("CompaniaRepresentantes", data);
+
+    return {
+      result: true,
+      message: !modoCreacion
+        ? "Registro actualizado con éxito"
+        : "Registro creado con éxito",
+    };
+  } catch (e) {
+    return {
+      result: false,
+      message: "Error al guardar el registro: " + e.message,
+      data: [],
+    };
+  }
+}
+
 async function processRecord(data) {
   try {
-    const modoCreacion = (data?.id ?? false) ? false : true;
+    const modoCreacion = !data?.id;
+    console.log("modoCreacion ", modoCreacion);
 
     // Validar datos
     const validation = await validateRecordData(data);
@@ -72,7 +126,7 @@ async function processRecord(data) {
 
     return {
       result: true,
-      message: modoCreacion
+      message: !modoCreacion
         ? "Registro actualizado con éxito"
         : "Registro creado con éxito",
       data: response,
@@ -287,4 +341,190 @@ exports.updateRamos = async (req, res) => {
     result: true,
     message: "Ramos actualizados con éxito",
   });
+};
+
+// Representantes
+exports.getRepresentantes = async (req, res) => {
+  const { compania_id } = req.body;
+  const isAdmin = handleIsAdmin(req);
+  const paranoid = !isAdmin;
+  // Validar que se proporcione un ID
+  if (!compania_id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+  // Eliminar asociaciones existentes
+  const repsonse = await CompaniaRepresentantes.findAll({
+    where: { compania_id: compania_id },
+    paranoid,
+  });
+
+  return res.json({
+    result: true,
+    message: "Representantes obtenidos con éxito",
+    data: repsonse,
+  });
+};
+
+exports.createOrUpdateRepresentante = async (req, res) => {
+  const data = req.body;
+
+  const response = await processRepresentante(data);
+
+  if (response.data) delete response.data;
+
+  res.json(response);
+};
+
+exports.deleteRepresentante = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+
+  try {
+    // Actualizar el estatus del registro a 0 (eliminado lógico)
+    const response = await updateRecord("CompaniaRepresentantes", {
+      id,
+      estatus: 0,
+    });
+
+    if (!response.result) {
+      return res.json({
+        result: false,
+        message: "Registro no encontrado o no se pudo eliminar",
+      });
+    }
+
+    // Respuesta exitosa
+    return res.json({
+      result: true,
+      message: "Registro eliminado con éxito",
+    });
+  } catch (error) {
+    console.log("Error al eliminar registro:", error);
+    return res.json({
+      result: false,
+      message: "Error al eliminar registro: " + error.message,
+    });
+  }
+};
+
+exports.softDeleteRepresentante = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(CompaniaRepresentantes, id);
+
+  return res.json(response);
+};
+
+// Productos
+exports.getProductos = async (req, res) => {
+  const { compania_id } = req.body;
+  const isAdmin = handleIsAdmin(req);
+  const paranoid = !isAdmin;
+  // Validar que se proporcione un ID
+  if (!compania_id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+  // Eliminar asociaciones existentes
+  const repsonse = await CompaniasProductos.findAll({
+    where: { compania_id },
+    paranoid,
+    include: [
+      {
+        model: Ramos,
+        as: "ramo",
+      },
+    ],
+  });
+
+  return res.json({
+    result: true,
+    message: "Productos obtenidos con éxito",
+    data: repsonse,
+  });
+};
+
+exports.createOrUpdateProducto = async (req, res) => {
+  const data = req.body;
+
+  const response = await processProducto(data);
+
+  if (response.data) delete response.data;
+
+  res.json(response);
+};
+
+exports.deleteProducto = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+
+  try {
+    // Actualizar el estatus del registro a 0 (eliminado lógico)
+    const response = await updateRecord("CompaniasProductos", {
+      id,
+      estatus: 0,
+    });
+
+    if (!response.result) {
+      return res.json({
+        result: false,
+        message: "Registro no encontrado o no se pudo eliminar",
+      });
+    }
+
+    // Respuesta exitosa
+    return res.json({
+      result: true,
+      message: "Registro eliminado con éxito",
+    });
+  } catch (error) {
+    console.log("Error al eliminar registro:", error);
+    return res.json({
+      result: false,
+      message: "Error al eliminar registro: " + error.message,
+    });
+  }
+};
+
+exports.softDeleteProducto = async (req, res) => {
+  const { id } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!id) {
+    return res.json({
+      result: false,
+      message: "ID de registro es requerido",
+    });
+  }
+
+  const response = await processSoftDelete(CompaniasProductos, id);
+
+  return res.json(response);
 };

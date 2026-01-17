@@ -4,11 +4,7 @@ import CompaniasProductos from "@/components/forms/companias/CompaniasProductos.
 import CompaniasRamos from "@/components/forms/companias/CompaniasRamos.vue";
 import CompaniasRepresentantes from "@/components/forms/companias/CompaniasRepresentantesV1.vue";
 
-import {
-  showErrorMessage,
-  showSuccessMessage,
-} from "@/components/apps/sweetAlerts/SweetAlets";
-import { customRequest } from "@/utils/axiosInstance";
+import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 // prettier-ignore
 import { ref, watch } from "vue";
 const props = withDefaults(
@@ -44,30 +40,14 @@ const formSchema = [
 const handleAtras = () => {
   emit("atras");
 };
-const handleFormSubmit = async (data: any) => {
-  let response = await customRequest({
-    url: "/api/companias/update",
-    method: "POST",
-    data: { ...data },
-  });
-  console.log(response.data.message);
-  if (response.data.result) {
-    showSuccessMessage({
-      title: "Actualización",
-      message: response.data.message,
-    });
-  } else {
-    showErrorMessage({ title: "Error", message: response.data.message });
-  }
-};
 
-const getRamos = async () => {
-  let response = await customRequest({
-    url: "/api/companias/ramos",
-    method: "POST",
-    data: { compania_id: formDataLocal.value.id },
+const handleFormSubmit = async (data: any) => {
+  await apiRequest({
+    url: "/api/compania",
+    payload: { ...data },
+    showMessages: true,
+    messageType: "toast",
   });
-  ramos.value = response.data.data;
 };
 
 const handleFetchCompania = async () => {
@@ -81,6 +61,7 @@ const handleFetchCompania = async () => {
     });
     emit("atras");
   }
+
   await apiRequest({
     url: "/api/compania/" + data.id,
     method: "GET",

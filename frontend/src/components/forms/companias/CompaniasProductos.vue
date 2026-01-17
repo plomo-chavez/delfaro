@@ -12,7 +12,7 @@ const props = withDefaults(
   defineProps<{
     data: any;
   }>(),
-  {}
+  {},
 );
 
 const title = ref("Productos"); // Referencia al componente FormFactory
@@ -40,10 +40,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/companias/productos/get", // Endpoint para obtener datos
-  create: "/api/companias/productos", // Endpoint para crear un elemento
-  update: "/api/companias/productos", // Endpoint para actualizar un elemento
-  delete: "/api/companias/productos/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/compania/productos", // Endpoint para obtener datos
+  create: "/api/compania/producto", // Endpoint para crear un elemento
+  update: "/api/compania/producto", // Endpoint para actualizar un elemento
+  delete: "/api/compania/producto/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -63,7 +63,7 @@ const handleActionCreate = async (dataRow: any) => {
   }
 
   const response = await customRequest({
-    url: "/api/companias/productos",
+    url: "/api/compania/producto",
     method: "POST",
     data: tmp,
   });
@@ -95,6 +95,7 @@ const handleActionDelete = (dataRow: any) => {};
     :title="title"
     :formModal="true"
     :emitCreate="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :refreshTable="refreshTable"
     :tableHeaders="tableHeaders"

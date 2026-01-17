@@ -7,7 +7,7 @@ const props = withDefaults(
   defineProps<{
     data: any;
   }>(),
-  {}
+  {},
 );
 
 const title = ref("Representantes"); // Referencia al componente FormFactory
@@ -35,11 +35,10 @@ const tableHeaders = [
 ];
 
 const apiEndpoints = {
-  // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/companias/representantes/get", // Endpoint para obtener datos
-  create: "/api/companias/representantes", // Endpoint para crear un elemento
-  update: "/api/companias/representantes", // Endpoint para actualizar un elemento
-  delete: "/api/companias/representantes/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/compania/representantes", // Endpoint para obtener datos
+  create: "/api/compania/representante", // Endpoint para crear un elemento
+  update: "/api/compania/representante", // Endpoint para actualizar un elemento
+  delete: "/api/compania/representante/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -60,6 +59,8 @@ const handleAtras = () => {
   <CrudManager
     :title="title"
     :formModal="true"
+    :showMessageApi="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :payloadDefault="payloadDefault"
     :tableHeaders="tableHeaders"

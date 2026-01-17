@@ -46,11 +46,16 @@ module.exports = (sequelize) => {
   CompaniasProductos.associate = (models) => {
     CompaniasProductos.belongsTo(models.Compania, {
       foreignKey: "compania_id",
-      onDelete: "CASCADE",
     });
     CompaniasProductos.belongsTo(models.Ramos, {
       foreignKey: "ramo_id",
-      onDelete: "CASCADE",
+      as: "ramo",
+    });
+
+    // Si necesitas que también sea bidireccional:
+    models.Ramos.hasOne(CompaniasProductos, {
+      foreignKey: "ramo_id",
+      as: "companiaProducto",
     });
   };
 

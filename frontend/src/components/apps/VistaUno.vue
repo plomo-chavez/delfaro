@@ -56,6 +56,7 @@ const props = withDefaults(
     filtroAgrupador?: string | null; // Indica si se debe mostrar el título
     filtroAgrupadorInicial?: string | null; // Indica si se debe mostrar el título
     estatusDefault?: boolean; // Indica el estatus por defecto
+    showMessageApi?: boolean; // Indica el estatus por defecto
     subtitulos?: any; // Configuración de la tabla
     configTable?: any; // Configuración de la tabla
     apiEndpoints?: {
@@ -78,6 +79,7 @@ const props = withDefaults(
     showStyleCard: true, // Valor predeterminado
     refreshTable: false, // Valor predeterminado
     customAction: false, // Valor predeterminado
+    showMessageApi: false, // Valor predeterminado
     exportSubmit: false, // Valor predeterminado
     estatusDefault: false, // Valor predeterminado
     showBtnNuevo: true, // Valor predeterminado
@@ -161,8 +163,10 @@ async function handleFormSubmit(data: Record<string, any>) {
         // await handleCancelarForm();
         await fetchTableData();
         showSuccessMessage({
-          title: "Guardado",
-          message: "El elemento ha sido guardado correctamente.",
+          title: "Proceso realizado con éxito",
+          message: props.showMessageApi
+            ? response.data.message
+            : "El elemento ha sido guardado correctamente.",
         });
       } else {
         showErrorMessage({
@@ -411,7 +415,7 @@ const countRegistros = computed(() => {
 onBeforeMount(() => {
   fetchTableData();
   let tmpHeaders = deepToRaw(props.tableHeaders);
-  if (isUserAdmin()) {
+  if (isUserAdmin() && props.softDelete) {
     tmpHeaders.push({ title: "Eliminación", key: "deleted_at" });
   }
   headersLocal.value = [...tmpHeaders];

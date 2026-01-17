@@ -1,4 +1,9 @@
-const { AgenteCompanias, Compania } = require("../models"); // Asegúrate de importar correctamente tu modelo
+const {
+  AgenteCompanias,
+  Compania,
+  CompaniasRamos,
+  Ramos,
+} = require("../models"); // Asegúrate de importar correctamente tu modelo
 const { Op } = require("sequelize");
 const models = require("../models");
 
@@ -46,26 +51,25 @@ exports.getCatalogo = async (req, res, tabla) => {
         });
       }
 
-      let rows = await getAllFrom(
-        "companias_ramos",
-        { compania_id: companiaId, estatus: 1 },
-        [
+      const rows = await CompaniasRamos.findAll({
+        where: {
+          compania_id: companiaId, // Cambié "id" por "compania_id" porque parece que quieres filtrar por el ID de la compañía
+          estatus: 1,
+        },
+        include: [
           {
-            tabla: "ramos",
-            foreignKey: "ramo_id", // campo en companias_ramos
-            localKey: "id", // campo en ramos
-            labelKey: "ramo", // cómo quieres llamar al objeto relacionado en el resultado (opcional)
-            tipo: "one", // tipo de relación (por defecto "one")
-            integrado: false,
-            customName: false, // o false, o "relacion_"
+            model: Ramos,
+            as: "ramo", // Asegúrate de que el alias coincida con el definido en la asociación
           },
-        ]
-      );
+        ],
+      });
+
+      let ramosData = rows.map((cr) => cr.ramo); // Extrae solo los datos de Ramos
 
       return res.json({
         result: true,
         message: "Registros obtenidos con éxito",
-        data: rows,
+        data: ramosData,
       });
     }
     // Caso especial: companiaByAgente

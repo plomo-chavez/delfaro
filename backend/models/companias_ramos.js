@@ -40,11 +40,18 @@ module.exports = (sequelize) => {
   CompaniasRamos.associate = (models) => {
     CompaniasRamos.belongsTo(models.Compania, {
       foreignKey: "compania_id",
-      onDelete: "CASCADE",
     });
+
+    // Relación uno a uno con Ramos
     CompaniasRamos.belongsTo(models.Ramos, {
       foreignKey: "ramo_id",
-      onDelete: "CASCADE",
+      as: "ramo",
+    });
+
+    // Si necesitas que también sea bidireccional:
+    models.Ramos.hasOne(CompaniasRamos, {
+      foreignKey: "ramo_id",
+      as: "companiaRamo",
     });
   };
 
