@@ -23,10 +23,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/catalogo/actividades/get", // Endpoint para obtener datos
-  create: "/api/catalogo/actividades", // Endpoint para crear un elemento
-  update: "/api/catalogo/actividades", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/actividades/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/catalogo/actividades", // Endpoint para obtener datos
+  create: "/api/catalogo/actividad", // Endpoint para crear un elemento
+  update: "/api/catalogo/actividad", // Endpoint para actualizar un elemento
+  delete: "/api/catalogo/actividad/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -35,6 +35,7 @@ const apiEndpoints = {
     title="Actividades"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"

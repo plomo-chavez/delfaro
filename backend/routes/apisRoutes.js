@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const upload = require("../middleware/multerConfig"); 
-const authMiddleware = require("../middleware/authMiddleware");
 
 //prettier-ignore
 const catalogosController  = require('../controllers/catalogosController');
@@ -16,6 +14,7 @@ const cobranzaRoutes = require("./cobranzaRoutes");
 const cotizacionesRoutes = require("./cotizacionesRoutes");
 const polizasRoutes = require("./polizasRoutes");
 const reportesRoutes = require("./reportesRoutes");
+const catalogosRoutes = require("./catalogosRoutes");
 
 router.post('/api/example',   exampleController.example);
 router.post('/api/login',     authController.login);
@@ -35,5 +34,6 @@ router.use("/api", cotizacionesRoutes); // Subrouter para cotizaciones
 router.use("/api", polizasRoutes); // Subrouter para polizas
 router.use("/api", reportesRoutes); // Subrouter para reportes
 router.use("/api", companiasRoutes); // Subrouter para reportes
+router.use("/api", catalogosRoutes); // Subrouter para reportes
 
 module.exports = router;
