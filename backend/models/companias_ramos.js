@@ -31,10 +31,8 @@ module.exports = (sequelize) => {
       },
     },
     {
-      paranoid: true,
       timestamps: true,
       underscored: true,
-      deletedAt: "deleted_at",
       tableName: "companias_ramos",
     },
   );

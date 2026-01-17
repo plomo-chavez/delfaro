@@ -106,13 +106,6 @@ exports.sanitizeData = async (data, config = {}) => {
   // Transforma estatus
   if (localConfig.estatusDefault) {
     if (data.estatus !== undefined) {
-      // data.estatus =
-      //   data.estatus === "Activo" ||
-      //   data.estatus === true ||
-      //   data.estatus === "true"
-      //     ? 1
-      //     : 0;
-
       data.estatus =
         data.estatus === "Activo" ||
         data.estatus === 1 ||
@@ -121,16 +114,6 @@ exports.sanitizeData = async (data, config = {}) => {
           ? true
           : false;
     }
-    // Validar y transformar el campo 'estatus'
-    // if (data.estatus !== undefined) {
-    //   data.estatus =
-    //     data.estatus === "Activo" ||
-    //     data.estatus === 1 ||
-    //     data.estatus === "true" ||
-    //     data.estatus === true
-    //       ? true
-    //       : false;
-    // }
   }
 
   // Transforma campos anidados a sus IDs

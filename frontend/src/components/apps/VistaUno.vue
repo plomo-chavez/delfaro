@@ -111,7 +111,6 @@ async function fetchTableData() {
         data: payload,
       });
       if (response.data.result && response.data.data) {
-        console.log("Respuesta de datos recibida:", response.data.data);
         let tmp = response.data.data.map((item: any) => ({
           ...item,
           created_at: formatToAmPm(item.created_at),
@@ -120,8 +119,6 @@ async function fetchTableData() {
             ? { deleted_at: formatToAmPm(item.deleted_at) }
             : {}),
         }));
-
-        console.log("Datos obtenidos:", tmp);
 
         if (props.estatusDefault) {
           tmp.map((item: any) => {

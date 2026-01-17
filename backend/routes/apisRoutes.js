@@ -9,6 +9,7 @@ const exampleController = require('../controllers/exampleController');
 const authController  = require('../controllers/authController');
 
 const usuariosRoutes = require("./usuariosRoutes");
+const companiasRoutes = require("./companiasRoutes");
 const agenteRoutes = require("./agentesRoutes");
 const clienteRoutes = require("./clientesRoutes");
 const cobranzaRoutes = require("./cobranzaRoutes");
@@ -33,5 +34,6 @@ router.use("/api", cobranzaRoutes); // Subrouter para cobranza
 router.use("/api", cotizacionesRoutes); // Subrouter para cotizaciones
 router.use("/api", polizasRoutes); // Subrouter para polizas
 router.use("/api", reportesRoutes); // Subrouter para reportes
+router.use("/api", companiasRoutes); // Subrouter para reportes
 
 module.exports = router;

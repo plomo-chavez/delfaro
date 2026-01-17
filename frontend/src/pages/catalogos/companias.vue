@@ -22,10 +22,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/companias/get", // Endpoint para obtener datos
-  create: "/api/companias/create", // Endpoint para crear un elemento
-  update: "/api/companias/update", // Endpoint para actualizar un elemento
-  delete: "/api/companias/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/companias", // Endpoint para obtener datos
+  create: "/api/compania", // Endpoint para crear un elemento
+  update: "/api/compania", // Endpoint para actualizar un elemento
+  delete: "/api/compania/eliminar", // Endpoint para eliminar un elemento
 };
 
 const handleActionsEdit = (dataRow: any) => {
@@ -48,6 +48,7 @@ const handleAtras = () => {
       :emitEdit="true"
       :formModal="true"
       :show-title="false"
+      :softDelete="true"
       :estatusDefault="true"
       :formSchema="formSchema"
       :tableHeaders="tableHeaders"

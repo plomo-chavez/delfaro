@@ -49,6 +49,7 @@ declare module 'vue' {
     ClientesV1: typeof import('./src/components/forms/clientes/ClientesV1.vue')['default']
     CompaniasFormEdit: typeof import('./src/components/forms/companias/CompaniasFormEdit.vue')['default']
     CompaniasProductos: typeof import('./src/components/forms/companias/CompaniasProductos.vue')['default']
+    CompaniasRamos: typeof import('./src/components/forms/companias/CompaniasRamos.vue')['default']
     CompaniasRepresentantesV1: typeof import('./src/components/forms/companias/CompaniasRepresentantesV1.vue')['default']
     ConfirmDialog: typeof import('./src/components/dialogs/ConfirmDialog.vue')['default']
     copy: typeof import('./src/components/managers/polizas/PolizaCancelar copy.vue')['default']

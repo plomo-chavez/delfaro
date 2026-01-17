@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import FormFactory from "@/components/apps/FormFactory.vue";
 import CompaniasProductos from "@/components/forms/companias/CompaniasProductos.vue";
+import CompaniasRamos from "@/components/forms/companias/CompaniasRamos.vue";
 import CompaniasRepresentantes from "@/components/forms/companias/CompaniasRepresentantesV1.vue";
 
 import {
@@ -14,7 +15,7 @@ const props = withDefaults(
   defineProps<{
     data: any;
   }>(),
-  {}
+  {},
 );
 
 const emit = defineEmits<{
@@ -43,12 +44,6 @@ const formSchema = [
 const handleAtras = () => {
   emit("atras");
 };
-
-const handleSelectRamo = (item: any) => {
-  item.isActivo = !item.isActivo;
-  ramos.value = [...ramos.value];
-};
-
 const handleFormSubmit = async (data: any) => {
   let response = await customRequest({
     url: "/api/companias/update",
@@ -75,13 +70,23 @@ const getRamos = async () => {
   ramos.value = response.data.data;
 };
 
-const handleUpdateRamos = async () => {
-  let response = await customRequest({
-    url: "/api/companias/ramos/update",
-    method: "POST",
-    data: {
-      compania_id: formDataLocal.value.id,
-      ramos: ramos.value,
+const handleFetchCompania = async () => {
+  let data = deepToRaw(props.data);
+  console.log("Fetching compania data... ", data);
+
+  if (!(data?.id ?? false)) {
+    showErrorMessage({
+      title: "Error",
+      message: "ID de compañia no proporcionado",
+    });
+    emit("atras");
+  }
+  await apiRequest({
+    url: "/api/compania/" + data.id,
+    method: "GET",
+    showMessages: false,
+    onSuccess: (response: any) => {
+      formDataLocal.value = response;
     },
   });
 };
@@ -89,7 +94,7 @@ const handleUpdateRamos = async () => {
 // prettier-ignore
 watch(() => props.data , (newValue) => { formDataLocal.value = newValue } );
 onMounted(() => {
-  getRamos();
+  handleFetchCompania();
 });
 </script>
 
@@ -146,24 +151,7 @@ onMounted(() => {
           <CompaniasRepresentantes :data="formDataLocal" />
         </VWindowItem>
         <VWindowItem :value="`tab3`">
-          <h1 class="ml-4">Ramos activos</h1>
-          <div class="cardsWrapper">
-            <div
-              v-for="(item, i) in [...ramos]"
-              :key="i"
-              class="cardItem"
-              @click="handleSelectRamo(item)"
-            >
-              <VCheckbox v-model="item.isActivo" :label="item.label" />
-            </div>
-          </div>
-
-          <div class="d-flex justify-end align-center mt-4">
-            <VBtn color="warning" @click="handleUpdateRamos">
-              <VIcon start icon="tabler-edit" />
-              actualizar
-            </VBtn>
-          </div>
+          <CompaniasRamos :data="formDataLocal" />
         </VWindowItem>
         <VWindowItem :value="`tab4`">
           <CompaniasProductos :data="formDataLocal" />

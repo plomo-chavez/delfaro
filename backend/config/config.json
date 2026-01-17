@@ -4,7 +4,7 @@
     "password": "z4thMUpEeGrC",
     "database": "desar257_DelFaro",
     "host": "mx66.hostgator.mx",
-    "logging": false,
+    "logging": true,
     "dialect": "mysql",
     "define": {
       "underscored": true,

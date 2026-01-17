@@ -10,6 +10,11 @@ export default [
     icon: { icon: "tabler-settings" },
     children: [
       // 2nd level
+      { title: "Compañias", to: { name: "catalogos-companias" } },
+      {
+        title: "Usuarios",
+        to: { name: "usuarios" },
+      },
       {
         title: "Catalogos",
         children: [
@@ -19,7 +24,6 @@ export default [
             to: { name: "catalogos-actividades" },
             // config: { requiresAuth: true },
           },
-          { title: "Compañias", to: { name: "catalogos-companias" } },
           {
             title: "Estatus de clientes",
             to: { name: "catalogos-estatus-clientes" },
@@ -35,10 +39,6 @@ export default [
             to: { name: "catalogos-tipos-usuarios" },
           },
         ],
-      },
-      {
-        title: "Usuarios",
-        to: { name: "usuarios" },
       },
     ],
   },
