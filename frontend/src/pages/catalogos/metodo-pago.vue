@@ -14,10 +14,10 @@ const tableHeaders = [
 ];
 
 const apiEndpoints = {
-  fetch: "/api/catalogo/metodo-pago/get", // Endpoint para obtener datos
-  create: "/api/catalogo/metodo-pago", // Endpoint para crear un elemento
-  update: "/api/catalogo/metodo-pago", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/metodo-pago/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/catalogo/metodos-pago/get", // Endpoint para obtener datos
+  create: "/api/catalogo/metodos-pago", // Endpoint para crear un elemento
+  update: "/api/catalogo/metodos-pago", // Endpoint para actualizar un elemento
+  delete: "/api/catalogo/metodos-pago/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -26,6 +26,7 @@ const apiEndpoints = {
     title="Métodos de Pago"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"

@@ -15,10 +15,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/catalogo/tipo-usuario/get", // Endpoint para obtener datos
-  create: "/api/catalogo/tipo-usuario", // Endpoint para crear un elemento
-  update: "/api/catalogo/tipo-usuario", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/tipo-usuario/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/catalogo/tipos-usuarios/get", // Endpoint para obtener datos
+  create: "/api/catalogo/tipos-usuarios", // Endpoint para crear un elemento
+  update: "/api/catalogo/tipos-usuarios", // Endpoint para actualizar un elemento
+  delete: "/api/catalogo/tipos-usuarios/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -27,6 +27,7 @@ const apiEndpoints = {
     title="Tipos de usuario"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"

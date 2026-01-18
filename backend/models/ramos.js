@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
     },
     {
       paranoid: true,
-      timestamps: false,
+      timestamps: true,
       underscored: true,
       deletedAt: "deleted_at",
       tableName: "ramos",

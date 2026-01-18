@@ -15,10 +15,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/catalogo/tipo-vencimiento/get", // Endpoint para obtener datos
-  create: "/api/catalogo/tipo-vencimiento", // Endpoint para crear un elemento
-  update: "/api/catalogo/tipo-vencimiento", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/tipo-vencimiento/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/catalogo/tipos-vencimiento/get", // Endpoint para obtener datos
+  create: "/api/catalogo/tipos-vencimiento", // Endpoint para crear un elemento
+  update: "/api/catalogo/tipos-vencimiento", // Endpoint para actualizar un elemento
+  delete: "/api/catalogo/tipos-vencimiento/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -27,6 +27,7 @@ const apiEndpoints = {
     title="Tipos de Vencimiento"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"

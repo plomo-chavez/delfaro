@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       paranoid: true,
-      timestamps: false,
+      timestamps: true,
       underscored: true,
       deletedAt: "deleted_at",
       tableName: "tipos_de_usuarios",

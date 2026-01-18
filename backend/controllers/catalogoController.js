@@ -15,21 +15,71 @@ const {
 const getModels = async (catalogo) => {
   switch (catalogo) {
     case "actividades":
-    case "actividad":
       return {
         modelo: models.Actividades,
         modeloString: "Actividades",
         tabla: "actividades",
         isGetAll: catalogo === "actividades",
       };
+    case "estatus-clientes":
+      return {
+        modelo: models.EstatusCliente,
+        modeloString: "EstatusCliente",
+        tabla: "estatus_cliente",
+        isGetAll: catalogo === "estatus-clientes",
+      };
+    case "metodos-pago":
+      return {
+        modelo: models.MetodosDePago,
+        modeloString: "MetodosDePago",
+        tabla: "metodos_de_pago",
+        isGetAll: catalogo === "metodos-pago",
+      };
+    case "ramos":
+      return {
+        modelo: models.Ramos,
+        modeloString: "Ramos",
+        tabla: "ramos",
+        isGetAll: catalogo === "ramos",
+      };
+    case "tipos-vencimiento":
+      return {
+        modelo: models.TiposDeVencimiento,
+        modeloString: "TiposDeVencimiento",
+        tabla: "tipos_de_vencimiento",
+        isGetAll: catalogo === "tipos-vencimiento",
+      };
+    case "tipos-usuarios":
+      return {
+        modelo: models.TiposDeUsuarios,
+        modeloString: "TiposDeUsuarios",
+        tabla: "tipos_de_usuarios",
+        isGetAll: catalogo === "tipos-usuarios",
+      };
     default:
       return null;
   }
+
+  // EstatusCliente
+  // estatus_cliente
+
+  //   MetodosDePago
+  // metodos_de_pago
+
+  // Ramos
+  // ramos
+
+  // TiposDeVencimiento
+  // tipos_de_vencimiento
+
+  // TiposDeUsuarios
+  // tipos_de_usuarios
 };
 
-exports.getData = async (req, res) => {
+exports.getData = async (req, res, isGetAll = false) => {
   try {
     const tabla = req.params.catalogo;
+    console.log("  isGetAll =", isGetAll);
     const dataModels = await getModels(tabla);
 
     if (!dataModels) {
@@ -38,19 +88,11 @@ exports.getData = async (req, res) => {
         message: `El catálogo '${tabla}' no existe.`,
       });
     }
-    const isGetAll = dataModels.isGetAll;
 
-    console.log(
-      "Tabla solicitada: ",
-      tabla,
-      "isGetAll: ",
-      isGetAll,
-      " dataModels ",
-      dataModels,
-    );
+    // prettier-ignore
+    console.log( "Tabla solicitada: ", tabla, "isGetAll: ", isGetAll, " dataModels ", dataModels);
 
     if (isGetAll) {
-      console.log("Entró a getAll ");
       const response = await handleGetAll(req, dataModels);
       return res.json(response); // Solo se envía una respuesta aquí
     } else {
@@ -58,8 +100,8 @@ exports.getData = async (req, res) => {
       return res.json(response); // Solo se envía una respuesta aquí
     }
   } catch (error) {
-    console.error("Error al obtener datos:", error);
-    return res.status(500).json({
+    console.log("Error al obtener datos:", error);
+    return res.json({
       result: false,
       message: "Error interno del servidor",
       error: error.message,

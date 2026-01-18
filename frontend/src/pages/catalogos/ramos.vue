@@ -19,7 +19,7 @@ const apiEndpoints = {
   fetch: "/api/catalogo/ramos/get", // Endpoint para obtener datos
   create: "/api/catalogo/ramos", // Endpoint para crear un elemento
   update: "/api/catalogo/ramos", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/ramos/delete", // Endpoint para eliminar un elemento
+  delete: "/api/catalogo/ramos/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -28,6 +28,7 @@ const apiEndpoints = {
     title="Ramos"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"

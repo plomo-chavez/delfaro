@@ -16,10 +16,10 @@ const tableHeaders = [
 
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
-  fetch: "/api/catalogo/estatus-cliente/get", // Endpoint para obtener datos
-  create: "/api/catalogo/estatus-cliente", // Endpoint para crear un elemento
-  update: "/api/catalogo/estatus-cliente", // Endpoint para actualizar un elemento
-  delete: "/api/catalogo/estatus-cliente/delete", // Endpoint para eliminar un elemento
+  fetch: "/api/catalogo/estatus-clientes/get", // Endpoint para obtener datos
+  create: "/api/catalogo/estatus-clientes", // Endpoint para crear un elemento
+  update: "/api/catalogo/estatus-clientes", // Endpoint para actualizar un elemento
+  delete: "/api/catalogo/estatus-clientes/eliminar", // Endpoint para eliminar un elemento
 };
 </script>
 
@@ -28,6 +28,7 @@ const apiEndpoints = {
     title="Estatus de Clientes"
     :formModal="true"
     :estatusDefault="true"
+    :softDelete="true"
     :formSchema="formSchema"
     :tableHeaders="tableHeaders"
     :apiEndpoints="apiEndpoints"
