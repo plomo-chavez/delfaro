@@ -168,7 +168,7 @@
 <script setup lang="ts">
 import PropuestaDetalles from "@/components/forms/cotizaciones/componentes/autosPropuestaDetalles.vue";
 import { deepToRaw, isItemSelected, toggleItemInArray } from "@/utils/helper";
-import { defineEmits, defineProps, ref } from "vue";
+import { ref } from "vue";
 
 const props = withDefaults(
   defineProps<{

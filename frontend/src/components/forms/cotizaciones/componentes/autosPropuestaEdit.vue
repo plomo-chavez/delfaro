@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps } from "vue";
 import EditQualitas from "./autosPropuestaEditQualitas.vue";
 
 const props = defineProps<{

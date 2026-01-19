@@ -35,6 +35,8 @@ declare module 'vue' {
     AppTextField: typeof import('./src/@core/components/app-form-elements/AppTextField.vue')['default']
     AutosCotizacion: typeof import('./src/components/forms/cotizaciones/autos/AutosCotizacion.vue')['default']
     AutosCotizacionDetalles: typeof import('./src/components/forms/cotizaciones/autos/AutosCotizacionDetalles.vue')['default']
+    AutosCotizacionEditar: typeof import('./src/components/forms/cotizaciones/autos/AutosCotizacionEditar.vue')['default']
+    AutosCotizacionEditarQualitas: typeof import('./src/components/forms/cotizaciones/autos/AutosCotizacionEditarQualitas.vue')['default']
     AutosPropuestaDetalles: typeof import('./src/components/forms/cotizaciones/componentes/autosPropuestaDetalles.vue')['default']
     AutosPropuestaEdit: typeof import('./src/components/forms/cotizaciones/componentes/autosPropuestaEdit.vue')['default']
     AutosPropuestaEditQualitas: typeof import('./src/components/forms/cotizaciones/componentes/autosPropuestaEditQualitas.vue')['default']

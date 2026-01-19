@@ -371,7 +371,7 @@
 
 <script setup lang="ts">
 import { deepClone, deepToRaw, diffObjects } from "@/utils/helper";
-import { defineEmits, defineProps, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 // Devuelve las diferencias entre dos objetos o arrays
 // diffObjects ahora devuelve solo los nuevos valores (valor1) de los elementos que cambiaron
 
@@ -557,7 +557,7 @@ function handleActualizar() {
   // Supón que cambiosFinales.coberturas es un array de objetos de cobertura
   cambiosFinales.coberturas.forEach((nuevaCobertura: any) => {
     const idx = tmpCotizacion.detalles.coberturasBasicas.findIndex(
-      (item: any) => item.cobertura === nuevaCobertura.cobertura
+      (item: any) => item.cobertura === nuevaCobertura.cobertura,
     );
     if (idx !== -1) {
       // Reemplaza el objeto completo
@@ -773,7 +773,9 @@ watch(cambios, () => {
   padding: 1rem 2rem;
   background: #ffffff;
   text-align: center;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
   min-width: 120px;
 }
 .frecuencia-card.selected {
@@ -808,7 +810,10 @@ watch(cambios, () => {
   border-radius: 12px;
   padding: 1rem;
   cursor: pointer;
-  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s,
+    background 0.2s;
   display: flex;
   flex-direction: column;
   align-items: stretch;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="cotizacion.compania == 'QUALITAS'">
+    <div v-if="cotizacion.compania.nombreCorto == 'QUALITAS'">
       <table class="table table-bordered w-100 mt-4">
         <thead>
           <tr>
@@ -64,8 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-
 const props = defineProps<{
   cotizacion: any;
 }>();
