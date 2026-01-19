@@ -7,7 +7,12 @@ export const themes: Record<string, ThemeDefinition> = {
   light: {
     dark: false,
     colors: {
+      white: "#fff",
       primary: staticPrimaryColor,
+      primaryDark: staticPrimaryDarkenColor,
+      primaryTonal: "#a3c4e8",
+      primaryTonalLight: "#dce6f5",
+      primaryTonalDark: "#d4d9f5",
       "on-primary": "#fff",
       "primary-darken-1": "#0b237b",
       secondary: "#808390",
@@ -46,6 +51,7 @@ export const themes: Record<string, ThemeDefinition> = {
       "skin-bordered-background": "#fff",
       "skin-bordered-surface": "#fff",
       "expansion-panel-text-custom-bg": "#fafafa",
+      boxShadow: "rgba(0, 0, 0, 0.1)",
     },
 
     variables: {

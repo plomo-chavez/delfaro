@@ -6,7 +6,7 @@
       class="my-5"
       :btnActions="false"
     />
-    <div class="card" v-if="props.cotizacion != null">
+    <div v-if="props.cotizacion != null">
       <!-- prettier-ignore -->
       <div v-if="props.cotizacion.compania.nombreCorto == 'QUALITAS'" >
         <EditQualitas

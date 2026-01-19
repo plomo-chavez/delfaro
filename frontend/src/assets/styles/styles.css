@@ -1,16 +1,14 @@
 
-.bgRed { background-color: red !important; }
-.textDanger, .text-danger { color: red !important; } 
-.textSuccess { color: var(--v-theme-success)!important; } 
-.textSuccess { color: #0bac30!important; } 
-.textSecondary { color: #717171 !important; } 
-.textSecondary { color: #717171 !important; } 
-.bgDiv { background-color: #ffffff!important; }
+.bgRed { background-color:  rgb(var(--v-theme-error))!important; }
+.textDanger, .text-danger { color: rgb(var(--v-theme-error))!important; }
+.textSuccess { color: var(--v-theme-success)!important; }
+.textSecondary { color: var(--v-theme-secondary)!important; }
+.bgDiv { background-color: var(--v-theme-surface)!important; }
 .divCustom {
-  background-color: #ffffff !important;
+  background-color: rgb(var(--v-theme-surface))!important; 
   border: 1px solid #d1d5db !important; /* Borde gris claro */
   border-radius: 8px !important; /* Bordes redondeados */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important; /* Sombra ligera */
+  box-shadow: 0px 4px 6px var(--v-theme-boxShadow) !important; /* Sombra ligera */
   padding: 16px !important; /* Espaciado interno */
   transition: box-shadow 0.3s ease, transform 0.3s ease !important; /* Transiciones suaves */
 }
@@ -23,11 +21,28 @@
     text-transform: capitalize; /* Asegura que solo la primera letra de cada palabra sea mayúscula */
 
 }
+.chip {
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.chipPrimary{
+  background-color: rgb(var(--v-theme-primaryTonalLight)) !important;
+  color: rgb(var(--v-theme-primaryDark)) !important;
+  font-weight: bold !important;
+}
+
+.chipPrimarySelected{
+  background-color: rgb(var(--v-theme-primaryDark)) !important;
+  color: rgb(var(--v-theme-white)) !important;
+  font-weight: bold !important;
+}
 /* Colores pastel */
 .bgTonalBlack {
   background-color: #d3d3d3; /* Gris claro, simulando un negro pastel */
   color: #333333; /* Texto oscuro */
 }
+
 .bgTonalGray {
   background-color: #e5e7eb; /* Gris claro pastel */
   color: #7f7f7f; /* Texto gris oscuro */
