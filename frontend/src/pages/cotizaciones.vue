@@ -9,6 +9,7 @@ const dataLocal: any = ref(null); // Referencia al componente FormFactory
 const tableHeaders = [
   { title: "ID", key: "id" },
   { title: "Nombre", key: "nombre" },
+  { title: "Ramo", key: "ramo" },
   { title: "Estatus", key: "estatus" },
   { title: "Creación", key: "created_at" },
   { title: "Últ. Modificación", key: "updated_at" },
@@ -17,8 +18,8 @@ const tableHeaders = [
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
   fetch: "/api/cotizaciones", // Endpoint para obtener datos
-  create: "/api/cotizacion/create", // Endpoint para crear un elemento
-  update: "/api/cotizacion/update", // Endpoint para actualizar un elemento
+  create: "/api/cotizacion", // Endpoint para crear un elemento
+  update: "/api/cotizacion", // Endpoint para actualizar un elemento
   delete: "/api/cotizacion/eliminar", // Endpoint para eliminar un elemento
 };
 
@@ -122,8 +123,6 @@ function tryPartialParse(jsonString: string) {
 const handleActionsEdit = (dataRow: any) => {
   let tmp = deepToRaw(dataRow);
 
-  tmp.configuracion = JSON.parse(tmp.configuracion);
-
   dataLocal.value = tmp;
   showWizard.value = true;
 };
@@ -132,6 +131,7 @@ const handleActionsCreate = () => {
   dataLocal.value = {}; // Reiniciar dataLocal para crear una nueva cotización
   showWizard.value = true;
 };
+
 const handleActionsCancel = () => {
   showWizard.value = false;
   showFormEdit.value = false;

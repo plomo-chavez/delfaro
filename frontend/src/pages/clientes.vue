@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CrudManager from "@/components/apps/VistaUno.vue";
-import ManagerRecord from "@/components/managers/ManagerClientes.vue";
+import ManagerClientes from "@/components/forms/clientes/ManagerClientes.vue";
 // prettier-ignore
 const formSchema = [
   { label: "Nombre",              type: "text",   model: "nombre",          },
@@ -41,7 +41,7 @@ const handleCancelar = () => {
 
 <template>
   <!-- prettier-ignore -->
-  <ManagerRecord v-if="showFormEdit" :data="data" @cancelar="handleCancelar" />
+  <ManagerClientes v-if="showFormEdit" :data="data" @cancelar="handleCancelar" />
   <div v-else>
     <h1>Clientes</h1>
     <!-- prettier-ignore -->

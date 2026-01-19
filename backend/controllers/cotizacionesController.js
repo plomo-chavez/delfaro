@@ -1,13 +1,8 @@
-const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
 const {
   getAllFromModel,
   processSoftDelete,
   handleIsAdmin,
 } = require("../db/customFunctions");
-const { enviarCorreo } = require("../utils/emailServiceHelper");
-const { Op } = require("sequelize");
-const moment = require("moment");
-const fs = require("fs");
 const {
   Cotizaciones,
   PolizaHistorial,
@@ -15,9 +10,25 @@ const {
   PolizaAsegurados,
   PolizaRecibos,
 } = require("../models");
-const entidad = "Poliza";
+
+const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
+const { enviarCorreo } = require("../utils/emailServiceHelper");
+const { Op } = require("sequelize");
+const moment = require("moment");
 const modelo = Cotizaciones;
-const fields = false;
+const fs = require("fs");
+const entidad = "Poliza";
+
+const fields = [
+  "id",
+  "nombre",
+  "ramo",
+  "estatus",
+  "configuracion",
+  "created_at",
+  "updated_at",
+  "deleted_at",
+];
 
 async function processRecord(data) {
   try {
@@ -45,7 +56,6 @@ async function processRecord(data) {
 exports.getAll = async (req, res) => {
   try {
     const isAdmin = handleIsAdmin(req);
-
     const paranoid = !isAdmin;
     const filtros = req.body.filtros || {};
     const page = parseInt(req.body.page) || 1;

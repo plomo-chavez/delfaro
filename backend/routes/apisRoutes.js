@@ -15,6 +15,7 @@ const cotizacionesRoutes = require("./cotizacionesRoutes");
 const polizasRoutes = require("./polizasRoutes");
 const reportesRoutes = require("./reportesRoutes");
 const catalogosRoutes = require("./catalogosRoutes");
+const multiCotizadorRoutes = require("./multiCotizadorRoutes");
 
 router.post('/api/example',   exampleController.example);
 router.post('/api/login',     authController.login);
@@ -26,14 +27,15 @@ router.post('/api/catalogos/:catalogo', (req, res) => {
   catalogosController.getCatalogo(req, res, catalogo);
 });
 
-router.use("/api", usuariosRoutes); // Subrouter para usuarios
-router.use("/api", agenteRoutes); // Subrouter para agentes
-router.use("/api", clienteRoutes); // Subrouter para clientes
-router.use("/api", cobranzaRoutes); // Subrouter para cobranza
-router.use("/api", cotizacionesRoutes); // Subrouter para cotizaciones
-router.use("/api", polizasRoutes); // Subrouter para polizas
-router.use("/api", reportesRoutes); // Subrouter para reportes
-router.use("/api", companiasRoutes); // Subrouter para reportes
-router.use("/api", catalogosRoutes); // Subrouter para reportes
+router.use("/api", usuariosRoutes); 
+router.use("/api", agenteRoutes); 
+router.use("/api", clienteRoutes); 
+router.use("/api", cobranzaRoutes); 
+router.use("/api", cotizacionesRoutes); 
+router.use("/api", polizasRoutes); 
+router.use("/api", reportesRoutes); 
+router.use("/api", companiasRoutes); 
+router.use("/api", catalogosRoutes); 
+router.use("/api/wizard", multiCotizadorRoutes); 
 
 module.exports = router;

@@ -13,11 +13,6 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      fechaNacimiento: {
-        field: "fechaNacimiento",
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-      },
       estatus: {
         type: DataTypes.STRING,
         defaultValue: "Borrador",

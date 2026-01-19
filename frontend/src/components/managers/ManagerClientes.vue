@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ModuladorFormFactory from "@/components/apps/ModuladorFormFactory.vue";
 import { apiRequest } from "@/utils/apiRequest";
 import { deepToRaw } from "@/utils/helper";
 import { ref } from "vue";

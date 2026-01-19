@@ -7,6 +7,7 @@ import Toastify from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 // Styles
 import "@core/scss/template/index.scss";
+import "@styles/cardStyles.css";
 import "@styles/styles.css";
 import "@styles/styles.scss";
 

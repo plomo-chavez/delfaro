@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormFactory from "@/components/apps/FormFactory.vue";
 const props = withDefaults(
   defineProps<{
     tipo?: string;
@@ -13,7 +14,7 @@ const props = withDefaults(
     form: "cliente",
     classForm: "w-100",
     exportCliente: true,
-  }
+  },
 );
 
 // prettier-ignore
@@ -404,7 +405,10 @@ const handleCancelarForm = async () => {
   cursor: pointer;
   font-size: 1rem;
   box-shadow: 0 2px 8px #535353;
-  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .btn:hover {
