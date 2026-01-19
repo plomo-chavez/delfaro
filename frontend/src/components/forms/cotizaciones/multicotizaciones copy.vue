@@ -16,7 +16,7 @@ const props = withDefaults(
   }>(),
   {
     registro: null,
-  }
+  },
 );
 
 const localData: any = ref(props.registro ? { ...props.registro } : {});
@@ -101,7 +101,7 @@ async function getCompanias() {
             producto.nombre_producto = producto.nombre;
             delete producto.nombre;
             return producto;
-          }
+          },
         );
       }
       return compania;
@@ -128,7 +128,7 @@ function selectProducto(valor: any, producto: any) {
   } else {
     // Si el checkbox está desmarcado, elimina el producto de la lista
     configuracion.value.productos = configuracion.value.productos.filter(
-      (p: any) => p.id !== producto.id
+      (p: any) => p.id !== producto.id,
     );
   }
 }
@@ -174,7 +174,7 @@ async function sendToCotizar() {
       ...p,
       compania:
         (configuracion.value.companias || []).find(
-          (c: any) => c.id === p.compania_id
+          (c: any) => c.id === p.compania_id,
         ) || null,
       ramo: toRaw(configuracion.value.ramo) || null,
       titular: { ...p.titular, ...configuracion.value.titular },
@@ -188,7 +188,7 @@ async function sendToCotizar() {
       acc[`cotizacion${idx + 1}`] = prod;
       return acc;
     },
-    {}
+    {},
   );
 
   const response = await customRequest({
@@ -206,7 +206,7 @@ function selectCompania(compania: any) {
   if (index) {
     // Si existe, elimínala
     configuracion.value.companias = configuracion.value.companias.filter(
-      (c: any) => c.id !== compania.id
+      (c: any) => c.id !== compania.id,
     );
   } else {
     // Si no existe, agrégala
@@ -244,7 +244,7 @@ async function handleTerminarEntrevista(data: any) {
   const rawData = toRaw(realData);
   // Busca el índice del producto
   const idx = configuracion.value.productos.findIndex(
-    (p: any) => p.id == rawData.id
+    (p: any) => p.id == rawData.id,
   );
   if (idx !== -1) {
     // Reemplaza el objeto para asegurar reactividad
@@ -358,7 +358,7 @@ function handleSeleccionProducto(item: any) {
     // Si estamos en modo edición, confirmamos la eliminación
     confirmarEliminarProducto(
       item,
-      configuracion.value.productos.indexOf(item)
+      configuracion.value.productos.indexOf(item),
     );
   } else {
     // Si no estamos en modo edición, seleccionamos el producto
@@ -416,7 +416,7 @@ watch(
       }, 1);
       await updateCotizacion(tmp);
     }
-  }
+  },
 );
 </script>
 

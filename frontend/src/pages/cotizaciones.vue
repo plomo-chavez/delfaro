@@ -9,7 +9,6 @@ const dataLocal: any = ref(null); // Referencia al componente FormFactory
 const tableHeaders = [
   { title: "ID", key: "id" },
   { title: "Nombre", key: "nombre" },
-  { title: "Ramo", key: "ramo" },
   { title: "Estatus", key: "estatus" },
   { title: "Creación", key: "created_at" },
   { title: "Últ. Modificación", key: "updated_at" },
@@ -18,8 +17,8 @@ const tableHeaders = [
 const apiEndpoints = {
   // fetch: "/api/test", // Endpoint para obtener datos
   fetch: "/api/cotizaciones", // Endpoint para obtener datos
-  create: "/api/cotizacion", // Endpoint para crear un elemento
-  update: "/api/cotizacion", // Endpoint para actualizar un elemento
+  create: "/api/cotizacion/create", // Endpoint para crear un elemento
+  update: "/api/cotizacion/update", // Endpoint para actualizar un elemento
   delete: "/api/cotizacion/eliminar", // Endpoint para eliminar un elemento
 };
 
@@ -123,15 +122,26 @@ function tryPartialParse(jsonString: string) {
 const handleActionsEdit = (dataRow: any) => {
   let tmp = deepToRaw(dataRow);
 
-  dataLocal.value = tmp;
-  showWizard.value = true;
+  try {
+    console.log("Configuración original:", typeof tmp.configuracion);
+    // Verifica si configuracion es una cadena antes de intentar parsearla
+    if (typeof tmp.configuracion === "string") {
+      tmp.configuracion = safeParseConfig(tmp.configuracion);
+    } else {
+      tmp.configuracion = tmp.configuracion || {};
+    }
+  } catch (error) {
+    console.error("Error al parsear la configuración:", error);
+    tmp.configuracion = {}; // Asignar un valor por defecto en caso de error
+  }
+
+  console.log("Editando cotización:", tmp.configuracion);
 };
 
 const handleActionsCreate = () => {
   dataLocal.value = {}; // Reiniciar dataLocal para crear una nueva cotización
   showWizard.value = true;
 };
-
 const handleActionsCancel = () => {
   showWizard.value = false;
   showFormEdit.value = false;

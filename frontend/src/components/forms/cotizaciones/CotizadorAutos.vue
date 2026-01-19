@@ -56,8 +56,8 @@ onBeforeMount(() => {
 <template>
   <div>
     <h1 class="module-title">Cotizador de Seguros de Autos</h1>
-    <div class="card cardForm mx-auto mt-3">
-      <div v-if="step === 1">
+    <div>
+      <div v-if="step === 1" class="card cardForm mx-auto mt-3">
         <h2 class="w-full mb-5">Información del cliente:</h2>
         <ManagerClientes
           :registro="dataPreguntas"
@@ -68,8 +68,7 @@ onBeforeMount(() => {
         />
       </div>
       <div>
-        <div class="divRows mt-3" v-if="cotizaciones">
-          <!-- <pre>{{ cotizaciones }}</pre> -->
+        <div class="" v-if="cotizaciones">
           <AutosCotizaciones class="w-100" :cotizaciones="cotizaciones" />
         </div>
       </div>
