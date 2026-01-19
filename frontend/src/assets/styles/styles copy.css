@@ -1,6 +1,6 @@
 
 .bgRed { background-color: red !important; }
-.textDanger, .text-danger { color: red !important; } 
+.textDanger { color: red !important; } 
 .textSuccess { color: var(--v-theme-success)!important; } 
 .textSuccess { color: #0bac30!important; } 
 .textSecondary { color: #717171 !important; } 
@@ -18,11 +18,7 @@
 .text-dark { color: #23272f !important; }
 .textDark { color: #23272f !important; }
 .font-bold { font-weight: 700 !important; } 
-.text-capitalize {
-  text-transform: capitalize!important; /* Convierte la primera letra de cada palabra a mayúscula */
-    text-transform: capitalize; /* Asegura que solo la primera letra de cada palabra sea mayúscula */
 
-}
 /* Colores pastel */
 .bgTonalBlack {
   background-color: #d3d3d3; /* Gris claro, simulando un negro pastel */
@@ -272,6 +268,17 @@
 }
 
 
+.card {
+  padding: 16px !important;
+  border-radius: 10px !important;
+  background-color: white !important;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.cardActive {
+  border: 2px solid rgb(var(--v-theme-primary));
+}
 
 .disabledItem {
   opacity: 0.5;
