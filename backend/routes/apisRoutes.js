@@ -16,6 +16,7 @@ const polizasRoutes = require("./polizasRoutes");
 const reportesRoutes = require("./reportesRoutes");
 const catalogosRoutes = require("./catalogosRoutes");
 const multiCotizadorRoutes = require("./multiCotizadorRoutes");
+const cotizadorRoutes = require("./cotizadorRoutes");
 
 router.post('/api/example',   exampleController.example);
 router.post('/api/login',     authController.login);
@@ -27,6 +28,7 @@ router.post('/api/catalogos/:catalogo', (req, res) => {
   catalogosController.getCatalogo(req, res, catalogo);
 });
 
+router.use("/api/", cotizadorRoutes); 
 router.use("/api", usuariosRoutes); 
 router.use("/api", agenteRoutes); 
 router.use("/api", clienteRoutes); 

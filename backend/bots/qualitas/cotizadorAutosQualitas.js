@@ -322,19 +322,19 @@ async function getDetallesCotizacion(driver, data, darClick = true) {
 
     await sleep(1000);
 
-    const frecuenciaTexto = data.detalles.frecuenciaPago ?? "Contado"; // Ejemplo: "Trimestral"
+    const frecuenciaTexto = data.cotizacion.frecuenciaPago ?? "Contado"; // Ejemplo: "Trimestral"
 
     await sleep(1000);
     const frecuenciasPago = await obtenerFrecuenciasPago(
       driver,
-      frecuenciaTexto
+      frecuenciaTexto,
     );
 
     data.detalles.frecuenciasPago = frecuenciasPago;
 
     let coberturasBasicas = await obtenerCoberturasBasicas(
       driver,
-      data.detalles.coberturasBasicas
+      data.detalles.coberturasBasicas,
     );
 
     data.detalles.coberturasBasicas = coberturasBasicas;
@@ -344,7 +344,7 @@ async function getDetallesCotizacion(driver, data, darClick = true) {
     let accesorios = [];
 
     // prettier-ignore
-    let obtenerDetallesAccesorios = data.titular.obtenerDetallesAccesorios || false;
+    let obtenerDetallesAccesorios = data.cotizacion.obtenerDetallesAccesorios || false;
 
     if (obtenerDetallesAccesorios) {
       // prettier-ignore
@@ -354,7 +354,7 @@ async function getDetallesCotizacion(driver, data, darClick = true) {
       });
 
       let accesoriosSeleccionados = accesorios.filter(
-        (item) => item.selected === true
+        (item) => item.selected === true,
       );
 
       if (accesoriosSeleccionados.length > 0) {
@@ -414,15 +414,6 @@ async function guardandoCambios(driver, data) {
 }
 
 async function preparacionData(data) {
-  if (!data.detalles) {
-    data.detalles = {};
-  }
-
-  if (data.titular.frecuenciaPago) {
-    data.detalles.frecuenciaPago = data.titular.frecuenciaPago.label;
-    // delete data.titular.frecuenciaPago;
-  }
-
   if (data.msgError) {
     delete data.msgError;
   }
@@ -431,39 +422,15 @@ async function preparacionData(data) {
     delete data.cambios;
   }
 
-  if (!data.hasOwnProperty("inicial")) {
-    data.inicial = true;
-  }
+  data.detalles ??= {};
 
-  if (!data.hasOwnProperty("vehiculo")) {
-    data.vehiculo = {
-      marca: data.titular.marca,
-      modelo: data.titular.modelo,
-      anio: data.titular.anio,
-      version: data.titular.version,
-    };
-
-    delete data.titular.anio;
-    delete data.titular.marca;
-    delete data.titular.modelo;
-    delete data.titular.version;
-  }
-
-  if (data.hasOwnProperty("companias_productos")) {
-    if (data.companias_productos.length == 1) {
-      let producto = data.companias_productos[0];
-      data.companiaProducto_id = producto.id; // Asignar el primer ID de compania_producto
-      data.companiaProducto = producto.nombre; // Asignar el primer ID de compania_producto
-      delete data.companias_productos; // Eliminar la propiedad 'companias_productos' si existe
-    }
-  }
   return data;
 }
 
 async function actualizarAccesorios(driver, accesoriosSolicitados) {
   // accesoriosSolicitados: [{ label_id: 'accesory8', ... }]
   const labels = await driver.findElements(
-    By.css("#coberturasAccesoriasItems label")
+    By.css("#coberturasAccesoriasItems label"),
   );
   if (labels.length === 0) return [];
 
@@ -619,22 +586,21 @@ async function generadorCotizacion(driver, data) {
     data.vehiculo.version = versiones[0].label;
   }
 
-  data.vehiculo.versiones = versiones;
+  data.detalles.versiones = versiones;
   await sleep(1000);
 
   await acercarHaElemento(driver, { locator: "postalCode" });
 
-  if (data.titular.direccion) {
+  if (data.cliente.direccion) {
     await setInputValue(driver, {
       locator: "postalCode",
       changeFocus: true,
       sleeptime: 10,
-      value: data.titular.direccion,
+      value: data.cliente.direccion,
     });
     await sleep(3000);
   } else {
-    const cp = data.titular.codigoPostal || null; // Default postal code if not provided
-
+    const cp = data.cliente.codigoPostal || null; // Default postal code if not provided
     if (cp == null) {
       // prettier-ignore
       data.msgError = "No se encontró un código postal válido.";
@@ -665,11 +631,11 @@ async function generadorCotizacion(driver, data) {
 
   await selectInUL(driver, { locator: "ui-id-2" });
 
-  if (!data.titular.direccion) {
+  if (!data.cliente.direccion) {
     // Seleccionanando la primera direccion disponible
 
-    data.titular.direccion = direcciones[0].value;
-    data.titular.direcciones = direcciones;
+    data.cliente.direccion = direcciones[0].value;
+    data.detalles.direcciones = direcciones;
   }
 
   // Continuando a la cotización
@@ -701,7 +667,7 @@ async function generadorCotizacion(driver, data) {
       selectReturnType: elemento.selectReturnType || "value", // Valor por defecto si no se especifica
       sleeptime: 1000,
     });
-    data.detalles[elemento.key] = tmp;
+    data.cotizacion[elemento.key] = tmp;
   }
 
   await waitForElement(driver, { locator: "selectPolicyRight" });
@@ -716,7 +682,7 @@ async function generadorCotizacion(driver, data) {
   });
 
   let paqueteCobertura = (
-    data?.titular?.paqueteCobertura?.label ?? "Basica"
+    data?.cotizacion?.paqueteCobertura?.label ?? "Basica"
   ).toUpperCase();
 
   await sleep(1000);
@@ -779,12 +745,6 @@ async function generadorCotizacion(driver, data) {
 
   const rutaPlantilla = obtenerRutaBackendFiles("plantillas", "Portada.pdf");
 
-  const resultadoMerge = await mergePDFs({
-    archivoOriginal: responseFile.path,
-    archivosMerge: rutaPlantilla,
-    eliminarOriginal: true,
-  });
-
   let archivo = null;
 
   if (responseFile.status) {
@@ -792,9 +752,7 @@ async function generadorCotizacion(driver, data) {
     archivo = pathFinal;
   }
 
-  data.detalles = { ...data.detalles, ...tmp, archivo };
-
-  data.inicial = false;
+  data.cotizacion = { ...data.cotizacion, ...tmp, archivo };
 
   // deepPrint(data);
 

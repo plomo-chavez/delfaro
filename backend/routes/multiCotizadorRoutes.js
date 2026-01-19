@@ -7,5 +7,7 @@ const multiCotizadorController = require("../controllers/multiCotizadorControlle
 router.use(authMiddleware);
 
 router.post('/multicotizador/steps',    multiCotizadorController.steps);
+router.post('/multicotizador/steps',    multiCotizadorController.steps);
+
 
 module.exports = router;

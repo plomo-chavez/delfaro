@@ -37,6 +37,7 @@ const handlePrepararCotizaciones = async () => {
     },
   );
   cotizaciones.value = tmpCotizaciones;
+  console.log("Cotizaciones preparadas:", tmpCotizaciones);
 };
 
 onBeforeMount(() => {

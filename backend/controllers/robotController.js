@@ -31,16 +31,16 @@ exports.demoRobots = async (req, res) => {
 
 exports.handleEstimarCotizaciones = async (data) => {
   let resultado = null;
-  let bot = data.bot || null; // Nombre del bot a ejecutar
+  let bot = data?.bot || null; // Nombre del bot a ejecutar
 
   if (bot == null) {
-    if (data.ramo == "AUTOS") {
-      if (data.compania == "QUALITAS") {
+    if (data.cotizacion.ramo.label == "AUTOS") {
+      if (data.cotizacion.compania.nombreCorto == "QUALITAS") {
         bot = "cotizadorAutosQualitas";
       }
     }
   }
-
+  console.log("Ejecutando bot:", bot);
   switch (bot) {
     case "planSeguroCotizacion":
       resultado = await ejecutarCotizacion(data);
@@ -79,6 +79,7 @@ exports.handleEmitirPolizas = async (data) => {
 
   return resultado;
 };
+
 exports.handleReprocesarPolizas = async (data) => {
   let resultado = null;
   let compania = data.compania.toLowerCase() || null;
