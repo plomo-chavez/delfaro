@@ -322,7 +322,7 @@ async function getDetallesCotizacion(driver, data, darClick = true) {
 
     await sleep(1000);
 
-    const frecuenciaTexto = data.cotizacion.frecuenciaPago ?? "Contado"; // Ejemplo: "Trimestral"
+    const frecuenciaTexto = data.cotizacion.frecuenciaPago?.label ?? "Contado"; // Ejemplo: "Trimestral"
 
     await sleep(1000);
     const frecuenciasPago = await obtenerFrecuenciasPago(

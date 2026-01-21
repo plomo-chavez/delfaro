@@ -6,7 +6,7 @@ const props = withDefaults(
     data: any;
     recibo: any;
   }>(),
-  {}
+  {},
 );
 
 const emit = defineEmits<{
@@ -43,7 +43,6 @@ const handleShowModalContrasenia = (estatus: string) => {
     </div>
     <div class="wFull">
       <!-- prettier-ignore -->
-      <!-- <pre>{{ props.recibo }}</pre> -->
       <ReciboDetalle
         :data="props.data"
         :recibo="props.recibo"

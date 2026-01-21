@@ -49,8 +49,8 @@
                     <VIcon size="35" icon="tabler-cash" color="primary" />
                   </div>
                   <div class="divFrecuenciaDetalleSub">
-                    <p class="titulo">Tipo de pago</p>
-                    <p>{{ frecuenciaPagoSeleccionada?.tipo }}</p>
+                    <p class="titulo">Monto de pago</p>
+                    <p>{{ frecuenciaPagoSeleccionada?.monto }}</p>
                   </div>
                 </div>
               </div>

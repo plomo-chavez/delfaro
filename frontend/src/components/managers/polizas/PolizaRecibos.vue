@@ -4,7 +4,6 @@
     <h1 class="pl-4 my-auto fontBold">Recibos</h1>
   </div>
   <template v-if="itsOkay">
-    <!-- <pre>{{ recibos }}</pre> -->
     <div v-if="recibos.length == 0"></div>
     <template v-if="recibos.length != 0">
       <div v-if="reciboSelected == null" class="wFull">
@@ -70,7 +69,7 @@ const props = withDefaults(
   defineProps<{
     data: any;
   }>(),
-  {}
+  {},
 );
 
 const emit = defineEmits<{
@@ -119,7 +118,7 @@ const groupRecibosByNumRecibo = (recibos: any) => {
       "Procesando recibo:",
       numeroRecibo,
       "Recibo actual:",
-      reciboActualNum
+      reciboActualNum,
     );
 
     if (numeroRecibo < incrementarRecibo(reciboActualNum, -1)) {

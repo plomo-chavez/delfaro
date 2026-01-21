@@ -20,6 +20,7 @@
           <AutosCotizacionesDetalles
             :key="item.id"
             :cotizacion="item"
+            :cotizacion_id="props.cotizacion_id"
             v-for="item in cotizaciones"
             @seleccionar="handleSeleccionar"
             @estimar="handleEstimarCotizacion"

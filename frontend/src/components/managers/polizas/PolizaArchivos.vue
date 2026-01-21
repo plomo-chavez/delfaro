@@ -4,7 +4,7 @@ const props = withDefaults(
   defineProps<{
     data: any;
   }>(),
-  {}
+  {},
 );
 
 const emit = defineEmits<{
@@ -31,7 +31,6 @@ const getNombreArchivo = (index: any) => {
     <VIcon :icon="'tabler-license'" size="40" />
     <h1 class="pl-4 my-auto fontBold">Archivos</h1>
   </div>
-  <!-- <pre>{{ props.data }}</pre> -->
   <div class="divWrapper">
     <div v-for="(archivo, indx) in props.data.archivos" :key="indx">
       <VCard class="rounded-lg w400 mb-4">

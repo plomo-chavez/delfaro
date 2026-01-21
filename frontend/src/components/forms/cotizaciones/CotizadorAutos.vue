@@ -50,7 +50,7 @@ const handlePrepararCotizaciones = async () => {
         cotizacion: {
           paqueteCobertura: dataPreguntas.value?.paqueteCobertura ?? "",
           frecuenciaPago: dataPreguntas.value?.frecuenciaPago ?? "",
-          ramo: deepToRaw(props.registro.ramo) ?? {},
+          ramo: deepToRaw(props.dataConfiguracion.ramo) ?? {},
           compania: compania,
           obtenerDetallesAccesorios:
             dataPreguntas.value.obtenerDetallesAccesorios ?? false,
@@ -66,18 +66,20 @@ async function hadnleUpdateCotizacion() {
   // console.log(toRaw(JSON.parse(props.registro.configuracion)));
   const preConfiguracion = deepToRaw(props.dataConfiguracion);
   console.log("preConfiguracion:", preConfiguracion);
-
+  const configuracionStringify = {
+    ...preConfiguracion,
+    cotizaciones: cotizaciones.value,
+  };
+  console.log("configuracionStringify:", configuracionStringify);
   // prettier-ignore
   const payload = {
     returnData: ["id"],
     nombre: (dataPreguntas.value?.nombre ?? "") + " " + (dataPreguntas.value?.segundoNombre ?? "") + " " + (dataPreguntas.value?.apellidoPaterno ?? "") + " " + ( dataPreguntas.value?.apellidoMaterno ?? ""),
     ramo: preConfiguracion.ramo.label,
     ramo_id: preConfiguracion.ramo.id,
-    configuracion: JSON.stringify({
-      ...preConfiguracion,
-      cotizaciones: cotizaciones.value,
-    }),
+    configuracion: JSON.stringify(configuracionStringify),
   };
+  console.log("payload:", payload);
 
   await apiRequest({
     url: "/api/cotizacion",
@@ -96,6 +98,8 @@ async function hadnleUpdateCotizacion() {
 onBeforeMount(() => {
   if (props.registro != null) {
     let tmpRegistro = deepToRaw(props.registro);
+    console.log("tmpRegistro:", tmpRegistro);
+    cotizacion_id.value = tmpRegistro.id;
     if (typeof tmpRegistro.configuracion == "string") {
       tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);
     }

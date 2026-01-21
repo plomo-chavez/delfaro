@@ -69,12 +69,13 @@ import PropuestaDetalles from "@/components/forms/cotizaciones/componentes/autos
 const props = withDefaults(
   defineProps<{
     cotizacion: any;
+    cotizacion_id: any;
     isSelected?: any;
     btnActions?: boolean;
   }>(),
   {
     cotizacion: null,
-    isSelected: false,
+    cotizacion_id: null,
     btnActions: true,
   },
 );
@@ -92,7 +93,7 @@ function getDato(tipo: any, campo?: any) {
       return cotizacion.value?.vehiculo ? `${cotizacion.value.vehiculo.marca} ${cotizacion.value.vehiculo.modelo} (${cotizacion.value.vehiculo.anio})` : "No hay datos del vehículo";
       // return "Honda CR-V EXL 2022"; // Datos fijos para demo
     case "version":
-      return cotizacion.value?.vehiculo?.version || "Sin datos de versión";
+      return cotizacion.value?.vehiculo?.version || "";
       // return "EXL"; // Datos fijos para demo
     case "frecuenciaPago":
       return cotizacion.value?.cotizacion?.frecuenciaPago?.label || " - "; // Datos fijos para demo
@@ -115,7 +116,7 @@ async function handleSeleccionar() {
 
 async function handleEstimarCotizacion() {
   const payload = {
-    cotizacion_id: 217,
+    cotizacion_id: props.cotizacion_id,
     cotizaciones: [toRaw(cotizacion.value)],
   };
 
@@ -127,6 +128,7 @@ async function handleEstimarCotizacion() {
     onSuccess: (response: any) => {
       console.log("Respuesta de estimación:", response);
       cotizacion.value = response[0];
+      isEstimada.value = cotizacion.value?.time ? true : false;
     },
   });
 }
@@ -141,10 +143,6 @@ function toggleAcordeon(id: number) {
   } else {
     abiertos.value.push(id);
   }
-}
-
-function editarPropuesta(item: any) {
-  emit("editar", item);
 }
 
 function descargarPDF() {
@@ -209,6 +207,7 @@ const menuOptions = [
 
 onBeforeMount(() => {
   cotizacion.value = props.cotizacion;
+  console.log("cotizacion.value:", toRaw(cotizacion.value));
   isEstimada.value = cotizacion.value?.time ? true : false;
 });
 </script>
@@ -219,14 +218,18 @@ onBeforeMount(() => {
   display: flex;
   flex-wrap: wrap;
 }
+.divTitle2 > .detalle-value {
+  color: rgb(var(--v-theme-primaryDark)) !important;
+}
 .divTitle2 {
+  margin-top: 20px !important;
   display: flex;
   flex-wrap: wrap;
 }
 .lblCompania {
   width: 100% !important;
   font-weight: bold;
-  color: #0d47a1;
+  color: rgb(var(--v-theme-primary));
   margin-right: 1rem;
 }
 .lblAuto {
