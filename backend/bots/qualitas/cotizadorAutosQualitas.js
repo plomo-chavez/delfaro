@@ -753,8 +753,11 @@ async function generadorCotizacion(driver, data) {
   }
 
   data.cotizacion = { ...data.cotizacion, ...tmp, archivo };
-
-  // deepPrint(data);
+  data.time = new Date().toISOString();
+  if (data.cotizacion.iVA) {
+    data.cotizacion.iva = data.cotizacion.iVA;
+    delete data.cotizacion.iVA;
+  }
 
   return data;
 }

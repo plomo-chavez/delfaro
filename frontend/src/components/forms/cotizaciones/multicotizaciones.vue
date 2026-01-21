@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // Make sure the file exists at the specified path and extension
 import BtnAtras from "@/components/apps/BtnAtras.vue";
-import ManagerClientes from "@/components/forms/clientes/ManagerClientes.vue";
 import CotizadorAutos from "@/components/forms/cotizaciones/CotizadorAutos.vue";
 import { apiRequest } from "@/utils/apiRequest";
 import { toggleItemInArray } from "@/utils/helper";
@@ -48,7 +47,6 @@ const handleCancelarCotizacion = () => {
 };
 
 const handleNextStep = () => {
-  stepWizard.value = 3;
   dataConfig.value.companias = companiasSeleccionadas.value.map((c: any) => {
     return {
       id: c.id,
@@ -56,6 +54,8 @@ const handleNextStep = () => {
       nombre: c.nombre,
     };
   });
+  dataConfig.value.ramo = ramoSeleccionado.value;
+  stepWizard.value = 3;
 };
 
 const handleGetDataCompanias = async () => {
@@ -144,26 +144,12 @@ watch(stepWizard, async (newVal) => {
 
 onBeforeMount(() => {
   let registro = deepToRaw(props.registro);
-  let dataConfigLocal: any = {};
 
-  if (typeof registro.configuracion == "string") {
+  if (registro.id) {
     let tmpConfig = JSON.parse(registro.configuracion);
     dataConfig.value = tmpConfig;
-    dataConfigLocal = tmpConfig;
-  }
-
-  if (dataConfigLocal.ramo && typeof dataConfigLocal.ramo == "object") {
-    ramoSeleccionado.value = dataConfigLocal.ramo;
-    stepWizard.value = 2;
-  }
-
-  if (dataConfigLocal.companias && Array.isArray(dataConfigLocal.companias)) {
-    companiasSeleccionadas.value = dataConfigLocal.companias;
+    ramoSeleccionado.value = tmpConfig.ramo;
     stepWizard.value = 3;
-  }
-
-  if (dataConfigLocal.cliente && typeof dataConfigLocal.cliente == "object") {
-    stepWizard.value = 4;
   }
 
   if (stepWizard.value == 1) {
@@ -176,7 +162,7 @@ onBeforeMount(() => {
   <div>
     <!-- prettier-ignore -->
     <BtnAtras titulo="Volver a cotizaciones" @atras="handleCancelarCotizacion" />
-    <template v-if="stepWizard != 4">
+    <template v-if="stepWizard != 3">
       <h1 class="module-title">Multicotizador de seguro</h1>
       <!-- Selecctor del ramo -->
       <!-- prettier-ignore -->
@@ -213,39 +199,14 @@ onBeforeMount(() => {
           </div>
         </div>
       </template>
-      <!-- Selecctor del cliente -->
-      <!-- prettier-ignore -->
-      <template v-if="stepWizard == 3">
-        <div>
-          <div class="card cardForm mx-auto mt-3">
-            <h2 class="w-full mb-5">Información del cliente:</h2>
-            <ManagerClientes
-              :registro="formdataCliente"
-              tipo="nuevo"
-              form="updateCliente"
-              @export="handleActualiarTitular"
-              @cancelar="handleCancelarCotizacion"
-            />
-          </div>
-          <div class="wfull d-flex justify-end mt-3">
-            <VBtn
-              @click="handleNextStep"
-              color="primary"
-              :disabled="companiasSeleccionadas.length === 0"
-            >
-              Continuar
-              <VIcon end icon="tabler-arrow-narrow-right" />
-            </VBtn>
-          </div>
-        </div>
-      </template>
     </template>
     <!-- Selecctor del cliente -->
     <!-- prettier-ignore -->
-    <template v-if="stepWizard == 4">
+    <template v-if="stepWizard == 3">
       <CotizadorAutos
         v-if="ramoSeleccionado.label.toLowerCase() == 'autos'"
-        :registro="dataConfig"
+        :dataConfiguracion="dataConfig"
+        :registro="props.registro"
         @cancelar="handleCancelarCotizacion"
       />
     </template>

@@ -51,9 +51,11 @@ import { toggleItemInArray } from "@/utils/helper";
 const props = withDefaults(
   defineProps<{
     cotizaciones: any;
+    cotizacion_id: any;
   }>(),
   {
     cotizaciones: null,
+    cotizacion_id: null,
   },
 );
 

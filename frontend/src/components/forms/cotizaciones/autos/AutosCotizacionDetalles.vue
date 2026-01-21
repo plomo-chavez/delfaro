@@ -9,14 +9,17 @@
     <!-- Información principal -->
     <div class="divHeader">
       <div class="divHeaders">
-        <div class="divHeader">
+        <div class="divTitulos">
           <div class="divTitle">
-            <span class="lblCompania">{{ cotizacion.compania.nombreCorto }}</span>
+            <span class="lblCompania">{{ cotizacion.cotizacion.compania.nombreCorto }}</span>
             <span class="lblAuto">{{ getDato("auto") }}</span>
             <span class="lblVersion">{{ getDato("version") }}</span>
           </div>
+          <div class="divTitle2">
+            <span class="detalle-value">{{ getDato("frecuenciaPago") }}</span>
+          </div>
         </div>
-        <div class="propuesta-detalles-grid " v-if="cotizacion.detalles">
+        <div class="divDetalles" v-if="isEstimada">
           <div class="detalle-item">
             <span class="detalle-value">{{ getDato("cotizacion", "numeroCotizacion") }}</span>
             <span class="detalle-key">Núm de Cotización</span>
@@ -63,7 +66,6 @@
 
 <script setup lang="ts">
 import PropuestaDetalles from "@/components/forms/cotizaciones/componentes/autosPropuestaDetalles.vue";
-import { cotizacionDummy } from "@/dummy/cotizacionGuardada";
 const props = withDefaults(
   defineProps<{
     cotizacion: any;
@@ -81,6 +83,7 @@ const emit = defineEmits(["seleccionar", "estimar", "editar"]);
 const cotizacion: any = ref(null);
 const abiertos = ref<number[]>([]);
 const moodDelete = ref<boolean>(false);
+const isEstimada = ref<boolean>(false);
 
 function getDato(tipo: any, campo?: any) {
   // prettier-ignore
@@ -91,8 +94,10 @@ function getDato(tipo: any, campo?: any) {
     case "version":
       return cotizacion.value?.vehiculo?.version || "Sin datos de versión";
       // return "EXL"; // Datos fijos para demo
+    case "frecuenciaPago":
+      return cotizacion.value?.cotizacion?.frecuenciaPago?.label || " - "; // Datos fijos para demo
     case "cotizacion":
-      return cotizacion.value?.detalles?.[campo] || " - "; // Datos fijos para demo
+      return cotizacion.value?.cotizacion?.[campo] || " - "; // Datos fijos para demo
     default:
       return "";
   }
@@ -109,7 +114,21 @@ async function handleSeleccionar() {
 }
 
 async function handleEstimarCotizacion() {
-  emit("estimar", toRaw(cotizacion.value));
+  const payload = {
+    cotizacion_id: 217,
+    cotizaciones: [toRaw(cotizacion.value)],
+  };
+
+  await apiRequest({
+    url: "/api/cotizador/autos/cotizar",
+    payload,
+    showMessages: true,
+    messageType: "toast",
+    onSuccess: (response: any) => {
+      console.log("Respuesta de estimación:", response);
+      cotizacion.value = response[0];
+    },
+  });
 }
 
 async function handleEditarCotizacion() {
@@ -129,7 +148,33 @@ function editarPropuesta(item: any) {
 }
 
 function descargarPDF() {
-  console.log("Descargar PDF");
+  const archivoUrl = toRaw(cotizacion.value.cotizacion.archivo);
+
+  if (!archivoUrl) {
+    console.error("No se encontró la URL del archivo.");
+    return;
+  }
+
+  fetch(archivoUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("No se pudo descargar el archivo.");
+      }
+      return response.blob();
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = archivoUrl.split("/").pop(); // Usa el nombre del archivo de la URL
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error("Error al descargar el archivo:", error);
+    });
 }
 
 const menuOptions = [
@@ -147,7 +192,7 @@ const menuOptions = [
     label: "Descargar PDF",
     icon: "tabler-download",
     action: descargarPDF,
-    condition: () => cotizacion?.detalles?.archivo, // Condición para mostrar esta opción
+    condition: () => descargarPDF(), // Condición para mostrar esta opción
   },
   {
     label: "Estimar Cotización",
@@ -164,13 +209,17 @@ const menuOptions = [
 
 onBeforeMount(() => {
   cotizacion.value = props.cotizacion;
-
-  cotizacion.value = cotizacionDummy;
+  isEstimada.value = cotizacion.value?.time ? true : false;
 });
 </script>
 
 <style scoped>
 .divTitle {
+  width: 100% !important;
+  display: flex;
+  flex-wrap: wrap;
+}
+.divTitle2 {
   display: flex;
   flex-wrap: wrap;
 }
@@ -203,17 +252,17 @@ onBeforeMount(() => {
   height: auto;
 }
 .divHeaders {
-  width: 95% !important;
+  width: calc(100% - 20px) !important;
   height: 100%; /* Asegura que ocupe todo el alto disponible */
 }
 
 .divActions {
-  width: 5% !important;
+  background-color: rgb(var(--v-theme-grey-300)) !important;
+  width: 20px !important;
+  border-radius: 50px !important;
   display: flex; /* Usamos flexbox para alinear el contenido */
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */
-  flex-grow: 1; /* Permite que el divActions crezca dinámicamente para ocupar el espacio disponible */
-  text-align: center; /* Centra el texto */
   padding: 0; /* Opcional: elimina el padding si no es necesario */
 }
 
@@ -224,11 +273,17 @@ onBeforeMount(() => {
   font-size: 1rem; /* Tamaño de fuente del valor */
 }
 
-.propuesta-detalles-grid {
+.divDetalles {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual tamaño */
   gap: 1rem; /* Espaciado entre las columnas */
   width: 100%; /* Asegura que el grid ocupe todo el ancho disponible */
+}
+.divTitulos {
+  display: flex;
+  width: 100% !important;
+  align-items: stretch;
+  height: auto;
 }
 
 .detalle-item {
@@ -241,6 +296,7 @@ onBeforeMount(() => {
 
 .detalle-key {
   font-size: 0.9rem;
+  width: 100% !important;
   font-weight: bold;
   font-style: italic;
   text-align: center;

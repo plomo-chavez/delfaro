@@ -120,21 +120,7 @@ function tryPartialParse(jsonString: string) {
 }
 
 const handleActionsEdit = (dataRow: any) => {
-  let tmp = deepToRaw(dataRow);
-
-  // try {
-  //   console.log("Configuración original:", typeof tmp.configuracion);
-  //   // Verifica si configuracion es una cadena antes de intentar parsearla
-  //   if (typeof tmp.configuracion === "string") {
-  //     tmp.configuracion = safeParseConfig(tmp.configuracion);
-  //   } else {
-  //     tmp.configuracion = tmp.configuracion || {};
-  //   }
-  // } catch (error) {
-  //   console.error("Error al parsear la configuración:", error);
-  //   tmp.configuracion = {}; // Asignar un valor por defecto en caso de error
-  // }
-  dataLocal.value = tmp; // Reiniciar dataLocal para crear una nueva cotización
+  dataLocal.value = deepToRaw(dataRow); // Reiniciar dataLocal para crear una nueva cotización
   showWizard.value = true;
 };
 

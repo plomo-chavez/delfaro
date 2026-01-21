@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="cotizacion.compania.nombreCorto == 'QUALITAS'">
+    <div v-if="cotizacion.cotizacion.compania.nombreCorto == 'QUALITAS'">
       <table class="table table-bordered w-100 mt-4">
         <thead>
           <tr>

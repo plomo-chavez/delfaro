@@ -11,7 +11,12 @@ const {
   PolizaRecibos,
 } = require("../models");
 
-const { createOrUpdatedRecord, validateRecord } = require("./CRUDController");
+const {
+  createOrUpdatedRecord,
+  validateRecord,
+  isReturnDataValid,
+  processReturnData,
+} = require("./CRUDController");
 const { enviarCorreo } = require("../utils/emailServiceHelper");
 const { Op } = require("sequelize");
 const moment = require("moment");
@@ -117,10 +122,13 @@ exports.getRecord = async (req, res) => {
 };
 
 exports.createOrUpdate = async (req, res) => {
-  const data = req.body;
-  const response = await processRecord(data);
+  const { data, returnData } = isReturnDataValid(req.body);
 
-  if (response.data) delete response.data;
+  if (returnData) delete data.returnData;
+
+  let responseData = await processRecord(data);
+
+  let response = processReturnData(returnData, req.body, responseData);
 
   res.json(response);
 };

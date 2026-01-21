@@ -6,9 +6,11 @@ const emit = defineEmits(["cancelar"]);
 
 const props = withDefaults(
   defineProps<{
+    dataConfiguracion: any;
     registro: any;
   }>(),
   {
+    dataConfiguracion: null,
     registro: null,
   },
 );
@@ -16,41 +18,123 @@ const props = withDefaults(
 const step = ref(1);
 const dataPreguntas: any = ref({});
 const cotizaciones: any = ref(null);
+const cotizacion_id: any = ref(null);
 
 // prettier-ignore
 const handleCancelar = () => { emit("cancelar") };
 
 const handleUpdateCliente = async (data: any) => {
   dataPreguntas.value = data;
-  step.value = 2;
   handlePrepararCotizaciones();
+  hadnleUpdateCotizacion();
+  step.value = 2;
 };
 
 const handlePrepararCotizaciones = async () => {
-  let tmpCotizaciones = deepToRaw(props.registro.companias).map(
-    (compania: any) => {
+  let tmpCotizaciones = deepToRaw(props.dataConfiguracion.companias).map(
+    (compania: any, index: number) => {
       return {
-        ...dataPreguntas.value,
-        ramo: deepToRaw(props.registro.ramo) ?? {},
-        compania,
+        cliente: {
+          nombre: dataPreguntas.value?.nombre ?? "",
+          segundoNombre: dataPreguntas.value?.segundoNombre ?? "",
+          apellidoPaterno: dataPreguntas.value?.apellidoPaterno ?? "",
+          apellidoMaterno: dataPreguntas.value?.apellidoMaterno ?? "",
+          codigoPostal: dataPreguntas.value?.codigoPostal ?? "",
+        },
+        vehiculo: {
+          marca: dataPreguntas.value?.marca ?? "",
+          modelo: dataPreguntas.value?.modelo ?? "",
+          anio: dataPreguntas.value?.anio ?? "",
+          version: dataPreguntas.value?.version ?? "",
+        },
+        cotizacion: {
+          paqueteCobertura: dataPreguntas.value?.paqueteCobertura ?? "",
+          frecuenciaPago: dataPreguntas.value?.frecuenciaPago ?? "",
+          ramo: deepToRaw(props.registro.ramo) ?? {},
+          compania: compania,
+          obtenerDetallesAccesorios:
+            dataPreguntas.value.obtenerDetallesAccesorios ?? false,
+        },
+        num: index + 1, // Agregar propiedad num con un valor numerado
       };
     },
   );
   cotizaciones.value = tmpCotizaciones;
-  console.log("Cotizaciones preparadas:", tmpCotizaciones);
 };
+
+async function hadnleUpdateCotizacion() {
+  // console.log(toRaw(JSON.parse(props.registro.configuracion)));
+  const preConfiguracion = deepToRaw(props.dataConfiguracion);
+  console.log("preConfiguracion:", preConfiguracion);
+
+  // prettier-ignore
+  const payload = {
+    returnData: ["id"],
+    nombre: (dataPreguntas.value?.nombre ?? "") + " " + (dataPreguntas.value?.segundoNombre ?? "") + " " + (dataPreguntas.value?.apellidoPaterno ?? "") + " " + ( dataPreguntas.value?.apellidoMaterno ?? ""),
+    ramo: preConfiguracion.ramo.label,
+    ramo_id: preConfiguracion.ramo.id,
+    configuracion: JSON.stringify({
+      ...preConfiguracion,
+      cotizaciones: cotizaciones.value,
+    }),
+  };
+
+  await apiRequest({
+    url: "/api/cotizacion",
+    payload,
+    showMessages: true,
+    messageType: "toast",
+    onSuccess: (response: any) => {
+      console.log("Respuesta de estimación:", response);
+      if (response.id) {
+        cotizacion_id.value = response.id;
+      }
+    },
+  });
+}
 
 onBeforeMount(() => {
   if (props.registro != null) {
     let tmpRegistro = deepToRaw(props.registro);
+    if (typeof tmpRegistro.configuracion == "string") {
+      tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);
+    }
+    if (tmpRegistro.id) {
+      cotizaciones.value = tmpRegistro.configuracion.cotizaciones;
+      step.value = 2;
+    } else {
+      let tmp = {};
+      if (tmpRegistro?.configuracion) {
+        console.log(tmpRegistro?.configuracion);
+        tmp = {
+          ...(tmpRegistro?.configuracion.cliente ?? {}),
+          ...(tmpRegistro?.configuracion.vehiculo ?? {}),
+        };
+      }
 
-    let tmp = {
-      ...(tmpRegistro?.cliente ?? {}),
-      ...(tmpRegistro?.carro ?? {}),
-    };
-
-    dataPreguntas.value = tmp;
+      dataPreguntas.value = tmp;
+    }
   }
+
+  dataPreguntas.value = {
+    nombre: "Jesus",
+    segundoNombre: "Ramon",
+    apellidoPaterno: "Chavez",
+    apellidoMaterno: "Quiroz",
+    marca: "Honda",
+    modelo: "CR-V",
+    anio: "2020",
+    codigoPostal: "39600",
+    paqueteCobertura: {
+      label: "Basica",
+      id: "Basica",
+    },
+    frecuenciaPago: {
+      label: "Mensual",
+      id: "Mensual",
+    },
+    obtenerDetallesAccesorios: true,
+  };
 });
 </script>
 
@@ -68,9 +152,13 @@ onBeforeMount(() => {
           @cancelar="handleCancelar"
         />
       </div>
-      <div>
+      <div v-else-if="step === 2">
         <div class="" v-if="cotizaciones">
-          <AutosCotizaciones class="w-100" :cotizaciones="cotizaciones" />
+          <AutosCotizaciones
+            class="w-100"
+            :cotizaciones="cotizaciones"
+            :cotizacion_id="cotizacion_id"
+          />
         </div>
       </div>
     </div>

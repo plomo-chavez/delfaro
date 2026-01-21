@@ -8,7 +8,7 @@
     />
     <div v-if="props.cotizacion != null">
       <!-- prettier-ignore -->
-      <div v-if="props.cotizacion.compania.nombreCorto == 'QUALITAS'" >
+      <div v-if="props.cotizacion.cotizacion.compania.nombreCorto == 'QUALITAS'" >
         <EditQualitas
           :cotizacion="props.cotizacion"
           @cancelar="emit('cancelar')"

@@ -126,10 +126,52 @@ const deleteRecord = async (tabla, id) => {
   }
 };
 
+function isReturnDataValid(data) {
+  let dataTMP = { ...data };
+  let returnData = data.returnData || false;
+  if (returnData != false) {
+    returnData =
+      Array.isArray(returnData) || returnData == true ? returnData : false;
+    delete dataTMP.returnData;
+  }
+  // Verifica si returnData es true o un objeto
+  return {
+    data: dataTMP,
+    returnData,
+  };
+}
+
+function processReturnData(returnData, data, response) {
+  // Si returnData es true, devuelve toda la información
+  if (returnData === false) {
+    delete response.data;
+    return response;
+  }
+
+  // Si returnData no es true, valida que sea un array y filtra los campos
+  if (Array.isArray(data.returnData)) {
+    const dataBD = response.data.toJSON
+      ? response.data.toJSON()
+      : response.data;
+
+    const filteredItem = {};
+    data.returnData.forEach((field) => {
+      filteredItem[field] = dataBD[field] !== undefined ? dataBD[field] : null;
+    });
+    delete response.data;
+    return { ...response, data: filteredItem };
+  }
+
+  // Si no es un array, devuelve null
+  return response;
+}
+
 module.exports = {
   createOrUpdatedRecord,
   createRecord,
   updateRecord,
   validateRecord,
   deleteRecord,
+  isReturnDataValid,
+  processReturnData,
 };

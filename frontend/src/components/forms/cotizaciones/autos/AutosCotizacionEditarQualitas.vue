@@ -1,7 +1,7 @@
 <template>
   <div class="wFull card">
     <div v-if="itsOkay" class="divContainerPrincipal">
-      <template v-if="false">
+      <template v-if="true">
         <div class="divSection">
           <h3 class="module-title mb-4">Informacion de la cotización</h3>
           <FormFactory
@@ -59,102 +59,104 @@
         </div>
       </template>
 
-      <template v-if="(accesorios || []).length > 0">
-        <div class="d-flex justify-space-between w-100 mt-5">
-          <div></div>
-          <div>
-            <!-- prettier-ignore -->
-            <VBtn color="dark" outlined @click="handleQuitarDetalles "> Cancelar </VBtn>
+      <template v-if="false">
+        <template v-if="(accesorios || []).length > 0">
+          <div class="d-flex justify-space-between w-100 mt-5">
+            <div></div>
+            <div>
+              <!-- prettier-ignore -->
+              <VBtn color="dark" outlined @click="handleQuitarDetalles "> Cancelar </VBtn>
+            </div>
           </div>
-        </div>
-        <div class="accesorios-tarjetas mt-4">
-          <template
-            v-for="(item, idx) in accesorios || []"
-            :key="item.label_id || idx"
-          >
-            <div v-if="item.nombre != null">
-              <div
-                :key="item.label_id || idx"
-                v-if="item.nombre != null"
-                class="accesorio-tarjeta"
-                :class="{ selected: item.selected || false }"
-                @click="handleItem(idx, item)"
-              >
-                <div class="accesorio-row">
-                  <div class="accesorio-nombre">
-                    {{ item.nombre }}
-                  </div>
-                  <div class="accesorio-valor" v-if="item.selected || false">
-                    {{ item.prima }}
-                  </div>
-                </div>
+          <div class="accesorios-tarjetas mt-4">
+            <template
+              v-for="(item, idx) in accesorios || []"
+              :key="item.label_id || idx"
+            >
+              <div v-if="item.nombre != null">
                 <div
-                  v-if="
-                    (item.selected || false) &&
-                    item.hijos &&
-                    item.hijos.length > 0
-                  "
-                  @click.stop
-                  class="accesorio-hijos"
+                  :key="item.label_id || idx"
+                  v-if="item.nombre != null"
+                  class="accesorio-tarjeta"
+                  :class="{ selected: item.selected || false }"
+                  @click="handleItem(idx, item)"
                 >
-                  <template
-                    v-for="(hijo, hidx) in item.hijos"
-                    :key="hijo.id || hidx"
-                  >
-                    <div class="accesorio-hijo-col">
-                      <span v-if="hijo.label" class="accesorio-hijo-label">{{
-                        hijo.label
-                      }}</span>
-                      <VTextField
-                        v-if="hijo.tag === 'input'"
-                        v-model="hijo.valor"
-                        :placeholder="hijo.label || 'Valor'"
-                        class="accesorio-input formInput"
-                        variant="outlined"
-                        density="compact"
-                        :readonly="!(item.selected || false)"
-                        @mousedown.stop
-                      />
-                      <VSelect
-                        v-else-if="hijo.tag === 'select'"
-                        v-model="hijo.valor"
-                        :items="hijo.opciones || []"
-                        item-title="texto"
-                        :item-value="(item) => item"
-                        :placeholder="hijo.label || 'Selecciona una opción'"
-                        class="accesorio-select formInput"
-                        density="compact"
-                        :readonly="!(item.selected || false)"
-                        @mousedown.stop
-                      />
-                      <span
-                        v-else-if="hijo.valor && hijo.label"
-                        class="accesorio-hijo-valor"
-                        >{{ hijo.valor }}</span
-                      >
-                      <span
-                        v-else-if="hijo.valor"
-                        class="accesorio-hijo-valor"
-                        >{{ hijo.valor }}</span
-                      >
+                  <div class="accesorio-row">
+                    <div class="accesorio-nombre">
+                      {{ item.nombre }}
                     </div>
-                  </template>
+                    <div class="accesorio-valor" v-if="item.selected || false">
+                      {{ item.prima }}
+                    </div>
+                  </div>
+                  <div
+                    v-if="
+                      (item.selected || false) &&
+                      item.hijos &&
+                      item.hijos.length > 0
+                    "
+                    @click.stop
+                    class="accesorio-hijos"
+                  >
+                    <template
+                      v-for="(hijo, hidx) in item.hijos"
+                      :key="hijo.id || hidx"
+                    >
+                      <div class="accesorio-hijo-col">
+                        <span v-if="hijo.label" class="accesorio-hijo-label">{{
+                          hijo.label
+                        }}</span>
+                        <VTextField
+                          v-if="hijo.tag === 'input'"
+                          v-model="hijo.valor"
+                          :placeholder="hijo.label || 'Valor'"
+                          class="accesorio-input formInput"
+                          variant="outlined"
+                          density="compact"
+                          :readonly="!(item.selected || false)"
+                          @mousedown.stop
+                        />
+                        <VSelect
+                          v-else-if="hijo.tag === 'select'"
+                          v-model="hijo.valor"
+                          :items="hijo.opciones || []"
+                          item-title="texto"
+                          :item-value="(item) => item"
+                          :placeholder="hijo.label || 'Selecciona una opción'"
+                          class="accesorio-select formInput"
+                          density="compact"
+                          :readonly="!(item.selected || false)"
+                          @mousedown.stop
+                        />
+                        <span
+                          v-else-if="hijo.valor && hijo.label"
+                          class="accesorio-hijo-valor"
+                          >{{ hijo.valor }}</span
+                        >
+                        <span
+                          v-else-if="hijo.valor"
+                          class="accesorio-hijo-valor"
+                          >{{ hijo.valor }}</span
+                        >
+                      </div>
+                    </template>
+                  </div>
                 </div>
               </div>
-            </div>
-          </template>
-        </div>
-      </template>
-      <template v-else>
-        <FormFactory
-          :schema="schemaDetalles"
-          :formLive="true"
-          :modelValue="cambios || {}"
-          @update:modelValue="(val) => (cambios = val)"
-          :textButtonSubmit="'Empezar cotización'"
-          :showButtonSubmit="false"
-          :showButtonCancel="false"
-        />
+            </template>
+          </div>
+        </template>
+        <template v-else>
+          <FormFactory
+            :schema="schemaDetalles"
+            :formLive="true"
+            :modelValue="cambios || {}"
+            @update:modelValue="(val) => (cambios = val)"
+            :textButtonSubmit="'Empezar cotización'"
+            :showButtonSubmit="false"
+            :showButtonCancel="false"
+          />
+        </template>
       </template>
     </div>
   </div>
@@ -414,17 +416,17 @@ onMounted(() => {
     if (cotizacionTMP.inicial) {
       tmpCambios = {
         ...(cotizacionTMP.vehiculo || {}),
-        codigoPostal: cotizacionTMP.titular.codigoPostal,
+        codigoPostal: cotizacionTMP.cliente.codigoPostal,
       };
     } else {
       tmpCambios = {
         ...(cotizacionTMP.vehiculo || {}),
-        codigoPostal: cotizacionTMP.titular.codigoPostal,
+        codigoPostal: cotizacionTMP.cliente.codigoPostal,
       };
     }
 
-    if (cotizacionTMP.titular.direcciones) {
-      let direcciones = cotizacionTMP.titular.direcciones;
+    if (cotizacionTMP.detalles.direcciones) {
+      let direcciones = cotizacionTMP.detalles.direcciones;
 
       schemaInicial.push({
         ...itemSchemaDireccion,
@@ -432,13 +434,13 @@ onMounted(() => {
       });
 
       tmpCambios.direccion = {
-        label: cotizacionTMP.titular.direccion,
-        value: cotizacionTMP.titular.direccion,
+        label: cotizacionTMP.cliente.direccion,
+        value: cotizacionTMP.cliente.direccion,
       };
     }
 
-    if (cotizacionTMP.vehiculo.versiones) {
-      let versiones = cotizacionTMP.vehiculo.versiones;
+    if (cotizacionTMP.detalles.versiones) {
+      let versiones = cotizacionTMP.detalles.versiones;
 
       schemaInicial.push({
         ...itemSchemaVersion,
