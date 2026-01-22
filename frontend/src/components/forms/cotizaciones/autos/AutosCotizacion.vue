@@ -4,8 +4,8 @@
       <div v-if="cotizacionSeleccionada">
         <AutosCotizacionEditar
           :cotizacion="cotizacionSeleccionada"
-          @cancelar="cotizacionSeleccionada = null"
-          @actualizar="emit('actualizar', $event)"
+          @cancelar="handleCancelar"
+          @actualizar="handleActualizarCotizacion"
         />
       </div>
       <div v-else class="w-75 mx-auto">
@@ -23,7 +23,6 @@
             :cotizacion_id="props.cotizacion_id"
             v-for="item in cotizaciones"
             @seleccionar="handleSeleccionar"
-            @estimar="handleEstimarCotizacion"
             @editar="handleEditarCotizacion"
             :class="{ cardSelected: cotizacionesSeleccionadas.includes(item) }"
           />
@@ -40,6 +39,11 @@
           </VBtn>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <p class="text-center my-5">
+        No hay cotizaciones disponibles para mostrar.
+      </p>
     </div>
   </div>
 </template>
@@ -74,10 +78,6 @@ const cotizacionesSeleccionadas: any = ref([]);
 
 const handleEmitirCotizaciones = () => {};
 
-const handleEstimarCotizacion = () => {
-  console.log("Estimar cotizacion");
-};
-
 const handleEditarCotizacion = (cotizacion: any) => {
   cotizacionSeleccionada.value = cotizacion;
 };
@@ -85,6 +85,41 @@ const handleEditarCotizacion = (cotizacion: any) => {
 const handleSeleccionar = (cotizacion: any) => {
   toggleItemInArray(cotizacionesSeleccionadas.value, cotizacion, "nombre");
 };
+const handleCancelar = () => {
+  cotizacionSeleccionada.value = null;
+};
+
+async function handleActualizarCotizacion(cotizacionActualizada: any) {
+  handleCancelar();
+  const payload = {
+    cotizacion_id: props.cotizacion_id,
+    cotizaciones: [toRaw(cotizacionActualizada)],
+  };
+
+  await apiRequest({
+    url: "/api/cotizador/autos/cotizar",
+    payload,
+    showMessages: true,
+    messageType: "toast",
+    onSuccess: (response: any) => {
+      const cotizacionActualizada = response[0];
+      const cotizacionesTmp = toRaw(cotizaciones.value);
+      cotizaciones.value = [];
+      const cotizacionActualizadaIndex = cotizacionActualizada.num;
+      let tmpCotizaciones = cotizacionesTmp.map(
+        (cotizacion: any, index: number) => {
+          if (cotizacion.num === cotizacionActualizadaIndex) {
+            return cotizacionActualizada;
+          }
+          return cotizacion;
+        },
+      );
+      setTimeout(() => {
+        cotizaciones.value = tmpCotizaciones;
+      }, 100);
+    },
+  });
+}
 
 onBeforeMount(() => {
   cotizaciones.value = props.cotizaciones;

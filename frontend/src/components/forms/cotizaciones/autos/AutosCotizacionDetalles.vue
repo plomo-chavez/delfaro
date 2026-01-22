@@ -50,8 +50,8 @@
           </VBtn>
         </div>
       </div>
-      <div class=" divActions" v-if="cotizacion.detalles && props.btnActions"  @click.stop="() => {}">
-        <ActionMenu :menuOptions="menuOptions" avatarIcon="fa fa-ellipsis-v" />
+      <div class=" divActions" v-if="  props.btnActions"  @click.stop="() => {}">
+        <ActionMenu :menuOptions="isEstimada ? menuOptions : menuOptionsSinCotizar" avatarIcon="fa fa-ellipsis-v" />
       </div>
     </div>
     <div v-if="cotizacion.time" class= "divTimeStamp"> Ultima actualización: {{ formatDateMoment(cotizacion.time,  "DD/MM/YYYY hh:mm A")}}</div>
@@ -68,8 +68,8 @@
 import PropuestaDetalles from "@/components/forms/cotizaciones/componentes/autosPropuestaDetalles.vue";
 const props = withDefaults(
   defineProps<{
-    cotizacion: any;
-    cotizacion_id: any;
+    cotizacion?: any;
+    cotizacion_id?: any;
     isSelected?: any;
     btnActions?: boolean;
   }>(),
@@ -126,7 +126,6 @@ async function handleEstimarCotizacion() {
     showMessages: true,
     messageType: "toast",
     onSuccess: (response: any) => {
-      console.log("Respuesta de estimación:", response);
       cotizacion.value = response[0];
       isEstimada.value = cotizacion.value?.time ? true : false;
     },
@@ -205,9 +204,16 @@ const menuOptions = [
   // },
 ];
 
+const menuOptionsSinCotizar = [
+  {
+    label: "Editar",
+    icon: "tabler-pencil",
+    action: handleEditarCotizacion,
+  },
+];
+
 onBeforeMount(() => {
   cotizacion.value = props.cotizacion;
-  console.log("cotizacion.value:", toRaw(cotizacion.value));
   isEstimada.value = cotizacion.value?.time ? true : false;
 });
 </script>

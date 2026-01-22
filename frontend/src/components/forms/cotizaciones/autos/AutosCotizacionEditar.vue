@@ -12,6 +12,7 @@
         <EditQualitas
           :cotizacion="props.cotizacion"
           @cancelar="emit('cancelar')"
+          @actualizar="emit('actualizar', $event)"
         />
       </div>
     </div>

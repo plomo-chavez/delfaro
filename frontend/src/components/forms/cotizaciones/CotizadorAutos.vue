@@ -26,7 +26,7 @@ const handleCancelar = () => { emit("cancelar") };
 const handleUpdateCliente = async (data: any) => {
   dataPreguntas.value = data;
   handlePrepararCotizaciones();
-  hadnleUpdateCotizacion();
+  handleCreateCotizacion();
   step.value = 2;
 };
 
@@ -62,15 +62,13 @@ const handlePrepararCotizaciones = async () => {
   cotizaciones.value = tmpCotizaciones;
 };
 
-async function hadnleUpdateCotizacion() {
+async function handleCreateCotizacion() {
   // console.log(toRaw(JSON.parse(props.registro.configuracion)));
   const preConfiguracion = deepToRaw(props.dataConfiguracion);
-  console.log("preConfiguracion:", preConfiguracion);
   const configuracionStringify = {
     ...preConfiguracion,
     cotizaciones: cotizaciones.value,
   };
-  console.log("configuracionStringify:", configuracionStringify);
   // prettier-ignore
   const payload = {
     returnData: ["id"],
@@ -79,7 +77,6 @@ async function hadnleUpdateCotizacion() {
     ramo_id: preConfiguracion.ramo.id,
     configuracion: JSON.stringify(configuracionStringify),
   };
-  console.log("payload:", payload);
 
   await apiRequest({
     url: "/api/cotizacion",
@@ -87,7 +84,6 @@ async function hadnleUpdateCotizacion() {
     showMessages: true,
     messageType: "toast",
     onSuccess: (response: any) => {
-      console.log("Respuesta de estimación:", response);
       if (response.id) {
         cotizacion_id.value = response.id;
       }
@@ -98,7 +94,6 @@ async function hadnleUpdateCotizacion() {
 onBeforeMount(() => {
   if (props.registro != null) {
     let tmpRegistro = deepToRaw(props.registro);
-    console.log("tmpRegistro:", tmpRegistro);
     cotizacion_id.value = tmpRegistro.id;
     if (typeof tmpRegistro.configuracion == "string") {
       tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);

@@ -79,7 +79,7 @@
                   v-if="item.nombre != null"
                   class="accesorio-tarjeta"
                   :class="{ selected: item.selected || false }"
-                  @click="handleItem(idx, item)"
+                  @click="handleItem(Number(idx), item)"
                 >
                   <div class="accesorio-row">
                     <div class="accesorio-nombre">
@@ -413,6 +413,11 @@ onMounted(() => {
   if (props.cotizacion) {
     let cotizacionTMP = deepToRaw(props.cotizacion);
     let tmpCambios: any = {};
+
+    let inputVersiones = false;
+    let optionsVersiones: any = [];
+    let inputDirecciones = false;
+    let optionsDirecciones: any = [];
     if (cotizacionTMP.inicial) {
       tmpCambios = {
         ...(cotizacionTMP.vehiculo || {}),
@@ -425,32 +430,30 @@ onMounted(() => {
       };
     }
 
-    if (cotizacionTMP.detalles.direcciones) {
-      let direcciones = cotizacionTMP.detalles.direcciones;
+    if (cotizacionTMP.detalles?.direcciones ?? false) {
+      inputDirecciones = true;
 
-      schemaInicial.push({
-        ...itemSchemaDireccion,
-        options: filtrarOpcionesValidas(direcciones, "value"),
-      });
+      let direcciones = cotizacionTMP.detalles.direcciones;
 
       tmpCambios.direccion = {
         label: cotizacionTMP.cliente.direccion,
         value: cotizacionTMP.cliente.direccion,
       };
+
+      optionsDirecciones = filtrarOpcionesValidas(direcciones, "label");
     }
 
-    if (cotizacionTMP.detalles.versiones) {
-      let versiones = cotizacionTMP.detalles.versiones;
+    if (cotizacionTMP.detalles?.versiones ?? false) {
+      inputVersiones = true;
 
-      schemaInicial.push({
-        ...itemSchemaVersion,
-        options: filtrarOpcionesValidas(versiones, "label"),
-      });
+      let versiones = cotizacionTMP.detalles.versiones;
 
       tmpCambios.version = {
         value: cotizacionTMP.vehiculo.version,
         label: cotizacionTMP.vehiculo.version,
       };
+
+      optionsVersiones = filtrarOpcionesValidas(versiones, "label");
     }
 
     if ("detalles" in cotizacionTMP) {
@@ -472,6 +475,18 @@ onMounted(() => {
         label: tmpCambios.direccion,
       };
     }
+
+    schemaInicial.push({
+      ...itemSchemaDireccion,
+      disabled: !inputDirecciones,
+      options: optionsDirecciones,
+    });
+
+    schemaInicial.push({
+      ...itemSchemaVersion,
+      disabled: !inputVersiones,
+      options: optionsVersiones,
+    });
 
     let obtenerDetallesAccesorios =
       cotizacionTMP.titular?.obtenerDetallesAccesorios ?? false;
