@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 import PropuestaDetalles from "@/components/forms/cotizaciones/componentes/autosPropuestaDetalles.vue";
+
 const props = withDefaults(
   defineProps<{
     cotizacion?: any;
@@ -220,6 +221,7 @@ onBeforeMount(() => {
 
 <style scoped>
 .divTitle {
+  text-align: left !important;
   width: 100% !important;
   display: flex;
   flex-wrap: wrap;

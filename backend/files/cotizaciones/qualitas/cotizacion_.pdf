@@ -547,7 +547,7 @@
 			}
 		};
 
-		Liferay.authToken = 'dAqgPnpR';
+		Liferay.authToken = 'HFVWZk0O';
 
 		
 
@@ -977,7 +977,7 @@ Liferay.on(
 
 
 
-	<nav aria-label="Enlaces rápidos" class="quick-access-nav" id="lrid_quickAccessNav">
+	<nav aria-label="Enlaces rápidos" class="quick-access-nav" id="qrtq_quickAccessNav">
 		<h1 class="hide-accessible">Navegación</h1>
 
 		<ul>
@@ -1114,7 +1114,7 @@ Liferay.on(
 				        <p class="c5 mt-n1">25050-maestra</p>
 				      </div>
 				      <div class="d-flex options" id="dropdownMenuButton"  data-toggle="dropdown">				      	
-				      	<a href="#!" class="picture-profile rounded-circle backImg mr-2" aria-haspopup="true" aria-expanded="false" style="background-image: url(/image/user_portrait?img_id=0&img_id_token=jWo%2B1zLZHlRIYbSNDnk04UTA3LI%3D&t=1768816532298);"></a>				      	
+				      	<a href="#!" class="picture-profile rounded-circle backImg mr-2" aria-haspopup="true" aria-expanded="false" style="background-image: url(/image/user_portrait?img_id=0&img_id_token=jWo%2B1zLZHlRIYbSNDnk04UTA3LI%3D&t=1769075547183);"></a>				      	
 				        <img class="ml-1" src="https://agentes360.qualitas.com.mx/o/Tema-Privado-Agentes/images/iconos/Chevron Down.svg" id="fdown">				        				      
 				      </div>				      				      
 				      <div class="dropdown-menu mt-4 rounded border-0 shadow-lg dropdown-menu-right mt-0 mb-0 pt-0 pb-0" aria-labelledby="dropdownMenuButton">
@@ -1306,6 +1306,8 @@ Liferay.on(
 									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_173" href="https://agentes360.qualitas.com.mx/group/guest/codigo-y-conducta"  role="menuitem">Código de Ética y Conducta</a>								
 		
 									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_180" href="https://universidad.qualitas.com.mx/contenidos/2024/pld/qualitas/index.php" target="_blank" role="menuitem">Sitio web PLD</a>								
+		
+									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_190" href="https://agentes360.qualitas.com.mx/group/guest/certificacion-politicas-marca-medios-digitales"  role="menuitem">Certificación en políticas uso de medios digitales</a>								
 		        		</div>             
 	
 	                
@@ -1446,6 +1448,8 @@ Liferay.on(
 									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_173" href="https://agentes360.qualitas.com.mx/group/guest/codigo-y-conducta"  role="menuitem">Código de Ética y Conducta</a>								
 		
 									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_180" href="https://universidad.qualitas.com.mx/contenidos/2024/pld/qualitas/index.php" target="_blank" role="menuitem">Sitio web PLD</a>								
+		
+									<a class="nav-item text-body d-flex align-items-center py-2 py-sm-3 pl-5 pl-sm-4 pr-4 my-sm-1 c3 " aria-labelledby="layout_190" href="https://agentes360.qualitas.com.mx/group/guest/certificacion-politicas-marca-medios-digitales"  role="menuitem">Certificación en políticas uso de medios digitales</a>								
 		        		</div>	        	
 		        		<div class="submenu pl-3 px-sm-2" data-index=43 data-index-static=8>
 		

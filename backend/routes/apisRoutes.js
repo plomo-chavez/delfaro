@@ -33,11 +33,11 @@ router.use("/api", usuariosRoutes);
 router.use("/api", agenteRoutes); 
 router.use("/api", clienteRoutes); 
 router.use("/api", cobranzaRoutes); 
-router.use("/api", cotizacionesRoutes); 
 router.use("/api", polizasRoutes); 
 router.use("/api", reportesRoutes); 
 router.use("/api", companiasRoutes); 
 router.use("/api", catalogosRoutes); 
+router.use("/api", cotizacionesRoutes); 
 router.use("/api/wizard", multiCotizadorRoutes); 
 
 module.exports = router;

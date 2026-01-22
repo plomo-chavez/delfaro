@@ -19,6 +19,7 @@ const step = ref(1);
 const dataPreguntas: any = ref({});
 const cotizaciones: any = ref(null);
 const cotizacion_id: any = ref(null);
+const cotizacionEmitida: any = ref(false);
 
 // prettier-ignore
 const handleCancelar = () => { emit("cancelar") };
@@ -94,24 +95,37 @@ async function handleCreateCotizacion() {
 onBeforeMount(() => {
   if (props.registro != null) {
     let tmpRegistro = deepToRaw(props.registro);
+
     cotizacion_id.value = tmpRegistro.id;
+
     if (typeof tmpRegistro.configuracion == "string") {
       tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);
     }
-    if (tmpRegistro.id) {
-      cotizaciones.value = tmpRegistro.configuracion.cotizaciones;
-      step.value = 2;
-    } else {
-      let tmp = {};
-      if (tmpRegistro?.configuracion) {
-        console.log(tmpRegistro?.configuracion);
-        tmp = {
-          ...(tmpRegistro?.configuracion.cliente ?? {}),
-          ...(tmpRegistro?.configuracion.vehiculo ?? {}),
-        };
-      }
 
-      dataPreguntas.value = tmp;
+    cotizacionEmitida.value =
+      (tmpRegistro?.configuracion?.timeEmision ?? false) ? true : false;
+
+    console.log("cotizacionEmitida.value:", cotizacionEmitida.value);
+
+    if (cotizacionEmitida.value) {
+      cotizacion_id.value =
+        tmpRegistro?.configuracion?.idCotizacionEmitida ?? null;
+    } else {
+      if (tmpRegistro.id) {
+        cotizaciones.value = tmpRegistro.configuracion.cotizaciones;
+        step.value = 2;
+      } else {
+        let tmp = {};
+        if (tmpRegistro?.configuracion) {
+          console.log(tmpRegistro?.configuracion);
+          tmp = {
+            ...(tmpRegistro?.configuracion.cliente ?? {}),
+            ...(tmpRegistro?.configuracion.vehiculo ?? {}),
+          };
+        }
+
+        dataPreguntas.value = tmp;
+      }
     }
   }
 
@@ -138,9 +152,9 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div>
+  <div class="divContenedor">
     <h1 class="module-title">Cotizador de Seguros de Autos</h1>
-    <div>
+    <div v-if="!cotizacionEmitida">
       <div v-if="step === 1" class="card cardForm mx-auto mt-3">
         <h2 class="w-full mb-5">Información del cliente:</h2>
         <ManagerClientes
@@ -161,6 +175,9 @@ onBeforeMount(() => {
         </div>
       </div>
     </div>
+    <div v-else>
+      <pre>{{ JSON.parse(props.registro.configuracion) }}</pre>
+    </div>
   </div>
 </template>
 
@@ -177,5 +194,11 @@ onBeforeMount(() => {
 .cardCompania {
   text-align: center !important;
   min-width: 100px !important;
+}
+.divContenedor {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+  max-width: 1000px !important;
 }
 </style>

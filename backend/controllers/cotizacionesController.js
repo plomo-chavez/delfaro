@@ -22,6 +22,7 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 const modelo = Cotizaciones;
 const fs = require("fs");
+const { deepPrint } = require("../utils/helper");
 const entidad = "Poliza";
 
 const fields = [
@@ -191,3 +192,72 @@ exports.softDelete = async (req, res) => {
 exports.cotizarCotizacion = async (req, res) => {};
 
 exports.emitirCotizacion = async (req, res) => {};
+
+// prettier-ignore
+exports.procesoActualizacionEstadoCotizaciones = async (data) => {
+  try {
+    const { cotizacion_id, cotizaciones } = data;
+
+    // Validar datos de entrada
+    if (!cotizacion_id || !cotizaciones || !Array.isArray(cotizaciones)) {
+      return {
+        result: false,
+        message: "Faltan datos necesarios o el formato de los datos es incorrecto",
+      };
+    }
+
+    // Buscar la cotización en la base de datos
+    const cotizacion = await Cotizaciones.findOne({ where: { id: cotizacion_id } });
+    if (!cotizacion) {
+      return {
+        result: false,
+        message: "Cotización no encontrada",
+      };
+    }
+
+    // Actualizar el estatus de la cotización
+    cotizacion.estatus = "Emitida";
+
+    // Parsear la configuración de la cotización
+    const configuracionActual = JSON.parse(cotizacion.configuracion);
+    const cotizacionesInBD = configuracionActual.cotizaciones || [];
+
+    console.log("cotizacionesInBD:", cotizacionesInBD);
+
+    // Filtrar las cotizaciones para emitir y no emitir
+    const cotizacionesParaEmitir = cotizacionesInBD.filter((c) => cotizaciones.includes(c.num));
+    const cotizacionesParaNoEmitir = cotizacionesInBD.filter((c) => !cotizaciones.includes(c.num));
+
+    // Actualizar la configuración de la cotización
+    const nuevaConfiguracion = {
+      ...configuracionActual,
+      cotizacionesSeleccionadas: cotizacionesParaEmitir,
+      cotizacionesOtras: cotizacionesParaNoEmitir,
+      timeEmision: new Date().toISOString().replace("T", " ").slice(0, 19),
+    };
+    
+    delete configuracionActual.configuracion;
+    delete nuevaConfiguracion.cotizaciones;
+
+    cotizacion.configuracion = JSON.stringify(nuevaConfiguracion);
+
+    // Guardar los cambios en la base de datos
+    await cotizacion.save();
+
+    // Retornar la respuesta
+    return {
+      result: true,
+      message: "Estado de cotización actualizado a Emitida",
+      data: {
+        cotizacion: configuracionActual,
+        cotizaciones: cotizacionesParaEmitir,
+      },
+    };
+  } catch (error) {
+    console.error("Error en procesoActualizacionEstadoCotizaciones:", error);
+    return {
+      result: false,
+      message: "Error en el proceso: " + error.message,
+    };
+  }
+};

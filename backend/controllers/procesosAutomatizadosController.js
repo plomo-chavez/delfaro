@@ -6,25 +6,34 @@ const {
   handleReprocesarPolizas,
 } = require("../controllers/robotController");
 
+const {
+  procesoActualizacionEstadoCotizaciones,
+} = require("../controllers/cotizacionesController");
+
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 exports.emitirCotizaciones = async (req, res) => {
   try {
-    let data = req.body; // Obtener los datos del cuerpo de la solicitud
-    if (!data.compania) {
-      res.json({
-        result: true,
-        message: "No se proporcionó una compañía para emitir la póliza",
-      });
-    }
-    const resultado = await handleEmitirPolizas(data);
-    res.json({
-      result: true,
-      message: "Cotizaciones emitidas con éxito",
-      data: resultado,
-    });
+    let data = req.body;
+
+    // prettier-ignore
+    const responsePrimerProceso = await procesoActualizacionEstadoCotizaciones(data);
+
+    return res.json(responsePrimerProceso);
+    // if (!data.compania) {
+    //   res.json({
+    //     result: true,
+    //     message: "No se proporcionó una compañía para emitir la póliza",
+    //   });
+    // }
+    // const resultado = await handleEmitirPolizas(data);
+    // res.json({
+    //   result: true,
+    //   message: "Cotizaciones emitidas con éxito",
+    //   data: resultado,
+    // });
   } catch (error) {
     res.status(500).json({ error: error.message });
     res.json({
@@ -88,7 +97,7 @@ exports.estimarCotizaciones = async (req, res) => {
         }
 
         resultado.push(detalle);
-      })
+      }),
     );
 
     res.json({

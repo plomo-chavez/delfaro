@@ -58,104 +58,89 @@
           </div>
         </div>
       </template>
-
-      <template v-if="false">
-        <template v-if="(accesorios || []).length > 0">
-          <div class="d-flex justify-space-between w-100 mt-5">
-            <div></div>
-            <div>
-              <!-- prettier-ignore -->
-              <VBtn color="dark" outlined @click="handleQuitarDetalles "> Cancelar </VBtn>
-            </div>
-          </div>
-          <div class="accesorios-tarjetas mt-4">
-            <template
-              v-for="(item, idx) in accesorios || []"
-              :key="item.label_id || idx"
-            >
-              <div v-if="item.nombre != null">
-                <div
-                  :key="item.label_id || idx"
-                  v-if="item.nombre != null"
-                  class="accesorio-tarjeta"
-                  :class="{ selected: item.selected || false }"
-                  @click="handleItem(Number(idx), item)"
-                >
-                  <div class="accesorio-row">
-                    <div class="accesorio-nombre">
-                      {{ item.nombre }}
-                    </div>
-                    <div class="accesorio-valor" v-if="item.selected || false">
-                      {{ item.prima }}
-                    </div>
-                  </div>
-                  <div
-                    v-if="
-                      (item.selected || false) &&
-                      item.hijos &&
-                      item.hijos.length > 0
-                    "
-                    @click.stop
-                    class="accesorio-hijos"
-                  >
-                    <template
-                      v-for="(hijo, hidx) in item.hijos"
-                      :key="hijo.id || hidx"
-                    >
-                      <div class="accesorio-hijo-col">
-                        <span v-if="hijo.label" class="accesorio-hijo-label">{{
-                          hijo.label
-                        }}</span>
-                        <VTextField
-                          v-if="hijo.tag === 'input'"
-                          v-model="hijo.valor"
-                          :placeholder="hijo.label || 'Valor'"
-                          class="accesorio-input formInput"
-                          variant="outlined"
-                          density="compact"
-                          :readonly="!(item.selected || false)"
-                          @mousedown.stop
-                        />
-                        <VSelect
-                          v-else-if="hijo.tag === 'select'"
-                          v-model="hijo.valor"
-                          :items="hijo.opciones || []"
-                          item-title="texto"
-                          :item-value="(item) => item"
-                          :placeholder="hijo.label || 'Selecciona una opción'"
-                          class="accesorio-select formInput"
-                          density="compact"
-                          :readonly="!(item.selected || false)"
-                          @mousedown.stop
-                        />
-                        <span
-                          v-else-if="hijo.valor && hijo.label"
-                          class="accesorio-hijo-valor"
-                          >{{ hijo.valor }}</span
-                        >
-                        <span
-                          v-else-if="hijo.valor"
-                          class="accesorio-hijo-valor"
-                          >{{ hijo.valor }}</span
-                        >
-                      </div>
-                    </template>
-                  </div>
+    </div>
+    <div class="wFull row mt-2">
+      <h3 class="module-title mb-4 wFull">Accesorios</h3>
+      <div class="d-flex flex-row align-center mb-5">
+        <VCheckbox
+          v-model="cotizacion.cotizacion.obtenerDetallesAccesorios"
+          color="primary"
+          hide-details
+          class="checkbox"
+        />
+        <span>Quieres obtener la informacion de los accesorios</span>
+      </div>
+      <template
+        v-if="cotizacion?.cotizacion?.obtenerDetallesAccesorios ?? false"
+      >
+        <div
+          v-if="Array.isArray(accesorios) && accesorios.length === 0"
+          class="mb-4"
+        >
+          <p>No hay accesorios disponibles para esta cotización.</p>
+        </div>
+        <template v-else>
+          <div
+            v-for="(item, idx) in accesorios || []"
+            :key="item.label_id || idx"
+            class="sectionAccesorio"
+          >
+            <!-- prettier-ignoree -->
+            <div class="secctionTitulo">
+              <div class="divTitulo">
+                <div class="divCheck">
+                  <VCheckbox
+                    v-model="item.selected"
+                    color="primary"
+                    hide-details
+                    class="checkbox"
+                  />
+                </div>
+                <div class="divLabels">
+                  <div class="fontBold">{{ item.nombre }}</div>
+                  <div>{{ item.prima }}</div>
                 </div>
               </div>
-            </template>
+            </div>
+            <!-- prettier-ignore -->
+            <div class="sectionValores">
+            <div v-if="item.hijos && item.hijos.length > 0" @click.stop class="wFull">
+              <template v-for="(hijo, hidx) in item.hijos" :key="hijo.id || hidx">
+                <div class="sectionHijos">
+                  <span v-if="hijo.label" class="sectionLabel">{{hijo.label}}</span>
+                  <div v-if="hijo.tag === 'input'" class="sectionInput">
+                    <VTextField   
+                      @mousedown.stop 
+                      :disabled="!(item.selected || false)" 
+                      :placeholder="hijo.label || 'Valor'" 
+                      v-model="hijo.valor" 
+                      class=" formInput" 
+                      :class=" { inpurFormActive: item.selected }" 
+                      :style="{width:'100%',backgroundColor:'white'}"
+                      variant="outlined" 
+                      density="compact"  />
+                  </div>
+                  <div v-else-if="hijo.tag === 'select'" class="sectionInput">
+                    <VSelect 
+                      @mousedown.stop 
+                      :items="hijo.opciones || []" item-title="texto" 
+                      :item-value="(item) => item" 
+                      :placeholder="hijo.label || 'Selecciona una opción'" 
+                      :disabled="!(item.selected || false)" 
+                      v-model="hijo.valor" 
+                      class=" formInput" 
+                      :class=" { inpurFormActive: item.selected }" 
+                      :style="{width:'100%',backgroundColor:'white'}"
+                      density="compact" 
+                    />
+                  </div>
+                  <span v-else-if="hijo.valor && hijo.label"  class="sectionLabel text-center" >{{ hijo.valor }}</span>
+                  <span v-else-if="hijo.valor"                class="sectionLabel text-center">{{ hijo.valor }}</span>
+                </div>
+              </template>
+            </div>
           </div>
-        </template>
-        <template v-else>
-          <FormFactory
-            :schema="schemaDetalles"
-            :formLive="true"
-            :modelValue="cambios || {}"
-            @update:modelValue="(val) => (cambios = val)"
-            :textButtonSubmit="'Empezar cotización'"
-            :showButtonSubmit="false"
-            :showButtonCancel="false"
-          />
+          </div>
         </template>
       </template>
     </div>
@@ -166,12 +151,13 @@
     </div>
     <div>
       <!-- prettier-ignore -->
-      <VBtn color="warning" :disabled="!canActualizar" @click="handleActualizar"> Actualizar </VBtn>
+      <VBtn color="warning"  @click="handleQuestionOfUpdate"> Actualizar </VBtn>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { showConfirmationMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 import { deepClone, deepToRaw, diffObjects } from "@/utils/helper";
 import { onMounted, ref } from "vue";
 // Devuelve las diferencias entre dos objetos o arrays
@@ -273,6 +259,19 @@ function handleCancelar() {
 const handleSelectFrecuenciaPago = (frecuenciaObject: any) => {
   selectedFrecuencia.value = frecuenciaObject.tipo;
   frecuenciaPagoSeleccionada.value = frecuenciaObject;
+};
+
+const handleQuestionOfUpdate = (frecuenciaObject: any) => {
+  showConfirmationMessage({
+    title: "¿Deseas actualizar esta cotización?",
+    message: "Este proceso hara que se vuelva a cotizar.",
+    confirmText: "Sí, continuar",
+    cancelText: "Cancelar",
+    onConfirm: async () => {
+      await handleActualizar();
+    },
+    onCancel: () => {},
+  });
 };
 
 function handleActualizar() {
@@ -495,6 +494,7 @@ onMounted(() => {
 
     cambios.value = deepClone(tmpCambios);
     accesorios.value = deepClone(cotizacionTMP?.detalles?.accesorios || []);
+    console.log("Accesorios:", deepToRaw(accesorios.value));
     cambiosInicial.value = deepClone(tmpCambios);
     // prettier-ignore
     coberturas.value = deepClone(cotizacionTMP?.detalles?.coberturasBasicas || []);
@@ -549,6 +549,24 @@ watch(cambios, () => {
 </script>
 
 <style scoped>
+.divTitulo {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 1000% !important;
+}
+
+.divcheck {
+  width: 20% !important;
+  text-align: center;
+}
+.divLabels {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between !important;
+  width: 80% !important;
+}
+
 .tabla-cuadriculada {
   border-collapse: separate;
   border-spacing: 0;
@@ -644,5 +662,66 @@ watch(cambios, () => {
   color: rgb(var(--v-theme-primary));
   font-size: 0.8rem;
   text-transform: uppercase !important;
+}
+
+.sectionAccesorio {
+  width: 100% !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(var(--v-theme-grey-400)) !important;
+}
+
+.secctionTitulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionValores {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sectionAccesorio .secctionTitulo,
+.sectionAccesorio .sectionValores {
+  flex: 1 1 50%; /* Cada div ocupa el 50% del ancho en pantallas grandes */
+  padding: 3px !important;
+  box-sizing: border-box;
+}
+
+/* Estilo para pantallas pequeñas (móviles y tabletas) */
+@media (max-width: 768px) {
+  .sectionAccesorio {
+    flex-direction: row; /* Cambia la dirección a columna */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+  }
+
+  .sectionAccesorio .secctionTitulo,
+  .sectionAccesorio .sectionValores {
+    flex: 1 1 100%; /* Cada div ocupa el 100% del ancho */
+    padding: 10px 0; /* Ajusta el espaciado */
+  }
+}
+
+.sectionInput {
+  width: 50% !important;
+  text-align: center;
+}
+.sectionLabel {
+  width: 50% !important;
+  text-align: left;
+}
+.inpurFormActive {
+  border-color: rgb(var(--v-theme-primaryTonal)) !important;
+}
+.sectionHijos {
+  display: flex;
+  flex-wrap: nowrap; /* Evita que los elementos se envuelvan */
+  align-items: center; /* Alinea los elementos verticalmente al centro */
+  width: 100% !important; /* Ocupa el 100% del ancho */
+  padding: 2px 0; /* Ajusta el espaciado */
 }
 </style>

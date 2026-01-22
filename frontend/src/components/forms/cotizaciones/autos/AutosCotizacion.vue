@@ -27,10 +27,10 @@
             :class="{ cardSelected: cotizacionesSeleccionadas.includes(item) }"
           />
         </div>
+        <!-- :disabled="cotizacionesSeleccionadas.length === 0" -->
         <div class="mt-6 justify-end d-flex">
           <VBtn
-            :disabled="cotizacionesSeleccionadas.length === 0"
-            @click="() => handleEmitirCotizaciones()"
+            @click="() => handleQuestionEmitir()"
             class="fontBold text-capitalize"
             color="primary"
           >
@@ -49,6 +49,10 @@
 </template>
 
 <script setup lang="ts">
+import {
+  showConfirmationMessage,
+  showInfoMessage,
+} from "@/components/apps/sweetAlerts/SweetAlets";
 import AutosCotizacionesDetalles from "@/components/forms/cotizaciones/autos/AutosCotizacionDetalles.vue";
 import AutosCotizacionEditar from "@/components/forms/cotizaciones/autos/AutosCotizacionEditar.vue";
 import { toggleItemInArray } from "@/utils/helper";
@@ -76,7 +80,55 @@ const cotizaciones: any = ref(null);
 const cotizacionSeleccionada: any = ref(null);
 const cotizacionesSeleccionadas: any = ref([]);
 
-const handleEmitirCotizaciones = () => {};
+// prettier-ignore
+const handleQuestionEmitir = () => {
+  const cotizacionSeleccionadaLocal = deepToRaw(cotizacionesSeleccionadas.value );
+
+  if (cotizacionSeleccionadaLocal.length == 0) {
+    showInfoMessage({
+      title: "No hay cotizaciones seleccionadas",
+      message: "Por favor, selecciona al menos una cotización para emitir.",
+    });
+
+  } else {
+    const titulo = cotizacionSeleccionadaLocal.length > 1
+      ? "¿Deseas emitir las cotizaciones seleccionadas?"
+      : "¿Deseas emitir la cotización seleccionada?";
+
+    showConfirmationMessage({
+      title: titulo,
+      message: "Este proceso no se podrá revertir.",
+      confirmText: "Sí, continuar",
+      cancelText: "Cancelar",
+      onConfirm: async () => {
+        await handleEmitirCotizaciones();
+      },
+      onCancel: () => {},
+    });
+  }
+};
+
+const handleEmitirCotizaciones = async () => {
+  const cotizaciones = deepToRaw(cotizacionesSeleccionadas.value).map(
+    (cotizacion: any) => cotizacion.num,
+  );
+
+  const payload = {
+    cotizacion_id: props.cotizacion_id,
+    cotizaciones,
+  };
+
+  await apiRequest({
+    url: "/api/cotizador/autos/emitir",
+    payload,
+    showMessages: true,
+    responseFull: true,
+    onSuccess: (response: any) => {
+      console.log("response emitir cotizaciones:", response);
+      // handleCancelar();
+    },
+  });
+};
 
 const handleEditarCotizacion = (cotizacion: any) => {
   cotizacionSeleccionada.value = cotizacion;
