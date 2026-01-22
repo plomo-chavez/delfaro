@@ -1,4 +1,4 @@
-// const { ejecutarCotizacion } = require("../bots/pruebas");
+const { Cotizaciones } = require("../models");
 const { ejecutarCotizacion } = require("../bots/planSeguroCotizacion");
 const {
   handleEstimarCotizaciones,
@@ -21,7 +21,15 @@ exports.emitirCotizaciones = async (req, res) => {
     // prettier-ignore
     const responsePrimerProceso = await procesoActualizacionEstadoCotizaciones(data);
 
-    return res.json(responsePrimerProceso);
+    const cotizacion = await Cotizaciones.findByPk(
+      responsePrimerProceso.data.cotizacion_id,
+    );
+
+    return res.json({
+      ...responsePrimerProceso,
+      data: cotizacion,
+    });
+
     // if (!data.compania) {
     //   res.json({
     //     result: true,

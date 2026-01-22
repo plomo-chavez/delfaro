@@ -11,7 +11,7 @@ export function formatearFechaHumana(fecha: string): string {
 
 export function calcularDiferenciaTiempo(
   fecha: string,
-  limite: any = null
+  limite: any = null,
 ): string {
   const fechaObjeto = new Date(fecha);
   const ahora = new Date();
@@ -25,7 +25,7 @@ export function calcularDiferenciaTiempo(
     const unidadesValidas = ["minutos", "horas", "dias", "meses", "años"];
     if (!unidadesValidas.includes(limite.unidad)) {
       let error = `La unidad del límite debe ser una de las siguientes: ${unidadesValidas.join(
-        ", "
+        ", ",
       )}`;
       console.log(error);
       return error;
@@ -86,6 +86,55 @@ export function toggleItemInArray(array: any[] = [], item: any, key: string | nu
   } else {
     array.splice(index, 1); // Elimina si existe
   }
+  return array;
+}
+
+// prettier-ignore
+export function toggleItemInArrayByKey(
+  array: any[] = [],
+  item: any,
+  fields: string | string[] | false = false, // Nuevo parámetro
+) {
+  array = Array.isArray(array) ? array : [];
+
+  // Determinar el valor que se usará para buscar y agregar
+  let valueToToggle: any;
+  if (fields === false) {
+    valueToToggle = item; // Usar todo el objeto
+  } else if (Array.isArray(fields)) {
+    // Crear un objeto con las propiedades especificadas
+    valueToToggle = fields.reduce((acc: any, field: string) => { acc[field] = item[field] !== undefined ? item[field] : null; return acc; }, {});
+  } else if (typeof fields === "string") {
+    // Usar solo el valor de la propiedad especificada
+    valueToToggle = item[fields] !== undefined ? item[fields] : null;
+  }
+
+  let index = -1;
+
+  // buscando el item en el array
+  if (fields === false) {
+    index = array.findIndex((element) => { return JSON.stringify(element) === JSON.stringify(valueToToggle); });
+  } else if (Array.isArray(fields)) {
+    index = array.findIndex((element) => {
+      // Comparar objetos con las mismas propiedades
+      const filteredElement = fields.reduce((acc: any, field: string) => { acc[field] = element[field] !== undefined ? element[field] : null; return acc; }, {});
+      return JSON.stringify(filteredElement) === JSON.stringify(valueToToggle);
+    });
+  } else if (typeof fields === "string") {
+    index = array.findIndex((element) => {
+      // Comparar solo el valor de la propiedad especificada
+      return element === valueToToggle;
+    });
+  }
+
+  if (index !== -1) {
+    // Si el item ya existe, lo elimina
+    array.splice(index, 1);
+  } else {
+    // Si el item no existe, lo agrega
+    array.push(valueToToggle);
+  }
+
   return array;
 }
 
@@ -223,7 +272,7 @@ export function diffObjects(obj1: any, obj2: any): any {
 export function formatCurrency(
   amount: string | number,
   locale: string = "es-MX",
-  currency: string = "MXN"
+  currency: string = "MXN",
 ): string {
   const numericAmount =
     typeof amount === "string" ? parseFloat(amount) : amount;
@@ -246,7 +295,7 @@ export function formatCurrency(
  */
 export function formatDateMoment(
   date: string,
-  format: any = "D [de] MMMM [de] YYYY"
+  format: any = "D [de] MMMM [de] YYYY",
 ): string {
   return moment(date).locale("es").format(format);
 }

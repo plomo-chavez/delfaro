@@ -222,7 +222,6 @@ exports.procesoActualizacionEstadoCotizaciones = async (data) => {
     const configuracionActual = JSON.parse(cotizacion.configuracion);
     const cotizacionesInBD = configuracionActual.cotizaciones || [];
 
-    console.log("cotizacionesInBD:", cotizacionesInBD);
 
     // Filtrar las cotizaciones para emitir y no emitir
     const cotizacionesParaEmitir = cotizacionesInBD.filter((c) => cotizaciones.includes(c.num));
@@ -238,6 +237,7 @@ exports.procesoActualizacionEstadoCotizaciones = async (data) => {
     
     delete configuracionActual.configuracion;
     delete nuevaConfiguracion.cotizaciones;
+    delete nuevaConfiguracion.companias;
 
     cotizacion.configuracion = JSON.stringify(nuevaConfiguracion);
 
@@ -249,7 +249,8 @@ exports.procesoActualizacionEstadoCotizaciones = async (data) => {
       result: true,
       message: "Estado de cotización actualizado a Emitida",
       data: {
-        cotizacion: configuracionActual,
+        cotizacion,
+        cotizacion_id: cotizacion.id,
         cotizaciones: cotizacionesParaEmitir,
       },
     };

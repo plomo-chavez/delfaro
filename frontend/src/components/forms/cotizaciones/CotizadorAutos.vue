@@ -16,6 +16,7 @@ const props = withDefaults(
 );
 
 const step = ref(1);
+const registroLocal: any = ref({});
 const dataPreguntas: any = ref({});
 const cotizaciones: any = ref(null);
 const cotizacion_id: any = ref(null);
@@ -92,41 +93,49 @@ async function handleCreateCotizacion() {
   });
 }
 
+const handleUpdateCotizacion = async (cotizacionActualizada: any) => {
+  procesandoRegistro(cotizacionActualizada);
+};
+
+const procesandoRegistro = async (registro: any) => {
+  const tmpRegistro = deepToRaw(registro);
+
+  cotizacion_id.value = tmpRegistro.id;
+
+  if (typeof tmpRegistro.configuracion == "string") {
+    tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);
+  }
+
+  cotizacionEmitida.value =
+    (tmpRegistro?.configuracion?.timeEmision ?? false) ? true : false;
+
+  if (cotizacionEmitida.value) {
+    cotizacion_id.value =
+      tmpRegistro?.configuracion?.idCotizacionEmitida ?? null;
+  } else {
+    if (tmpRegistro.id) {
+      cotizaciones.value = tmpRegistro.configuracion.cotizaciones;
+      step.value = 2;
+    } else {
+      let tmp = {};
+
+      if (tmpRegistro?.configuracion) {
+        console.log(tmpRegistro?.configuracion);
+        tmp = {
+          ...(tmpRegistro?.configuracion.cliente ?? {}),
+          ...(tmpRegistro?.configuracion.vehiculo ?? {}),
+        };
+      }
+
+      dataPreguntas.value = tmp;
+    }
+  }
+  registroLocal.value = tmpRegistro;
+};
+
 onBeforeMount(() => {
   if (props.registro != null) {
-    let tmpRegistro = deepToRaw(props.registro);
-
-    cotizacion_id.value = tmpRegistro.id;
-
-    if (typeof tmpRegistro.configuracion == "string") {
-      tmpRegistro.configuracion = JSON.parse(tmpRegistro.configuracion);
-    }
-
-    cotizacionEmitida.value =
-      (tmpRegistro?.configuracion?.timeEmision ?? false) ? true : false;
-
-    console.log("cotizacionEmitida.value:", cotizacionEmitida.value);
-
-    if (cotizacionEmitida.value) {
-      cotizacion_id.value =
-        tmpRegistro?.configuracion?.idCotizacionEmitida ?? null;
-    } else {
-      if (tmpRegistro.id) {
-        cotizaciones.value = tmpRegistro.configuracion.cotizaciones;
-        step.value = 2;
-      } else {
-        let tmp = {};
-        if (tmpRegistro?.configuracion) {
-          console.log(tmpRegistro?.configuracion);
-          tmp = {
-            ...(tmpRegistro?.configuracion.cliente ?? {}),
-            ...(tmpRegistro?.configuracion.vehiculo ?? {}),
-          };
-        }
-
-        dataPreguntas.value = tmp;
-      }
-    }
+    procesandoRegistro(props.registro);
   }
 
   dataPreguntas.value = {
@@ -171,12 +180,13 @@ onBeforeMount(() => {
             class="w-100"
             :cotizaciones="cotizaciones"
             :cotizacion_id="cotizacion_id"
+            @actualizar="handleUpdateCotizacion"
           />
         </div>
       </div>
     </div>
     <div v-else>
-      <pre>{{ JSON.parse(props.registro.configuracion) }}</pre>
+      <h3>Cotización Emitida</h3>
     </div>
   </div>
 </template>

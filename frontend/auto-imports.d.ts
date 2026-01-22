@@ -174,6 +174,7 @@ declare global {
   const toValue: typeof import('vue')['toValue']
   const todosTienenPropiedadesAsync: typeof import('./src/utils/helper')['todosTienenPropiedadesAsync']
   const toggleItemInArray: typeof import('./src/utils/helper')['toggleItemInArray']
+  const toggleItemInArrayByKey: typeof import('./src/utils/helper')['toggleItemInArrayByKey']
   const triggerRef: typeof import('vue')['triggerRef']
   const tryOnBeforeMount: typeof import('@vueuse/core')['tryOnBeforeMount']
   const tryOnBeforeUnmount: typeof import('@vueuse/core')['tryOnBeforeUnmount']
@@ -563,6 +564,7 @@ declare module 'vue' {
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly toggleItemInArray: UnwrapRef<typeof import('./src/utils/helper')['toggleItemInArray']>
+    readonly toggleItemInArrayByKey: UnwrapRef<typeof import('./src/utils/helper')['toggleItemInArrayByKey']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryOnBeforeMount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeMount']>
     readonly tryOnBeforeUnmount: UnwrapRef<typeof import('@vueuse/core')['tryOnBeforeUnmount']>

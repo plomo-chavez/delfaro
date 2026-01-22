@@ -24,7 +24,9 @@
             v-for="item in cotizaciones"
             @seleccionar="handleSeleccionar"
             @editar="handleEditarCotizacion"
-            :class="{ cardSelected: cotizacionesSeleccionadas.includes(item) }"
+            :class="{
+              cardSelected: cotizacionesSeleccionadas.includes(item.num),
+            }"
           />
         </div>
         <!-- :disabled="cotizacionesSeleccionadas.length === 0" -->
@@ -55,7 +57,7 @@ import {
 } from "@/components/apps/sweetAlerts/SweetAlets";
 import AutosCotizacionesDetalles from "@/components/forms/cotizaciones/autos/AutosCotizacionDetalles.vue";
 import AutosCotizacionEditar from "@/components/forms/cotizaciones/autos/AutosCotizacionEditar.vue";
-import { toggleItemInArray } from "@/utils/helper";
+import { toggleItemInArrayByKey } from "@/utils/helper";
 
 const props = withDefaults(
   defineProps<{
@@ -119,13 +121,12 @@ const handleEmitirCotizaciones = async () => {
   };
 
   await apiRequest({
-    url: "/api/cotizador/autos/emitir",
     payload,
     showMessages: true,
     responseFull: true,
+    url: "/api/cotizador/autos/emitir",
     onSuccess: (response: any) => {
-      console.log("response emitir cotizaciones:", response);
-      // handleCancelar();
+      emit("actualizar", response.data);
     },
   });
 };
@@ -134,9 +135,13 @@ const handleEditarCotizacion = (cotizacion: any) => {
   cotizacionSeleccionada.value = cotizacion;
 };
 
+// prettier-ignore
 const handleSeleccionar = (cotizacion: any) => {
-  toggleItemInArray(cotizacionesSeleccionadas.value, cotizacion, "nombre");
+  if (cotizacion.time) {
+    cotizacionesSeleccionadas.value = toggleItemInArrayByKey(cotizacionesSeleccionadas.value, cotizacion,"num");
+  }
 };
+
 const handleCancelar = () => {
   cotizacionSeleccionada.value = null;
 };
