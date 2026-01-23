@@ -8,21 +8,8 @@
     </h6>
 
     <div class="opciones-botones">
-      <button
-        class="cardCustom"
-        v-for="(opcion, idx) in config.opciones"
-        :key="idx"
-        :class="{ disabled: opcion.disabled }"
-        @click="!opcion.disabled && seleccionarOpcion(opcion)"
-        :disabled="opcion.disabled"
-        :style="{ width: props.widthCard || '120px' }"
-      >
-        <span
-          :class="opcion.icono || 'fa fa-question fa-2x'"
-          :style="{ width: props.widthIcon || '100px' }"
-        ></span>
-        <span class="btnText">{{ opcion.label }}</span>
-      </button>
+      <div>Si</div>
+      <div>No</div>
     </div>
     <!-- Acciones: continuar cuando un elemento esté seleccionado -->
     <div class="stch-clientebuscador-actions">
@@ -103,6 +90,26 @@ function onCancelar() {
   gap: 40px;
   justify-content: center;
   align-items: center;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 120px;
+  background: #fff;
+  color: #535353;
+  border: 2px solid #535353;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px #535353;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .btn:hover {

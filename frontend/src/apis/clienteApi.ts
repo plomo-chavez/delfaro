@@ -12,7 +12,7 @@ import { showErrorMessage } from "@/components/apps/sweetAlerts/SweetAlets";
 export const createCliente = async (data: any) => {
   try {
     const response = await customRequest({
-      url: "/api/clientes/create",
+      url: "/api/cliente",
       method: "POST",
       data: data,
     });

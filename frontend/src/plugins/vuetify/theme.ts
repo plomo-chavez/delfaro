@@ -8,11 +8,16 @@ export const themes: Record<string, ThemeDefinition> = {
     dark: false,
     colors: {
       white: "#fff",
-      primary: staticPrimaryColor,
-      primaryDark: staticPrimaryDarkenColor,
-      primaryTonal: "#a3c4e8",
-      primaryTonalLight: "#dce6f5",
-      primaryTonalDark: "#d4d9f5",
+      primary: staticPrimaryColor, // Brillo: 33%
+      primaryDark: staticPrimaryDarkenColor, // Brillo: 26%
+      primaryTonal: "#a3c4e8", // Brillo: 78%
+      primaryTonalLight: "#dce6f5", // Brillo: 90%
+      primaryTonalDark: "#d4d9f5", // Brillo: 85%
+      info2: "#009DFF", // Color base
+      info2Tonal: "#66C7FF", // 50% de brillo
+      info2TonalLight: "#0074CC", // 40% de brillo
+      info2TonalLighter: "#D6F2FF", // 60% de brillo
+      info2TonalDark: "#007ACC", // Un tono más oscuro
       "on-primary": "#fff",
       "primary-darken-1": "#0b237b",
       secondary: "#808390",

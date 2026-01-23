@@ -216,7 +216,7 @@ exports.procesoActualizacionEstadoCotizaciones = async (data) => {
     }
 
     // Actualizar el estatus de la cotización
-    cotizacion.estatus = "Emitida";
+    cotizacion.estatus = "Emitiendo";
 
     // Parsear la configuración de la cotización
     const configuracionActual = JSON.parse(cotizacion.configuracion);
@@ -247,7 +247,7 @@ exports.procesoActualizacionEstadoCotizaciones = async (data) => {
     // Retornar la respuesta
     return {
       result: true,
-      message: "Estado de cotización actualizado a Emitida",
+      message: "Estado de cotización actualizado, la cotizacion está en proceso de emisión",
       data: {
         cotizacion,
         cotizacion_id: cotizacion.id,

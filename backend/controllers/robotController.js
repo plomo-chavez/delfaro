@@ -69,7 +69,7 @@ exports.handleEstimarCotizaciones = async (data) => {
 
 exports.handleEmitirPolizas = async (data) => {
   let resultado = null;
-  let compania = data.compania.toLowerCase() || null;
+  let compania = data.compania.label.toLowerCase() || null;
   console.log("Emitiendo poliza para la compañia:", compania);
   switch (compania) {
     case "qualitas":

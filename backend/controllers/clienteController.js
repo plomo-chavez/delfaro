@@ -212,6 +212,38 @@ exports.deleteRecord = async (req, res) => {
   }
 };
 
+exports.searchRecords = async (req, res) => {
+  const { isCliente, referencia } = req.body;
+
+  // Validar que se proporcione un ID
+  if (!isCliente || !referencia) {
+    return res.json({
+      result: false,
+      message: "Faltan los campos de busqueda",
+    });
+  }
+
+  // Llama a la función genérica
+  const response = await getAllFromModel({
+    attributes: false,
+    model: Clientes,
+    filtros: {
+      isCliente: 1,
+      [Op.or]: [
+        { nombre: { [Op.like]: `%${referencia}%` } },
+        { curp: { [Op.like]: `%${referencia}%` } },
+      ],
+    },
+    pagination: false,
+  });
+
+  return res.json({
+    result: true,
+    message: "Registros obtenidos con éxito",
+    data: response.data,
+  });
+};
+
 exports.softDelete = async (req, res) => {
   const { id } = req.body;
 

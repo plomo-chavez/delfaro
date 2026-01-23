@@ -110,14 +110,21 @@ const handleQuestionEmitir = () => {
   }
 };
 
+// prettier-ignore
+const handleSeleccionar = (cotizacion: any) => {
+  if (cotizacion.time) {
+    console.log("Seleccionando cotización con time... ", cotizacion);
+    cotizacionesSeleccionadas.value = toggleItemInArrayByKey(deepToRaw(cotizacionesSeleccionadas.value), cotizacion,"num");
+    console.log(toRaw(cotizacionesSeleccionadas.value));
+  }
+};
+
 const handleEmitirCotizaciones = async () => {
-  const cotizaciones = deepToRaw(cotizacionesSeleccionadas.value).map(
-    (cotizacion: any) => cotizacion.num,
-  );
+  const numsCotizaciones = deepToRaw(cotizacionesSeleccionadas.value);
 
   const payload = {
     cotizacion_id: props.cotizacion_id,
-    cotizaciones,
+    cotizaciones: numsCotizaciones,
   };
 
   await apiRequest({
@@ -133,13 +140,6 @@ const handleEmitirCotizaciones = async () => {
 
 const handleEditarCotizacion = (cotizacion: any) => {
   cotizacionSeleccionada.value = cotizacion;
-};
-
-// prettier-ignore
-const handleSeleccionar = (cotizacion: any) => {
-  if (cotizacion.time) {
-    cotizacionesSeleccionadas.value = toggleItemInArrayByKey(cotizacionesSeleccionadas.value, cotizacion,"num");
-  }
 };
 
 const handleCancelar = () => {

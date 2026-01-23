@@ -191,7 +191,7 @@ const props = withDefaults(
   }>(),
   {
     isCliente: true, // default to true if not provided
-  }
+  },
 );
 
 const ejemploRegistros = [
@@ -266,11 +266,11 @@ const modalItem = ref<any | null>(null);
 const displayItems = computed(() => results.value);
 const minChars = computed(() => 3);
 const activeDescId = computed<string | undefined>(() =>
-  focusedIndex.value >= 0 ? `stch-cb-item-${focusedIndex.value}` : undefined
+  focusedIndex.value >= 0 ? `stch-cb-item-${focusedIndex.value}` : undefined,
 );
 
 const displayCountText = computed(
-  () => `${displayItems.value.length} resultados encontrados`
+  () => `${displayItems.value.length} resultados encontrados`,
 );
 
 function openModal(item: any) {
@@ -353,7 +353,7 @@ async function doSearch() {
 
   try {
     const resp = await customRequest({
-      url: "/api/clientes/search",
+      url: "/api/cliente/search",
       method: "POST",
       data: requestData,
     });

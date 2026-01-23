@@ -13,7 +13,6 @@ const router = useRouter();
 const paso = ref(1);
 const formData: any = ref({});
 const data: any = ref({});
-const cotizacion: any = ref({});
 
 const emit = defineEmits<{
   (event: "cancelar"): void;
@@ -21,44 +20,16 @@ const emit = defineEmits<{
 
 const props = withDefaults(
   defineProps<{
-    dataEmitir?: any;
+    dataEmitir: any;
     registro: any;
-    actualizarFN?: any;
+    actualizarFN: any;
   }>(),
   {
     registro: null,
     dataEmitir: null,
-  },
+  }
 );
 const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-
-const dummyCliente = {
-  fechaNacimiento: "1994-06-10",
-  nacionalidad: "Mexicana",
-  nombre: "Jesus",
-  segundoNombre: "Ramon",
-  apellidoPaterno: "Chavez",
-  apellidoMaterno: "Quiroz",
-  curp: "CURP",
-  rfc: "RFC",
-  tipoIdentificacion: "Tipo de identificación",
-  referenciaIdentificacion: "Tipo de identificación",
-  genero: true,
-  pais: "Mexico",
-  municipio: "Municipio",
-  colonia: "Colonia",
-  calle: "Calle",
-  numeroExterior: "Numero",
-  codigoPostal: "Codigo",
-  telefonoFijo: "Telfono",
-  celular: "Celular",
-  correo: "Correo",
-  profesion: "profesion",
-  ocupacion: "ocupacion",
-  giro: "giro",
-  isPolitico: true,
-  isCliente: true,
-};
 
 // prettier-ignore
 function convertirDatosSeguro(data :  any) {
@@ -229,15 +200,7 @@ function handleBack(idx: number) {
 }
 
 function handleGetDataCarro() {
-  formData.value = {
-    conductorHabitual: data.value.cliente.conductorHabitual || "",
-    placas: data.value.cliente.placas || "",
-    numeroMotor: data.value.cliente.numeroMotor || "",
-    repuve: data.value.cliente.repuve || "",
-    numeroSerie: data.value.cliente.numeroSerie || "",
-    color: data.value.cliente.color || "",
-    numeroEconomico: data.value.cliente.numeroEconomico || "",
-  };
+  formData.value = { ...(data.value?.carro ?? {}) };
 }
 
 function handleAseguradoIgual(accion: string) {
@@ -249,34 +212,25 @@ function handleAseguradoIgual(accion: string) {
 
 async function handleActualizarEmision() {
   let tmp = toRaw(data.value);
-
+  tmp.cotizacion = toRaw(props.registro);
   tmp.agente_id = userData.id;
+  tmp.compania = tmp.cotizacion.compania.toLowerCase();
   tmp.cliente.isCliente = true;
   tmp.asegurado.isCliente = false;
+  if (!props.dataEmitir) {
+    let tmpt = convertirDatosSeguro(tmp.cotizacion.detalles);
+    tmp.cotizacion.detalles.accesorios = tmpt.accesorios;
+    tmp.cotizacion.detalles.coberturasBasicas = tmpt.coberturasBasicas;
+  }
 
-  await handleUpdateCotizacion(tmp);
-}
+  delete tmp.cliente.data;
+  delete tmp.asegurado.data;
+  delete tmp.cotizacion.titular.direcciones;
+  delete tmp.cotizacion.detalles.frecuenciasPago;
+  delete tmp.cotizacion.detalles.titular;
 
-async function handleUpdateCotizacion(dataEmision: any) {
-  // console.log(toRaw(JSON.parse(props.registro.configuracion)));
-  const registroTMP = deepToRaw(props.registro);
-  const configuracionStringify = {
-    ...registroTMP.configuracion,
-    dataEmision,
-  };
-  // prettier-ignore
-  const payload = {
-    id: registroTMP.id,
-    configuracion: JSON.stringify(configuracionStringify),
-  };
-
-  await apiRequest({
-    url: "/api/cotizacion",
-    payload,
-    showMessages: true,
-    messageType: "toast",
-    onSuccess: (response: any) => {},
-  });
+  props.actualizarFN(tmp);
+  return tmp;
 }
 
 async function handleEmitir() {
@@ -337,11 +291,6 @@ async function handleFormSubmit() {
 
 async function handleContinue(dataCliente: any) {
   let isCliente = paso.value < 4;
-  if (typeof dataCliente.data == "string") {
-    dataCliente.data = JSON.parse(dataCliente.data);
-    dataCliente = { ...dataCliente.data, ...dataCliente };
-    delete dataCliente.data;
-  }
   let payload: any = { ...dataCliente, isCliente };
   let tipo = isCliente ? "cliente" : "asegurado";
   data.value[tipo] = payload;
@@ -362,26 +311,24 @@ async function handleCancelar() {
 
 onBeforeMount(() => {
   if (props.registro) {
-    const tmpRegistro = toRaw(props.registro);
-    if (tmpRegistro.configuracion.dataEmision) {
-      data.value = tmpRegistro.configuracion.dataEmision;
+    let tmp = { ...props.registro.titular, ...props.registro.vehiculo };
+
+    // prettier-ignore
+    let domicilioArr = (props.registro.titular.direccion || "").split(",");
+    tmp.colonia = domicilioArr[0]?.trim() || "";
+    tmp.municipio = domicilioArr[1]?.trim() || "";
+    tmp.estado = {
+      label: domicilioArr[2]?.trim() || "",
+      id: domicilioArr[2]?.trim(),
+    };
+
+    delete tmp.direcciones;
+    delete tmp.versiones;
+
+    formData.value = tmp;
+    if (props.dataEmitir) {
       paso.value = 9;
-    } else {
-      // prettier-ignore
-      const cotizacionTMP = tmpRegistro.configuracion.cotizacionesSeleccionadas[0];
-
-      let tmp = { ...cotizacionTMP.cliente, ...cotizacionTMP.vehiculo };
-
-      // prettier-ignore
-      let domicilioArr = (tmp.direccion || "").split(",");
-      tmp.colonia = domicilioArr[0]?.trim() || "";
-      tmp.municipio = domicilioArr[1]?.trim() || "";
-      tmp.estado = {
-        label: domicilioArr[2]?.trim() || "",
-        id: domicilioArr[2]?.trim(),
-      };
-
-      cotizacion.value = cotizacionTMP;
+      data.value = { ...props.dataEmitir };
     }
   }
 });
@@ -392,17 +339,13 @@ watch(
     if (newVal === 8) {
       handleGetDataCarro();
     }
-    if (newVal === 3) {
-      formData.value = { ...dummyCliente };
-    }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 
 <template>
-  <div v-if="true">
-    <pre>paso: {{ paso }}</pre>
+  <div>
     <OpcionSelector
       v-if="paso === 1"
       :config="{
@@ -412,6 +355,7 @@ watch(
         tipo: 'cards',
         opciones: opciones.cliente,
       }"
+      :widthCard="'200px'"
       :btnCancelar="true"
       @accionSeleccionada="handleContinuar"
       @cancelar="handleCancelar"
@@ -425,6 +369,7 @@ watch(
         tipo: 'cards',
         opciones: opciones.aseguradoIgual,
       }"
+      :widthCard="'200px'"
       :btnCancelar="true"
       @accionSeleccionada="handleAseguradoIgual"
       @cancelar="handleCancelar"
@@ -438,6 +383,7 @@ watch(
         tipo: 'cards',
         opciones: opciones.asegurado,
       }"
+      :widthCard="'200px'"
       :btnCancelar="true"
       @accionSeleccionada="handleContinuar"
       @cancelar="handleCancelar"

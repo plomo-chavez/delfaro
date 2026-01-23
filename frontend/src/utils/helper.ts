@@ -95,6 +95,7 @@ export function toggleItemInArrayByKey(
   item: any,
   fields: string | string[] | false = false, // Nuevo parámetro
 ) {
+  console.log("toggleItemInArrayByKey llamado con:", { array, item, fields });
   array = Array.isArray(array) ? array : [];
 
   // Determinar el valor que se usará para buscar y agregar
@@ -134,6 +135,8 @@ export function toggleItemInArrayByKey(
     // Si el item no existe, lo agrega
     array.push(valueToToggle);
   }
+
+  console.log("Resultado después de toggle:", array);
 
   return array;
 }

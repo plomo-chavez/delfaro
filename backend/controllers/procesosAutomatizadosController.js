@@ -21,6 +21,23 @@ exports.emitirCotizaciones = async (req, res) => {
     // prettier-ignore
     const responsePrimerProceso = await procesoActualizacionEstadoCotizaciones(data);
 
+    if (!responsePrimerProceso.result) {
+      return res.json(responsePrimerProceso);
+    }
+    const cotizacionInBD = responsePrimerProceso.data.cotizacion.toJSON();
+    const configuracion = JSON.parse(cotizacionInBD.configuracion);
+    console.log(
+      "responsePrimerProceso:",
+      configuracion.cotizacionesSeleccionadas[0],
+    );
+
+    // const resultado = await handleEmitirPolizas(configuracion.cotizacionesSeleccionadas);
+    // res.json({
+    //   result: true,
+    //   message: "Cotizaciones emitidas con éxito",
+    //   data: resultado,
+    // });
+
     const cotizacion = await Cotizaciones.findByPk(
       responsePrimerProceso.data.cotizacion_id,
     );
@@ -29,19 +46,6 @@ exports.emitirCotizaciones = async (req, res) => {
       ...responsePrimerProceso,
       data: cotizacion,
     });
-
-    // if (!data.compania) {
-    //   res.json({
-    //     result: true,
-    //     message: "No se proporcionó una compañía para emitir la póliza",
-    //   });
-    // }
-    // const resultado = await handleEmitirPolizas(data);
-    // res.json({
-    //   result: true,
-    //   message: "Cotizaciones emitidas con éxito",
-    //   data: resultado,
-    // });
   } catch (error) {
     res.status(500).json({ error: error.message });
     res.json({

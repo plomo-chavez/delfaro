@@ -11,6 +11,7 @@ router.post('/clientes',                clienteController.getAll);
 router.get('/cliente/:id',              clienteController.getRecord);
 router.post('/cliente',                 clienteController.createOrUpdate);
 router.post('/cliente/eliminar',        clienteController.deleteRecord);
+router.post('/cliente/search',          clienteController.searchRecords);
 router.post('/cliente/eliminar/soft',   clienteController.softDelete);
 router.post('/cliente/polizas',         clienteController.obtenerPolizasCliente);
 

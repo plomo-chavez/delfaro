@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ManagerClientes from "@/components/forms/clientes/ManagerClientes.vue";
 import AutosCotizaciones from "@/components/forms/cotizaciones/autos/AutosCotizacion.vue";
+import PanelEmision from "@/components/forms/cotizaciones/PanelEmision.vue";
 
 const emit = defineEmits(["cancelar"]);
 
@@ -161,9 +162,9 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="divContenedor">
+  <div class="divContenedor" v-if="!cotizacionEmitida">
     <h1 class="module-title">Cotizador de Seguros de Autos</h1>
-    <div v-if="!cotizacionEmitida">
+    <div>
       <div v-if="step === 1" class="card cardForm mx-auto mt-3">
         <h2 class="w-full mb-5">Información del cliente:</h2>
         <ManagerClientes
@@ -185,9 +186,10 @@ onBeforeMount(() => {
         </div>
       </div>
     </div>
-    <div v-else>
-      <h3>Cotización Emitida</h3>
-    </div>
+  </div>
+  <div v-else>
+    <h1 class="module-title">Emisión de cotización</h1>
+    <PanelEmision :registro="registroLocal" />
   </div>
 </template>
 
